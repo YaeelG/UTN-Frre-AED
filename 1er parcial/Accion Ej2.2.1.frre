@@ -1,0 +1,75 @@
+/* https://aed-frre.github.io/practica/2.21/#ejercicio-221
+Dada una secuencia de caracteres de entrada, desarrollar un algoritmo que produzca una secuencia de salida de caracteres; la que contendrá solo los caracteres “numéricos” correspondientes a dígitos impares encontrados en la secuencia de entrada.
+
+Ejemplo: Si en la entrada viniera A125EB% en la salida debería ir 15.
+
+Al final del proceso informar:
+
+    Cuantos dígitos impares encontró
+    Cuantos dígitos pares
+    Total de caracteres “numéricos” (dígitos) y porcentaje de pares e impares */
+
+
+
+Accion Ej2.2.1 es
+    Ambiente
+        par=('0','2','4','6','8')
+        impar=('1','3','5','7','9')
+        s,sal: secuencia de caracter
+        sal2: secuencia de entero
+        v: caracter
+        v2, v1,contpar,contimpar: entero
+
+        Funcion Convertir (x:caracter): entero es
+            Segun x hacer
+                '0': Convertir:=0
+                '2': Convertir:=2
+                ..
+                '8': Convertir:=8
+            Fin_Segun
+        Fin_Funcion
+ 
+
+
+    Proceso
+        Arrancar(s) // A125EB%
+        Avanzar(s,v) // Se posiciona en A
+        Crear(sal) // Sec dígitos impares
+        Crear(sal2) // Sec dígitos pares
+        contpar:=0; 
+        contimpar:=0
+
+        Mientras NoFDS(s) hacer
+            // par=('0','2','4','6','8')
+            // impar=('1','3','5','7','9')
+            Si v en par o v en impar entonces
+                Si v en impar entonces
+                    v1:= Convertir(v)
+                    Escribir(sal,v) // Sec dígitos impares
+                    contimpar:=contimpar+1
+                Sino
+                    v2:= Convertir(v)
+                    Escribir(sal2,v2) // Sec dígitos pares
+                    contpar:=contpar+1 
+                Fin_Si
+            Fin_Si
+
+            Avanzar(s,v)
+        Fin_Mientras
+
+
+        // Total de caracteres “numéricos” (dígitos) y porcentaje de pares e impares
+        Escribir('Total de numeros', contpar+contimpar) //3
+
+        Escribir('Porc. de pares', contpar*100/(contpar+contimpar)) // 1
+
+        Escribir('Porc. de impares', contimpares*100/(contpar+contimpar)) // 2
+
+
+        Cerrar(sal); 
+        Cerrar(sal2);
+        Cerrar(s)
+
+Fin_Accion
+
+

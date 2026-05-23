@@ -1,0 +1,334 @@
+//! Secuencias de datos elementales
+
+/*
+ Ejercicio 2.1.1
+  Dada una secuencia de letras del alfabeto que finaliza con una marca '*', contar cuantas letras "A" hay en la secuencia.
+
+* Sec con marca de fin
+*/
+
+ACCION EJ2_1_1 es
+AMBIENTE
+    sec: secuencia de caracteres
+    v: caracter
+    cont: entero
+
+PROCESO
+    ARR(sec)
+    AVZ(sec, v)
+    cont := 0
+
+    //finaliza con una marca '*'
+    Mientras (v<>'*') hacer
+        si (v='A') entonces
+            cont := cont + 1
+        fin_Si
+
+        AVZ(sec, v)
+    fin_mientras
+
+    CERRAR(sec)
+    ESC("Cantidad de A: ", cont)
+fin_ACCION
+       
+
+
+/*
+ Ejercicio 2.1.4
+  Se dispone de una secuencia de números de socios, y se desea saber la cantidad de socios que están registrados.
+
+* Sec sin marca de fin
+*/
+ACCION 2_1_4 es
+AMBIENTE
+    sec: secuencia de caracteres
+    v: caracter
+    cont: entero
+
+PROCESO
+    ARR(sec)
+    AVZ(sec, v)
+    cont := 0
+    
+    Mientras NoFDS(sec) hacer
+        cont := cont+1
+        AVZ(sec, v)
+    fin_mientras
+
+    CERRAR(sec)
+    ESC("Cantidad de socios: ", cont)
+fin_ACCION
+
+
+
+/*
+ Ejercicio 2.1.5
+  La secuencia de socios del problema anterior tiene el inconveniente de que los números están ordenados pero no son correlativos. Se desea generar una secuencia que contenga los números de socios que no figuran en la secuencia de socios.
+*/
+
+// 1ra version: graba numeros de la secuencia sec y aquellos que falta.      sec: 1 2 4 6  sal: 1 2 3 4 5 6
+ACCION 2_1_5 es
+AMBIENTE
+    sec, sal: secuencia de entero
+    v1, v2: entero
+    aux: entero
+    
+PROCESO
+    //Secuencia Socios
+    ARR(sec)
+    AVZ(sec, v1)
+
+    //Secuencia de Salida
+    Crear(sal)
+    // // ARR(sal)
+    // // AVZ(sal, v2)
+
+    aux := v1           //guardo el valor
+    Escribir(sal, v1)   //agregar valor a sec salida
+
+    Mientras NoFDS(sec)
+        AVZ(sec, v1)    //avanzo sec socios
+       // // AVZ(sal, v2)    //avanzo sec salida
+
+        si (aux+1<v1) entonces
+            mientras (aux+1<v1) hacer
+                aux := aux+1
+                Escribir(sal, aux)
+            fin_mientras
+        sino
+            aux := v1
+            Escribir(sal, aux)
+        fin_si
+        
+    fin_mientras
+
+    Cerrar(sec)
+fin_ACCION
+
+        
+
+// 2da version: graba solo aquellos que falta de la secuencia.     sec: 1 2 4 6  sal: 3 5
+ACCION 2_1_5 es
+AMBIENTE
+    sec, sal: secuencia de entero
+    anterior, actual, faltante : entero
+    
+PROCESO
+    //Secuencia Socios
+    ARR(sec)
+    AVZ(sec, anterior)
+
+    //Secuencia de Salida
+    Crear(sal)
+
+    MIENTRAS NOFDS(sec) HACER
+        AVZ(sec, actual)
+
+        SI (actual > anterior + 1) ENTONCES
+            faltante := anterior + 1
+            MIENTRAS (faltante < actual) HACER
+                GRABAR(sal, faltante)  //Para construir una nueva secuencia
+                faltante := faltante + 1
+            FIN_MIENTRAS
+        FIN_SI
+
+        anterior := actual
+    FIN_MIENTRAS
+
+    CERRAR(sec)
+    CERRAR(sal)
+FIN_ACCION
+
+
+/*
+ Ejercicio 2.1.6
+  Dada una secuencia de enteros que almacena la cantidad de habitantes de las ciudades capitales de las 23 provincias de la República Argentina, discriminados 4 categorías:
+  - menores de 18 años (Varones y Mujeres) y 
+  - mayores de 18 años (Varones y Mujeres). 
+
+    Es una secuencia, cada 4 valores es una nueva provincia.
+
+  
+  Se pide determinar la población total y los siguientes porcentajes: 
+    - masculinos, 
+    - femeninos, 
+    - mayores de 18 y 
+    - menores de 18.
+*/
+
+ACCION EJ2_1_6 ES
+AMBIENTE
+    sec: secuencia de enteros
+    v, pos, tot, masc, fem, mayor18, menor18: entero
+
+PROCESO
+    //Inicializo secuencia
+    ARR(sec)
+    AVZ(sec, v)
+
+    //Inicializo variables
+    masc := 0
+    fem := 0
+    mayor18 := 0
+    menor18 := 0
+    tot := 0
+    pos:=1
+
+    //Proceso secuencia sin marca de fin
+    Mientras NoFDS(sec) entonces
+        Segun pos hacer
+            1: //sec: Menores VARONES
+                menor18 := menor18 + v  //menores totales
+                masc := masc + v        //masculinos totales
+            2: //sec: Menores MUJERES
+                menor18 := menor18 + v  //menores totales
+                fem := fem + v          //femeninos totales
+
+            3: //sec: Mayores VARONES
+                mayor18 := mayor18 + v  //mayores totales
+                masc := masc + v        //masculinos totales
+            4: //sec: Mayores MUJERES
+                mayor18 := mayor18 + v  //mayores totales
+                fem := fem + v          //femeninos totales
+        Fin_segun
+
+
+        tot := tot + v
+
+        pos := pos + 1
+        si pos = 5 entonces
+            pos := 1
+        fin_si
+
+        AVZ(sec, v)
+    fin_mientras
+
+    CERRAR(sec)
+
+fin_ACCION
+
+
+/*
+ Ejercicio 2.1.7
+  Se tiene una secuencia de enteros que contiene todos los CUIT de los empleados de una empresa, la misma termina con el CUIT 0. 
+  
+  Para evitar largas esperas en los días de pago, la empresa necesita organizarlos de acuerdo al último dígito de su documento, 
+  
+  generar una secuencia con los CUIT de las personas que su número de documento termine con 0, 1, 2 o 3.
+
+  27 45 000 002 2 -> 11 digitos -> v MOD 10 = 2
+
+*/
+
+ACCION EJ2_1_7 ES
+AMBIENTE
+    sec, sal: secuencia de enteros
+    v, ult: entero
+
+PROCESO
+    //Inicializo secuencia
+    ARR(sec)
+    AVZ(sec, v)
+    CREAR(sal)
+    
+    Mientras v<>0 hacer
+        ult := v MOD 10
+
+        si (ult = 0) o (ult = 1) o (ult = 2) o (ult = 3) entonces
+            GRABAR(sal, v)
+        fin_si
+
+        AVZ(sec, v)
+    fin_mientras
+
+    CERRAR(sec)
+    CERRAR(sal)
+
+fin_ACCION
+
+
+
+/*
+ Ejercicio 2.1.20
+  Se dispone de dos secuencias texto formadas por oraciones bimembres (sujeto y predicado, separados por comas ‘,’). Se desea una secuencia texto de salida formada por oraciones bimembres, de la siguiente forma:
+
+  El sujeto, de la secuencia 1, y el predicado, de la secuencia 2.
+
+  Al finalizar informar cuantas oraciones tiene cada secuencia.
+*/
+ACCION EJ2_1_20 ES
+AMBIENTE
+    sec1, sec2, sal: secuencia de caracteres
+    v1, v2: caracter
+    cont1, cont2: enteros
+
+PROCESO
+    //Inicializo secuencias y variables
+    ARR(sec1)
+    ARR(sec2)
+    AVZ(sec1, v1)
+    AVZ(sec2, v2)
+    CREAR(sal)
+    cont1 := 0
+    cont2 := 0
+    
+    Mientras NoFDS(sec1) y NoFDS(sec2) hacer
+        //Proceso sec1
+        Mientras (v1<>",") hacer //Grabar sujeto de sec1
+            GRABAR(sal, v1)
+            AVZ(sec1, v1)
+        fin_mientras
+
+        
+        GRABAR(sal, ",")  
+        GRABAR(sal, " ")
+
+        //Llevar ventana al final de la oración
+        //asume que la oración siempre termina con punto.
+        Mientras (v1<>".") hacer 
+            AVZ(sec1, v1)
+        fin_mientras
+        
+        //Repetir
+            //AVZ(sec1, v1)
+        //Hasta (v1 = ".")
+
+        AVZ(sec1, v1) //v1="." -> v1=siguiente oracion
+
+
+        cont1 := cont1 + 1 //Contar oraciones sec1
+
+
+        //Proceso sec2
+
+        //Después del primer MIENTRAS, la ventana está parada en la coma, por lo que el segundo MIENTRAS copiaría también la coma al predicado.
+        Mientras (v2<>",") hacer //Llevar ventana hasta el predicado
+            AVZ(sec2, v2)
+        fin_mientras
+
+        AVZ(sec2, v2)   //porque la coma no es parte del predicado
+        AVZ(sec2, v2)   //tampoco este espacio
+
+        //Grabar predicado de sec2
+        //asume que la oración siempre termina con punto.
+        Mientras (v2<>".") hacer 
+            GRABAR(sal, v2)
+            AVZ(sec2, v2)
+        fin_mientras
+
+        cont2 := cont2 + 1
+
+        GRABAR(sal, ".")
+    fin_mientras
+
+    //Informar cuantas oraciones tiene cada secuencia.
+    ESCRIBIR("La secuencia 1 tiene", cont1, "oraciones")
+    ESCRIBIR("La secuencia 2 tiene", cont2, "oraciones")
+
+    //Cerrar secuencia
+    CERRAR(sec1)
+    CERRAR(sec2)
+    CERRAR(sal)
+fin_ACCION
+
+

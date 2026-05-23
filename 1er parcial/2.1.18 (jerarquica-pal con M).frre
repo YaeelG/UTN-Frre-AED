@@ -1,0 +1,39 @@
+2.1.18 (jerarquica-pal con M)
+
+// Escribir un algoritmo que produzca una secuencia de salida que contenga una oración formada por las palabras en posición par de cada oración de una secuencia texto de entrada, que además comienzan con la letra 'M'.
+
+ACCION Palabras_con_M ES
+AMBIENTE
+	
+	Sal, Sec: Secuencia de caracter;
+	VS,V: Caracter;
+	Cont: Entero;
+
+ALGORITMO
+	Crear (Sal);
+	Arrancar (sec);
+	Avanzar (sec,v);
+	Mientras NoFDS(sec)  hacer
+		cont:=0;
+		Mientras  v  <>  ‘.’  hacer
+			Mientras  ( v  = ‘  ’)  hacer
+				avanzar (sec,v);
+			fin_mientras;
+			cont:= cont + 1;
+			Si  ( v = ‘m’ )  y (cont mod 2 = 0 ) entonces
+				mientras  ( v <>  ‘.’ )  y ( v <> ‘  ’ ) hacer
+					escribir  (sal,v);
+					avanzar  (sec,v);
+				fin_mientras;
+				escribir (sal, ‘ ’);
+			sino
+				mientras  ( v <>  ‘.’ )  y ( v <> ‘  ’ ) hacer
+					avanzar (sec,v);
+				fin_mientras;
+			fin_si;
+		fin_mientras;               *fin_oracion*
+		Avanzar(sec,v)
+	fin_mientras;			*fin_secuencia*
+	Escribir (sal, ‘.’);
+	Cerrar (sal); Cerrar (sec);
+FIN_ACCION;

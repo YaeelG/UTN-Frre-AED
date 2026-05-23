@@ -1,0 +1,57 @@
+/* https://aed-frre.github.io/practica/2.1/#ejercicio-214
+
+2.1.4
+Se dispone de una secuencia de números de socios, y se desea saber la cantidad de socios que están registrados.
+
+2.1.5
+La secuencia de socios del problema anterior tiene el inconveniente de que los números están ordenados pero no son correlativos. Se desea generar una secuencia que contenga los números de socios que no figuran en la secuencia de socios.
+*/
+
+Accion Ej2.1.5 es
+	Ambiente
+		s1,s2,sal: secuencia de caracter
+		v1,v2: caracter
+		cont1,cont2: entero
+
+	Proceso
+		Arr(s1) // Secuencia de numeros
+		Arr(s2) // Secuencia de Socios
+		Crear(sal) // Num de socios y nombre de socio
+		Avz(s1,v1)
+		Avz(s2,v2)
+		cont1:=0; 
+
+		Mientras NoFDS(s1) y NoFDS(s2) hacer
+			Escribir(sal,v1) // Esc Numero
+			Escribir(sal,v2) // Esc Nombre Socio
+			Avz(s1,v1)
+			Avz(s2,v2)
+			cont1:=cont1+1
+		Fin_Mientras
+
+		cont2:=cont1 // Hasta este punto s1 y s2 tienen la misma cantidad de caracteres
+
+		Mientras NoFDS(s1) hacer
+			cont1:=cont1+1
+			Avz(s1,v1)
+		Fin_Mientras
+
+		Mientras NoFDS(s2) hacer
+			cont2:=cont2+1
+			Avz(s2,v2)
+		Fin_Mientras
+
+		Escribir('Sec1 tiene',cont1,'y la Sec2 tiene',cont2)
+
+		Cerrar(sal)
+		Cerrar(s2)
+		Cerrar(s1)
+
+FinAccion
+
+// Outputs:
+// Num Socio  Nombre Socio
+// Num Socio  Nombre Socio
+// Num Socio  Nombre Socio
+// ...
+// Sect tiene 10 y la Sec2 tiene 11

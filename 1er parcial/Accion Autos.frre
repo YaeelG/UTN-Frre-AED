@@ -1,0 +1,63 @@
+Accion Autos es
+	Ambiente
+		Auto = registro
+			prov: AN(30)
+			depto: AN(40)
+			ciudad: AN(50)
+			pat: AN(7)
+			modelo: N(4)
+		Finregistro
+		Arch: archivo de Auto ordenado por prov, depto, ciudad y pat
+		reg: Auto
+		r_ciudad: AN(50)
+		r_depto: AN(40)
+		r_prov: AN(30)
+		cc,cd,cp,ct: N(9999)
+		Procedim corte_ciudad es
+			Escribir('El total de autos de',r_ciudad,'es',cc)
+			cd:=cd+cc
+			cc:=0
+			r_ciudad:=reg.ciudad
+		FinProc
+		Procedim corte_depto es
+			corte_ciudad
+			Escribir('El total de autos de',r_depto,'es',cd)
+			cp:=cp+cd
+			cd:=0
+			r_depto:=reg.depto
+		FinProc
+		Procedim corte_prov es
+			corte_depto
+			Escribir('El total de autos de',r_prov,'es',cp)
+			ct:=ct+cp
+			cp:=0
+			r_prov:=reg.prov
+		FinProc
+
+	Proceso
+		Abrir E/(Arch); Leer(Arch,reg)
+		cc:=0; cd:=0; cp:=0; ct:=0
+		r_prov:=reg.prov
+		r_depto:=reg.depto
+		r_ciudad:=reg.ciudad
+		Mientras NFA(Arch) hacer
+			Si r_prov <> reg.prov entonces
+				corte_prov
+			sino
+				Si r_depto <> reg.depto entonces
+					corte_depto
+				sino
+					Si r_ciudad <> reg.ciudad entonces
+						corte_ciudad
+					FinSi
+				FinSi
+			FinSi
+			Si reg.modelo >= 2000 entonces
+				cc:=cc+1
+			FinSi
+			Leer(Arch,reg)
+		FinMientras
+		corte_prov
+		Escribir('El total de autos es',ct)
+		Cerrar(Arch)
+FinAccion

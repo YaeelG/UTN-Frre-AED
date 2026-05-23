@@ -1,0 +1,453 @@
+//! Archivos Secuenciales
+
+/*
+ Ejercicio 2.2.1
+  Se dispone de una secuencia con los datos de los alumnos de la facultad:
+    Apellido y Nombre
+    Carrera (ISI - IEM - IQ)
+    Nº de Legajo
+    Fecha de Nacimiento
+    Fecha de Ingreso
+    D.N.I.
+    Sexo (M o F)
+    Fecha de último examen aprobado
+    Nota
+
+  Se desea un listado de los mismos, con el siguiente formato:
+    Nro_Legajo | Apellido_Nombre | Documento | Carrera 
+*/
+
+
+/* 
+ Ejercicio 2.2.2
+  Se dispone de una secuencia de facturas con los siguientes datos:
+    - Nº de Factura
+    - Fecha
+    - Total
+
+  Se desea un listado de las facturas cuyas fechas sean posteriores a una fecha dada, y cuyos importes totales no alcancen los $1000, con el siguiente formato:
+    Nro_Factura | Fecha | Importe_Total 
+*/
+
+ACCION EJ2_2_2 ES
+AMBIENTE
+    FECHA = registro 
+        dia: 1..31
+        mes: 1..12
+        año: N(4)
+    fin_registro
+
+    FACTURAS = registro
+        Nro_Factura: N(8)
+        Fecha: FECHA
+        Importe_Total: N(10)
+    fin_registro
+
+    afact: Archivo de FACTURAS
+    rfact: FACTURAS
+
+    FechaDada: FECHA
+
+PROCESO
+    Escribir("Facturas con fechas sean posteriores a una fecha dada, y cuyos importes totales no alcancen los $1000")
+    ESCRIBIR("Introduce una fecha mínima")
+    LEER(FechaDada)
+
+    ABRIR E/ (afact)
+    LEER(afact, rfact)
+
+    Mientras NoFDA(afact) hacer
+        si ( rfact.Fecha.año > FechaDada.año ) o
+           ( rfact.Fecha.año = FechaDada.año y rfact.Fecha.mes > FechaDada.mes ) o
+           ( rfact.Fecha.año = FechaDada.año y 
+             rfact.Fecha.mes = FechaDada.mes y 
+             rfact.Fecha.dia > FechaDada.dia ) entonces
+
+            si rfact.Importe_Total < 1000 entonces
+                Escribir( rfacta.Nro_Factura, " | ",
+                rfact.Fecha.dia, "/", rfact.Fecha.mes, "/", rfact.Fecha.año,
+                " | ", rfact.Importe_Total)
+            fin_si
+
+        fin_si
+
+        LEER(afact, rfact)
+    fin_mientras
+
+    CERRAR(afact)
+fin_ACCION
+
+
+
+//! Modelo 2025 - 1er parcial
+/*
+ Ejercicio 1)
+  La FIFA desea analizar la participación de los jugadores por equipo en el Mundial de Clubes. Para ello cuenta con dos secuencias de caracteres:
+
+  SECUENCIA_JUGADORES:
+  Confederación-NombreEquipo-NombreJugador*Edad(2)NroJugador(2)#NombreJugador*Edad(2)NroJugador(2)#...%NombreEquipo-NombreJugador*....$Confederación-...
+
+
+  > El guión - separa Confederaciones y nombre del equipo. 
+  > El nombre del jugador termina con *. 
+  > Confederación finaliza con $, 
+  > Equipo finaliza con %, 
+  > jugador termina con #. 
+  > Por cada confederación existen varios equipos y por cada equipo existen varios jugadores.
+
+  Ejemplo:
+  UEFA-Real Madrid-Luka Modric*3801#Vinicius Jr*2402#Jude Bellingham*2103#%Manchester City-Kevin De Bruyne*3304#Erling Haaland*2405#Phil Foden*2306#%SCONMEBOL-Fluminense-Germán Cano*3607#André Trindade*2208#%Boca Juniors-Edinson Cavani*3709#Luis Advincula*3410#%$*
+
+
+  SECUENCIA_ESTADISTICAS:  Correspondencia 1 a 1 con cada jugador.
+  
+  Goles(2caracteres)Asistencias(2caracteres)MinutosJugados(4caracteres)TarjetasAmarillas(1caracter)TarjetasRojas(1caracter)#...
+
+  Ejemplo:
+    0101027000#0403031210#0201024500#0501030010#0600028001#*
+
+  Se pide:
+
+    1. Generar una secuencia de salida con los Equipos (al final del nombre poner un /) y sus Jugadores que hayan tenido al menos el triple de goles que de la suma entre asistencias y tarjetas rojas, separando los jugadores con "..." y los equipos con "%" (Suponer que sí o sí todos los equipos tienen al menos un jugador que cumple la condición).
+
+    Formato:
+    NombreEquipo/NombreJugador...NombreJugador...%NombreEquipo/NombreJugador...*
+
+    2. Informar por pantalla cantidad de jugadores de cada equipo. (ejemplo: el Real Madrid 2).
+
+    3. Informar por confederación cuántos jugadores jugaron más de 1000 minutos.
+*/
+
+ACCION EJ1_ES
+AMBIENTE
+  secJ, secE, sal: secuencia de caracteres
+  vj, ve: caracter
+
+  // Sec aux para nombres de equipos y jugadores
+  nomEquipo, nomJug: secuencia de caracteres
+
+  // Datos numéricos
+  edad, nro: entero
+  gol, ast, min, tr: entero
+
+  // Contadores
+  cantJugEquipo, cant1000Conf: entero
+
+  FUNCION ConvertirDigito(c: caracter): entero ES
+    Segun c hacer
+      '0': retornar 0
+      '1': retornar 1
+      '2': retornar 2
+      '3': retornar 3
+      '4': retornar 4
+      '5': retornar 5
+      '6': retornar 6
+      '7': retornar 7
+      '8': retornar 8
+      '9': retornar 9
+    Fin_segun
+  FIN_FUNCION
+
+  FUNCION LeerNdigitos(sec: secuencia de caracteres;
+                     v: caracter;
+                     n: entero): entero ES
+    AMBIENTE
+      num, dig, i: entero
+
+    PROCESO
+      num := 0
+
+      Para i := 1 hasta n hacer
+          dig := ConvertirDigito(v)
+          num := num * 10 + dig
+          AVZ(sec, v)
+      fin_para
+      
+      LeerNdigitos:= num
+  FIN_FUNCION
+
+  PROCEDIMIENTO LeerNombreA(sec: secuencia de caracteres;
+                            v: caracter;
+                            fin: caracter;
+                            nombreAux: secuencia de caracteres) ES
+    CREAR(nombreAux)
+
+    Mientras (v <> fin) hacer
+      GRABAR(nombreAux, v) 
+      AVZ(sec, v)
+    fin_mientras
+
+    AVZ(sec, v)   // saltar el delimitador
+  FIN_PROCEDIMIENTO
+
+
+  PROCEDIMIENTO LeerJugadorDatos(sec: secuencia de caracteres;
+                                 v: caracter;
+                                 edad, nro: entero) ES
+    edad := LeerNdigitos(sec, v, 2)
+    nro  := LeerNdigitos(sec, v, 2)
+    // queda parado sobre '#'
+  FIN_PROCEDIMIENTO
+
+
+  PROCEDIMIENTO LeerStats(sec: secuencia de caracteres;
+                          v: caracter;
+                          gol, ast, min, tr: entero) ES
+    gol := LeerNdigitos(sec, v, 2) //uso en pto 1
+    ast := LeerNdigitos(sec, v, 2) //uso en pto 1
+    min := LeerNdigitos(sec, v, 4) //uso en pto 3
+    // // ta  := LeerNdigitos(sec, v, 1)
+    AVZ(sec, v)
+    tr  := LeerNdigitos(sec, v, 1) //uso en pto 1
+  FIN_PROCEDIMIENTO
+
+
+  PROCEDIMIENTO CopiarSecuenciaA(aux: secuencia de caracteres;
+                                 sal: secuencia de caracteres) ES
+    AMBIENTE
+      va: caracter
+
+    PROCESO  
+      ARR(aux)
+      AVZ(aux, va)
+
+      Mientras NoFDS(aux) hacer
+        GRABAR(sal, va)
+        AVZ(aux, va)
+      fin_mientras
+  FIN_PROCEDIMIENTO
+
+
+PROCESO
+  // Inicializar secuencias principales
+  ARR(secJ)
+  ARR(secE)
+  AVZ(secJ, vj)
+  AVZ(secE, ve)
+  CREAR(sal)
+
+  Mientras (vj <> '*') hacer    // ---------- CONFEDERACIÓN ----------
+      
+    cant1000Conf := 0
+
+    // Avanzar hasta el primer '-' que separa confederación y equipo
+    Mientras (vj <> '-') hacer
+      AVZ(secJ, vj)
+    fin_mientras
+    AVZ(secJ, vj)   // saltar '-'
+
+    // ---------------- EQUIPOS DENTRO DE LA CONFEDERACIÓN ----------------
+    Mientras (vj <> '$') hacer
+
+      // Leer nombre de equipo hasta el siguiente '-'
+      LeerNombreA(secJ, vj, '-', nomEquipo)
+
+      // Copiar nombre de equipo a salida + "/"
+      CopiarSecuenciaA(nomEquipo, sal)
+      GRABAR(sal, '/')
+
+      cantJugEquipo := 0
+
+      // ---------------- JUGADORES DEL EQUIPO ----------------
+      Mientras (vj <> '%') hacer
+
+        // Leer nombre del jugador hasta '*'
+        LeerNombreA(secJ, vj, '*', nomJug)
+
+        // Leer edad y nro
+        LeerJugadorDatos(secJ, vj, edad, nro)
+
+        // Leer estadísticas paralelas
+        LeerStats(secE, ve, gol, ast, min, tr)
+
+        // Condición pedida
+        Si gol >= 3 * (ast + tr) entonces
+          CopiarSecuenciaA(nomJug, sal)
+          GRABAR(sal, '.')
+          GRABAR(sal, '.')
+          GRABAR(sal, '.')
+        fin_si
+
+        // Contar jugador
+        cantJugEquipo := cantJugEquipo + 1
+
+        // Más de 1000 minutos por confederación
+        Si min > 1000 entonces
+          cant1000Conf := cant1000Conf + 1
+        fin_si
+
+        // saltar '#' final del jugador
+        AVZ(secJ, vj)
+        AVZ(secE, ve)
+
+      fin_mientras
+
+      // cierre de equipo
+      GRABAR(sal, '%')
+
+      // INFORME requerido
+      ESCRIBIR("El equipo tiene ", cantJugEquipo, " jugadores.")
+
+      AVZ(secJ, vj)  // saltar '%'
+
+    fin_mientras
+
+    // Informe por confederación
+    ESCRIBIR("Confederación con ", cant1000Conf, " jugadores con más de 1000 minutos.")
+
+    AVZ(secJ, vj)   // saltar '$'
+
+  fin_mientras
+
+  // fin de salida
+  GRABAR(sal, '*')
+
+FIN_ACCION
+
+
+
+/*
+ Ejercicio 2)
+  La FIFA desea complementar el análisis del Mundial de Clubes con un reporte de participación y rendimiento. Se dispone del archivo secuencial PARTICIPACIONES, ordenado por Confederación, Equipo y Posición con la siguiente estructura:
+  Confederación  Equipo  Posición  NombreJugador  Asistencias  Goles  Edad
+
+  Se pide:
+
+    1. Informar el total de goles por confederación, equipo.
+
+    2. Informar por confederación el total de equipos con más de 20 goles.
+
+    3. Emitir un archivo de salida llamado Equipazos que contenga el equipo, posición y el promedio de goles de la misma (por posición).
+*/
+
+ACCION EJ2_MODULAR ES
+AMBIENTE
+  PARTICIP = registro
+    Confederacion: AN(20)
+    Equipo: AN(30)
+    Posicion: entero
+    NombreJugador: AN(30)
+    Asistencias: entero
+    Goles: entero
+    Edad: entero
+  fin_registro
+
+  arch: archivo de PARTICIP
+  r: PARTICIP
+
+
+  Equipazos = registro
+    Equipo: AN(30)
+    Posicion: entero
+    PromGoles: real
+  fin_registro
+
+  archSal: archivo de Equipazos
+  rSal: Equipazos
+
+
+  // Acumuladores
+  golesConf, golesEquipo, golesPos: entero
+  cantEquiposMas20: entero
+  cantJugPos: entero
+
+  confActual: AN(20)
+  eqActual: AN(30)
+  posActual: entero
+
+  FUNCION EsMismaConf(conf1, conf2: AN(20)) : booleano ES
+    Si conf1 = conf2 entonces
+      EsMismaConf := Verdadero
+    sino
+      EsMismaConf := Falso
+    fin_si
+  FIN_FUNCION
+
+
+  FUNCION EsMismoEquipo(e1, e2: AN(30)) : booleano ES
+    Si e1 = e2 entonces
+        EsMismoEquipo:= Verdadero
+    sino
+        EsMismoEquipo:= Falso
+    fin_si
+  FIN_FUNCION
+
+
+  FUNCION EsMismaPos(p1, p2: entero) : booleano ES
+    Si p1 = p2 entonces
+        EsMismaPos:= Verdadero
+    sino
+        EsMismaPos:= Falso
+    fin_si
+  FIN_FUNCION
+
+
+PROCESO
+  ABRIR E/(arch)
+  LEER(arch, r)
+
+  ABRIR S/(archSal)
+
+  Mientras NoFDA(arch) hacer
+
+    //------------ NIVEL 1: CONFEDERACIÓN ------------
+    confActual := r.Confederacion
+    golesConf := 0
+    cantEquiposMas20 := 0
+
+    Mientras NoFDA(arch) y EsMismaConf(r.Confederacion, confActual) hacer
+
+      //------------ NIVEL 2: EQUIPO ------------
+      eqActual := r.Equipo
+      golesEquipo := 0
+
+      Mientras NoFDA(arch) y
+              EsMismaConf(r.Confederacion, confActual) y
+              EsMismoEquipo(r.Equipo, eqActual) hacer
+
+        //------------ NIVEL 3: POSICIÓN ------------
+        posActual := r.Posicion
+        golesPos := 0
+        cantJugPos := 0
+
+        Mientras NoFDA(arch) y
+              EsMismaConf(r.Confederacion, confActual) y
+              EsMismoEquipo(r.Equipo, eqActual) y
+              EsMismaPos(r.Posicion, posActual) hacer
+
+          golesPos := golesPos + r.Goles
+          cantJugPos := cantJugPos + 1
+          LEER(arch, r)
+        fin_mientras   // FIN POSICIÓN
+
+        // Emito los datos de esta posición al archivo EQUIPAZOS
+        rSal.Equipo := eqActual
+        rSal.Posicion := posActual
+        rSal.PromGoles := golesPos / cantJugPos
+        GRABAR(archSal, rSal)
+
+        // sumar a nivel equipo y conf.
+        golesEquipo := golesEquipo + golesPos
+        golesConf := golesConf + golesPos
+
+      fin_mientras    // FIN EQUIPO
+
+      // Informe del equipo
+      ESCRIBIR("Equipo ", eqActual, ": ", golesEquipo, " goles.")
+
+      Si golesEquipo > 20 entonces
+          cantEquiposMas20 := cantEquiposMas20 + 1
+      fin_si
+
+    fin_mientras   // FIN CONFEDERACIÓN
+
+    // Informe de confederación
+    ESCRIBIR("Confederación ", confActual)
+    ESCRIBIR("Total de goles: ", golesConf)
+    ESCRIBIR("Equipos con más de 20 goles: ", cantEquiposMas20)
+
+  fin_mientras
+
+  CERRAR(arch)
+  CERRAR(archSal)
+FIN_ACCION

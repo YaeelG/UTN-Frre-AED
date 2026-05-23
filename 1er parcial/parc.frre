@@ -1,0 +1,97 @@
+Accion Bank_OFF es
+    Ambiente
+        // Definición de registros
+        Componente = registro
+            codigo: N(3)
+            categoria: ('1','2','3','4')
+            descripcion: AN(255)
+        finregistro
+
+        Marca = registro
+            nombre: AN(255)
+            cant_componentes: N(5)
+        finregistro
+
+        // Secuencias y archivos
+        sec_entrada: secuencia de caracter
+        sec_salida: secuencia de entero
+        v: caracter
+
+        // Variables de control
+        marca_actual: Marca
+        comp_actual: Componente
+        max_marca: Marca
+        categorias: arreglo[1..4] de entero
+        temp_cod: cadena
+
+
+
+    Proceso
+        // Inicialización
+        max_marca.cant_componentes := 0
+        para i desde 1 hasta 4 hacer
+            categorias[i] := 0
+        finpara
+
+        abrir E/(sec_entrada)
+        abrir S/(sec_salida)
+        leer(sec_entrada, v)
+
+        // Procesamiento principal
+        mientras v ≠ '#' hacer
+            // Leer marca
+            marca_actual.nombre := ''
+            marca_actual.cant_componentes := 0
+            
+            mientras (v ≠ '#') y (longitud(marca_actual.nombre) < 3) hacer
+                marca_actual.nombre := marca_actual.nombre + v
+                leer(sec_entrada, v)
+            finmientras
+
+            // Leer componentes
+            mientras v ≠ '%' hacer
+                // Leer código (3 dígitos)
+                temp_cod := ''
+                para i desde 1 hasta 3 hacer
+                    temp_cod := temp_cod + v
+                    leer(sec_entrada, v)
+                finpara
+                comp_actual.codigo := convertir_a_entero(temp_cod)
+
+                // Leer categoría
+                comp_actual.categoria := v
+                categorias[ord(v) - ord('0')] := categorias[ord(v) - ord('0')] + 1
+                leer(sec_entrada, v)
+
+                // Leer descripción
+                comp_actual.descripcion := ''
+                mientras v ≠ '@' hacer
+                    comp_actual.descripcion := comp_actual.descripcion + v
+                    leer(sec_entrada, v)
+                finmientras
+                leer(sec_entrada, v) // Leer después de '@'
+
+                // Actualizar contadores
+                marca_actual.cant_componentes := marca_actual.cant_componentes + 1
+                escribir(sec_salida, comp_actual.codigo)
+            finmientras
+
+            // Verificar marca con más componentes
+            si marca_actual.cant_componentes > max_marca.cant_componentes entonces
+                max_marca.nombre := marca_actual.nombre
+                max_marca.cant_componentes := marca_actual.cant_componentes
+            finsi
+
+            leer(sec_entrada, v) // Leer después de '%'
+        finmientras
+
+        // Resultados
+        escribir("Marca con más componentes:", subcadena(max_marca.nombre, 1, 3))
+        escribir("Componentes por categoría:")
+        para i desde 1 hasta 4 hacer
+            escribir("Categoría", i, ":", categorias[i])
+        finpara
+
+        cerrar(sec_entrada)
+        cerrar(sec_salida)
+FinAccion

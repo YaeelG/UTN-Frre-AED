@@ -1,0 +1,140 @@
+/* https://aed-frre.github.io/practica/2.2/#ejercicio-2211
+Se dispone de un archivo con datos de los alumnos de la U.T.N. con la siguiente información para cada alumno:
+
+PRODUCTOS Ordenado por Sexo, Carrera, Nro_Legajo
+
+    Sexo | Carrera | Nro_Legajo | Fecha_Ingreso | Total_Materias_Aprobadas 
+
+Se desea un listado con el siguiente detalle por sexo, carrera y total general
+
+1. Total de alumnos que ingresaron en el año 2009 con más de 20 materias aprobadas.
+
+2. Total de alumnos que ingresaron en el año 2009 con menos de 20 materias aprobadas
+
+*/
+
+
+Accion Ej2.2.11 es
+
+	Ambiente
+		// Definimos los registros Fecha y Alumno
+		Fecha = reg 
+			aa
+			mm
+			dd
+		Finreg // Registro anidado dentro de Alumno para manejar la fecha de ingreso.
+
+		Alumno = reg
+			sexo: ('f','m','x')
+			carrera: (ISI, IEM, IQ)
+			legajo: N(5)
+			f_ing: Fecha // Registro fecha, campo continente
+			ma: N(2)
+		Finreg
+
+		// Definimos el Archivo 
+		arch: archivo de Alumno ordenado por sexo, carrera y legajo
+		reg: alumno // Es una variable de tipo Alumno que se usa como buffer o registro actual. Es la "ventana" al archivo que te permite acceder a los datos del alumno actual que se está procesando. Cuando haces Leer(arch, reg), estás leyendo del archivo arch y almacenando el registro leído en reg.
+
+		// VARIABLES DE CONTROL:
+		rs: ('f','m','x') // Guarda el sexo del grupo actual que se está procesando.
+		rc: ('ISI','IEM','IQ') //Guarda la carrera del subgrupo actual dentro del sexo.
+
+		/* rs y rc son variables de control para manejar los cortes. 
+
+		Al inicio, toman los valores del primer registro leído.
+
+		Cuando encuentras un registro con sexo o carrera diferente, sabes que:
+
+        1. Cambió de carrera (mismo sexo) → Haces corte por carrera
+
+        2. Cambió de sexo → Haces corte por sexo (que implica también corte por carrera) 
+		*/
+		
+
+		ccmenos20,ccmas20,csmas20,csmenos20,ctmas20,ctmenos20: entero
+		/*
+		El programa usa 6 contadores principales organizados en 3 niveles:
+
+    	Por Carrera (cc)
+        	ccmas20: Cuenta alumnos con +20 materias en la carrera actual
+       		ccmenos20: Cuenta alumnos con -20 materias en la carrera actual
+
+    	Por Sexo (cs)
+        	csmas20: Acumula total por sexo de alumnos con +20 materias
+        	csmenos20: Acumula total por sexo de alumnos con -20 materias
+
+    	Totales Generales (ct)
+        	ctmas20: Total general de alumnos con +20 materias
+        	ctmenos20: Total general de alumnos con -20 materias
+		*/
+
+		Procedimiento corte_c es
+			// Corte de control por carrera
+			Escribir('Los alumnos de la carrera',rc,'que cumplen con más 20 materias aprobadas son',ccmas20)
+			
+			Escribir('Los alumnos de la carrera',rc,'que cumplen con menos 20 materias aprobadas son',ccmenos20)
+			
+			// Acumula en los contadores de sexo
+			csmas20:=csmas20+ccmas20
+			csmenos20:=csmenos20+ccmenos20
+
+			// Reinicia los contadores de carrera, prepara para la siguiente carrera.
+			ccmas20:=0
+			ccmenos20:=0
+			
+			// Actualiza la carrera actual
+			rc:=reg.carrera
+		Fin_Procedimiento
+
+		Procedimiento corte_s es
+			Escribir('Los alumnos de la carrera',rs,'que cumplen con más 20 materias aprobadas son',csmas20)
+
+			Escribir('Los alumnos de la carrera',rs,'que cumplen con menos 20 materias aprobadas son',csmenos20)
+
+			ctmas20:=ctmas20+csmas20
+			ctmenos20:=ctmenos20+csmenos20
+			
+			csmas20:=0
+			csmenos20:=0
+
+			rs:=reg.sexo
+		Fin_Procedimiento
+
+
+	Proceso
+		Abrir E/(arch)
+		Leer(arch,reg)
+		ccmenos20:=0
+		csmenos20:=0
+		ctmenos20:=0
+		rs:=reg.sexo
+		rc:=reg.carrera
+
+		Mientras NFDA(arch) hacer
+			Si rs <> reg.sexo entonces
+				corte_s //
+			sino
+				Si rc <> reg.carrera entonces
+					corte_c // Cuando el algoritmo detecta un cambio de carrera (pero mismo sexo), ejecuta corte_c
+				Fin_Si
+			Fin_Si
+
+			Si reg.f_ing.aa = 2009 entonces
+				Si reg.ma >= 20 entonces
+					ccmas20:=ccmas20+1
+				sino
+					ccmenos20:=ccmenos20+1
+				FinSi
+			FinSi
+
+			Leer(arch,reg)
+
+		FinMientras
+
+		corte_s
+		Escribir('los alumnos q cumplen +20 son',ctmas20)
+		Escribir('los alumnos q cumplen -20 son',ctmenos20)
+		Cerrar(arch)
+FinAccion
+
