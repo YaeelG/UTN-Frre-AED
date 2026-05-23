@@ -1,0 +1,86 @@
+//! Ej ChatGPT - BUSQUEDA
+
+//* BUSQUEDA LINEAL
+ACCION buscar_secuencial ES
+AMBIENTE
+    v: VECTOR[1..N] DE ENTERO
+    i, j: ENTERO
+    x: ENTERO  //valor a buscar
+
+PROCESO
+    Para i := 1 hasta N HACER
+        SI v[i] = x ENTONCES
+            ESC("Valor encontrado en posición ", i)
+            j := j + 1
+        FIN_SI
+    fin_para
+
+    SI j = 0 ENTONCES
+        ESC("No se encontró el elemento")
+    FIN_SI
+FIN_ACCION
+
+
+
+//* BUSQUEDA LINEAL Con Centinela
+ACCION buscar_secuencial ES
+AMBIENTE
+    v: VECTOR[1..N] DE ENTERO
+    i: ENTERO
+    x: ENTERO  //valor a buscar
+    encontrado: BOOLEANO
+
+PROCESO
+    encontrado := FALSO
+    i := 1
+
+    MIENTRAS (i <= N) Y (encontrado = FALSO) HACER
+        SI v[i] = x ENTONCES
+            encontrado := VERDADERO
+        SINO
+            i := i + 1
+        FIN_SI
+    FIN_MIENTRAS
+
+    SI encontrado ENTONCES
+        ESC("Valor encontrado en posición ", i)
+    SINO
+        ESC("No se encontró el valor")
+    FIN_SI
+
+FIN_ACCION
+
+
+//* BUSQUEDA BINARIA
+ACCION buscar_binaria ES
+AMBIENTE
+    v: VECTOR[1..N] DE ENTERO
+    x: ENTERO //valor a buscar
+    medio, inicio, fin: ENTERO
+    encontrado: BOOLEANO
+
+PROCESO
+    inicio := 1
+    fin := N
+    encontrado := FALSO
+    medio := (inicio + fin) DIV 2
+
+    MIENTRAS (inicio <= fin) Y (encontrado = FALSO) HACER
+        SI v[medio] = x ENTONCES
+            encontrado := VERDADERO
+            Esc("Elemento encontrado en posición:", x)
+        SINO
+            SI v[medio] > x ENTONCES
+                fin := medio - 1
+            SINO //v[medio] < x
+                inicio := medio + 1
+            FIN_SI
+        FIN_SI
+    FIN_MIENTRAS
+FIN_ACCION
+
+/*
+ No es que estas sean las unicas maneras de hacerlo existen varios ejemplos distintos. 
+ La idea está en aplicar ese concepto como código, adaptarlo a el caso específico que tengamos.
+*/
+

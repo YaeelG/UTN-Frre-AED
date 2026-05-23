@@ -1,0 +1,23 @@
+//! EJ ChatGPT - Ordenamiento
+
+//* Ord. por Intercambio  (Burbuja)
+    //Va hagarrando de a dos, de a pares, y ordenando de mayor a menor. Luego vuelve a hacer otras pasada, y otra pasada, hasta que quede todo ordenado.
+ACCION ordenar_burbuja ES
+AMBIENTE
+    v: VECTOR[1..N] DE ENTERO //44-55-12-94-42  N:=5
+    i, j, aux: ENTERO
+
+PROCESO
+    PARA i := 1 HASTA N-1 HACER //N:=4
+        PARA j := 1 HASTA N-i HACER //N:=4
+            SI v[j] > v[j+1] ENTONCES
+                aux := v[j]
+                v[j] := v[j+1]
+                v[j+1] := aux
+            FIN_SI
+        FIN_PARA
+    FIN_PARA
+FIN_ACCION
+
+
+

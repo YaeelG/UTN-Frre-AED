@@ -1,0 +1,140 @@
+//! Ejemplo CHATGPT
+/* 
+ 1. Mezcla  Directa vs Indirecta
+    Si sabemos que:
+    - MEZCLA DIRECTA: Ambos archivos están Completamente ordenados. Comparamos registro a registro y grabamos el menor.
+    - MEZCLA INDIRECTA (natural): Los archivos tienen Partes ordenadas naturalmente. Detectamos esos tramos para mezclarlos.
+
+    En este caso simple (dos archivos ya ordenados), la lógica del código sería la de mezcla directa.
+    Pero la estructura del algoritmo es la misma en ambas, solo cambia cómo se identifican las “subsecuencias”.
+
+ 2. Ciclo Influyente y Excluyente
+    Ciclo INCLUYENTE: se ejecuta mientras Ambos archivos tengan datos.
+    Ciclo EXCLUYENTE: cuando a uno se le terminan los datos, volcamos el resto del otro.
+
+ 3. Pseudocódigo:
+*/
+
+/*
+* Mezcla DIRECTA  de archivos:
+* 2 archivos totalmente ordenados
+
+* Tenemos dos archivos secuenciales ordenados por número de socio:
+* | Archivo 'sociosA.dat' | Archivo 'sociosB.dat' |
+* | --------------------- | --------------------- |
+* | 101                   | 102                   |
+* | 105                   | 106                   |
+* | 110                   | 107                   |
+* | —                     | 111                   |
+
+* Queremos generar un archivo nuevo sociosC.dat que contenga todos los socios en orden.
+*/
+
+ACCION mezcla_directa ES
+AMBIENTE
+    archA, archB, archC : ARCHIVO DE ENTERO
+    a, b : ENTERO
+
+
+PROCESO
+    ABRIR E/ (archA)
+    ABRIR E/ (archB)
+    ABRIR /S (archC)
+
+    LEER(archA, a)
+    LEER(archB, b)
+
+    //CICLO INCLUYENTE
+    MIENTRAS (NDFS(archA) = FALSO) Y (NDFS(archB) = FALSO) HACER
+        SI a <= b ENTONCES
+            ESCRIBIR(archC, a)
+            LEER(archA, a)
+        SINO
+            ESCRIBIR(archC, b)
+            LEER(archB, b)
+        FINSI
+    FIN_MIENTRAS
+
+    //CICLOS EXCLUYENTES
+    MIENTRAS (NDFS(archA) = FALSO) HACER
+        ESCRIBIR(archC, a)
+        LEER(archA, a)
+    FIN_MIENTRAS
+
+    MIENTRAS (NDFS(archB) = FALSO) HACER
+        ESCRIBIR(archC, b)
+        LEER(archB, b)
+    FIN_MIENTRAS
+
+    CERRAR(archA)
+    CERRAR(archB)
+    CERRAR(archC)
+FINACCION
+
+/*
+| A   | B   | Grabar C | Comentario       |
+| --- | --- | -------- | ---------------- |
+| 101 | 102 | 101      | a < b            |
+| 105 | 102 | 102      | b < a            |
+| 105 | 106 | 105      | a < b            |
+| 110 | 106 | 106      | b < a            |
+| 110 | 107 | 107      | b < a            |
+| 110 | 111 | 110      | a < b            |
+| —   | 111 | 111      | ciclo excluyente |
+|     |     |          | (queda B)        |
+*/
+
+
+
+/*
+* Mezcla INDIRECTA  de archivos:
+* 1 archivo desordenado parcialmente
+
+* tenemos el archivo socios.dat 101, 104, 108, 100, 103, 109, 102, 105
+
+ 👉 Acá hay tres “subarchivos naturales”:
+    Run 1: 101, 104, 108
+    Run 2: 100, 103, 109
+    Run 3: 102, 105
+
+    El algoritmo de mezcla indirecta:
+    - Detecta cada tramo creciente.
+    - Copia alternadamente a dos archivos auxiliares (aux1, aux2).
+    - Luego aplica la misma mezcla directa que vimos antes para generar el nuevo archivo ordenado (socios_ordenado.dat).
+    - Repite hasta que quede una sola secuencia completa.
+*/
+
+ACCION mezcla_indirecta ES
+AMBIENTE
+    archOrigen, aux1, aux2, archDestino : ARCHIVO DE ENTERO
+    x, ant : ENTERO
+
+PROCESO
+    ABRIR E/ (archOrigen)
+    ABRIR /S (aux1)
+    ABRIR /S (aux2)
+
+    LEER(archOrigen, ant)
+    band := VERDADERO
+
+    MIENTRAS (NDFS(archOrigen) = FALSO) HACER
+        LEER(archOrigen, x)
+        SI (x < ant) ENTONCES
+            band := NOT band
+        FIN_SI
+
+        SI band ENTONCES
+            ESCRIBIR(aux1, ant)
+        SINO
+            ESCRIBIR(aux2, ant)
+        FIN_SI
+
+        ant := x
+    FINMIENTRAS
+
+    //Cerrar los auxiliares y mezclar igual que mezcla_directa
+    CERRAR(archOrigen)
+    CERRAR(aux1)
+    CERRAR(aux2)
+    mezcla_directa(aux1, aux2, archDestino)
+FINACCION

@@ -1,0 +1,75 @@
+//! Ejemplo CHATGPT CON SECUENCIAS
+//* Tenemos dos secuencias de enteros ordenados en forma ascendente:
+//* A:  1, 4, 7, 10, 15     B:  2, 3, 8, 12
+//* Queremos generar un nuevo archivo C con todos los números en orden ascendente.
+
+/* 
+ 1. Mezcla  Directa vs Indirecta
+    Si sabemos que:
+    - MEZCLA DIRECTA: Ambos archivos están Completamente ordenados. Comparamos registro a registro y grabamos el menor.
+    - MEZCLA INDIRECTA (natural): Los archivos tienen Partes ordenadas naturalmente. Detectamos esos tramos para mezclarlos.
+
+    En este caso simple (dos archivos ya ordenados), la lógica del código sería la de mezcla directa.
+    Pero la estructura del algoritmo es la misma en ambas, solo cambia cómo se identifican las “subsecuencias”.
+
+ 2. Ciclo Influyente y Excluyente
+    Ciclo INCLUYENTE: se ejecuta mientras Ambos archivos tengan datos.
+    Ciclo EXCLUYENTE: cuando a uno se le terminan los datos, volcamos el resto del otro.
+
+ 3. Pseudocódigo:
+*/
+
+ACCION mezcla_archivos ES
+AMBIENTE
+    secA, secB, secC : SECUENCIA DE ENTERO
+    a, b : ENTERO
+PROCESO
+    ARR(secA) //A: 1, 4, 7, 10, 15
+    ARR(secB) //B: 2, 3, 8, 12
+    CREAR(secC)
+
+    AVZ(secA, a) //a=1
+    AVZ(secB, b) //b=2
+
+    //CICLO INCLUYENTE: mientras ambos tengan datos
+    MIENTRAS (NDFS(secA) = FALSO) Y (NDFS(secB) = FALSO) HACER
+        SI a <= b ENTONCES
+            GRABAR(secC, a)
+            AVZ(secA, a)
+        SINO
+            GRABAR(secC, b)
+            AVZ(secB, b)
+        FINSI
+    FINMIENTRAS
+
+    //CICLO EXCLUYENTE: volcar lo que sobra de uno
+    MIENTRAS (NDFS(secA) = FALSO) HACER
+        GRABAR(secC, a)
+        AVZ(secA, a)
+    FINMIENTRAS
+
+    MIENTRAS (NDFS(secB) = FALSO) HACER
+        GRABAR(secC, b)
+        AVZ(secB, b)
+    FINMIENTRAS
+
+    CERRAR(secA)
+    CERRAR(secB)
+    CERRAR(secC) //C: 1, 2, 3, 4, 7, 8, 10, 12, 15
+FINACCION
+
+/*
+| Paso | A   | B   | GRABAR C | Comentario         |
+| ---- | --- | --- | -------- | ------------------ |
+| 1    | 1   | 2   | 1        | a < b              |
+| 2    | 4   | 2   | 2        | b < a              |
+| 3    | 4   | 3   | 3        | b < a              |
+| 4    | 4   | 8   | 4        | a < b              |
+| 5    | 7   | 8   | 7        | a < b              |
+| 6    | 10  | 8   | 8        | b < a              |
+| 7    | 10  | 12  | 10       | a < b              |
+| 8    | 15  | 12  | 12       | b < a              |
+| 9    | 15  | —   | 15       | ciclo excluyente:  |
+|      |     |     |          | solo A tiene datos |
+
+*/

@@ -1,0 +1,164 @@
+//! Modelo 2do Parcial 2025
+
+/*
+ Ejercicio N° 1
+  La Secretaría de Turismo lanzó el programa “EcoRutas Naturales”, destinado a promover actividades turísticas ecológicas, como avistamiento de aves, caminatas guiadas y recorridos interpretativos en distintas reservas naturales de la región metropolitana.
+
+  El programa incluye 6 circuitos ecológicos, distribuidos en distintas zonas rurales y costeras de la región.
+ 
+  Se cuenta con un archivo secuencial con la información de todos los equipos disponibles para las actividades, tales como binoculares, bastones de trekking y guías GPS. 
+
+  # ARCHIVO: EQUIPOS (Ordenado por: tipo_equipo, nro_equipo)
+
+        tipo_equipo | nro_equipo | fecha_adquisición | fecha_ult_mantenimiento | horas_de_uso | disponibilidad
+
+
+  Además, se cuenta con un archivo de Novedades que registra los distintos eventos ocurridos sobre los equipos durante los meses transcurridos del año actual. Las novedades pueden ser nuevos ingresos, préstamos a turistas o mantenimientos.
+
+  # ARCHIVO: NOVEDADES (Ordenado por tipo_equipo, nro_equipo, tipo_novedad, fecha)
+
+        tipo_equipo | nro_equipo | tipo_novedad | fecha_novedad | hora_inicio | hora_fin | nro_circuito | id_usuario
+
+      Donde tipo_novedad puede ser:
+        - 1 (Alta de nuevo equipo)
+        - 2 (Préstamo) – por cada préstamo se debe incrementar las horas de uso del equipo, teniendo en cuenta hora_inicio y hora_fin.
+        - 3 (Mantenimiento) – implica actualizar el campo disponibilidad a Falso y modificar la fecha_ult_mantenimiento con fecha_novedad.
+
+
+  Se pide:
+
+   a) Desarrollar un algoritmo que permita mantener actualizado el archivo de EQUIPOS, considerando que pueden existir múltiples informaciones para un mismo número de equipo. Controlar cualquier tipo de error en los datos o referencias inexistentes, informando adecuadamente al usuario.
+
+   b) Informar la cantidad de equipos de un tipo_equipo ingresado por el usuario, que tengan 150 horas de uso o más (después de la actualización).
+
+   c) Informar cuantos equipos nuevos ingresaron.
+
+   notas: suponer que se diaspone de la función diff(hora_inicio, hora_fin) que devuelve diferencia de horas
+
+*/
+
+ACCION EJ1_p2 ES
+AMBIENTE
+
+
+    // Funcion Manejo de errores - pt. a)
+MAE: archivo maestro
+RMAE: registro maestro
+MOV: archivo novedades
+RMOV: registro novedades
+
+//Comienzo un ciclo incluyente. Dentro de ese ciclo comparás claves.
+Mientras NoFDA(MAE) o NoFDA(MOV) HACER
+      //inicializo contadores contadores
+
+      //Comienzo un ciclo excluyente
+      Mientras NoFDA(MAE) HACER
+      fin_mientras
+
+      Req.disponibilidad := FALSO
+      Req.fecha_ult_mantenimiento := Rnov.fecha_novedad
+      GRABAR(Anew, Req)
+
+
+
+      
+
+/*
+ Ejercicio N° 2
+  La Secretaría desea analizar la información estadística de los distintos circuitos y equipos utilizados.
+  Para ello debe tener en cuenta el archivo NOVEDADES detallado en el Ejercicio N° 1, y además el archivo:
+
+  USUARIOS (archivo indexado por id_usuario):
+
+  id_usuario | dni | sexo (m/f) | apellido_y_nombre | lugar_de_origen | edad
+
+  Donde lugar_de_origen puede ser:
+   1–Chaco, 2–Otra provincia argentina, 3–País limítrofe, 4–Otro país.
+
+  Se pide calcular y mostrar:
+
+   1. Cantidad de préstamos por circuito y por rango de edad de los usuarios (18 a 25 años, 26 a 30 años y más de 30 años).
+
+   2. Cantidad total de préstamos por circuito ecológico y por rango de edad.
+
+   3. Calcular el porcentaje de préstamos de cada circuito sobre el total general de préstamos, y cargar en un vector. Informar cuál es el circuito que tiene el mayor porcentaje.
+*/ 
+
+
+
+
+
+
+
+
+
+//! Modelo 2do Parcial 2024
+
+/* 
+ Ejercicio N° 1
+
+  Un importante banco del país cuenta con la información de todos sus clientes en un archivo secuencial con el siguiente formato:
+
+  CLIENTES (ordenado por id_sucursal, id_cliente)
+
+    id_sucursal | id_cliente | nombre y apellido | saldo a la fecha | fecha alta | fecha baja
+
+  Al final de cada mes, corre un proceso de actualización con todos los movimientos generados por cada cliente durante el mes. La información se encuentra en un archivo secuencial con la siguiente estructura:
+
+  MOVIMIENTOS (ordenado por id_sucursal, id_cliente, cod_movimiento)
+
+    id_sucursal | id_cliente | cod_movimiento (0..99) | nombre y apellido | fecha_movimiento | monto | detalle | categoría (1..6) | tipo
+
+
+  Donde:
+
+  - cod_movimiento indica: 0 (alta de un nuevo cliente), 99 (baja de un cliente), cualquier otro valor entre 1 y 98 es una transacción en la cuenta del cliente.
+
+  - detalle: indica una descripción del movimiento.
+
+  - categoría: indica la categoría del movimiento (1-Supermercado, 2-Farmacia, 3-Carnicería, 4-Transferencia, 5-Pago de servicios, 6-Otros).
+
+  - tipo: indica "I" si es un ingreso, "E" si es un egreso.
+
+
+  Se pide:
+
+    a) Desarrollar un algoritmo que permita mantener actualizado el archivo CLIENTES con sus respectivos saldos. Informar por pantalla cualquier tipo de error que considere pertinente durante el proceso.
+
+    b) Indicar la cantidad de clientes nuevos que se produjeron durante el proceso.
+
+*/
+
+
+
+/*
+ Ejercicio N° 2
+
+  El banco ha solicitado un informe para conocer cómo se integra su cartera de clientes, agrupándolos por sucursal y categoría de cliente, a partir de los datos del archivo de CLIENTES (usar las estructuras de datos del ejercicio anterior).
+
+  Considerando que son 15 sucursales, y la información de las sucursales se encuentra en un archivo indexado:
+
+  Sucursales (indexado por id_sucursal)
+
+    id_sucursal | nombre de la sucursal | direccion | localidad
+
+
+  La estructura del informe solicitado es la siguiente:
+
+                 | Categ. diamante | Categ. oro | Categ estándar | Tot por suc |
+ Nom sucursal 1  |                 |            |                |             |
+ Nom sucursal 2  |                 |            |                |             |
+ ...             |                 |            |                |             |
+ Nom sucursal 15 |                 |            |                |             |
+ Tot x categoría |                 |            |                |             |
+
+
+ La categoría del cliente dependerá de los montos obtenidos en su saldo de la cuenta al último día del mes:
+
+  - Montos menores a $100.000 serán de categoría estándar.
+  - Montos menores a $1.500.000 serán de categoría oro.
+  - Montos superiores serán de categoría diamante.
+
+ Nota: no considerar clientes dados de baja.
+
+*/

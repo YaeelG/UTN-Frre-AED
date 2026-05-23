@@ -1,0 +1,64 @@
+/*
+! Ej de procesos estadísticos dado en clase:
+
+* Entrada: archivo de registros VUELOS con campos ciu_ori, ciu_dest, pasajeros.
+
+* Proceso: cargar en una matriz M los pasajeros transportados desde una ciudad origen hacia una ciudad destino.
+        -Las filas representan las ciudades de origen.
+        -Las columnas representan las ciudades de destino.
+        -La última fila y columna (fila 7, columna 11) se usan como totales por ciudad y total general.
+
+* Salida: matriz M con los valores acumulados.
+*/
+    
+
+AMBIENTE matriz_vuelos ES
+
+    // Definir registros "VUELOS"
+    // REG: VUELOS
+    // ARCH: Archivo de VUELOS
+    VUELOS = registros
+        id_viaje: entero
+        ciu_ori: entero
+        ciu_dest: entero
+        pasajeros: entero
+    fin_registro
+
+    REG: VUELOS
+    ARCH: Archivo de VUELOS
+
+
+    M: Arreglo[1..7, 1..11] de enteros
+    i, J: enteros
+
+PROCESO
+    // 1. Inicializar matriz en 0
+    Para i:=1 hasta 7 hacer 
+        Para j:=1 hasta 11 hacer
+            M[i,j]:=0
+        fin_para
+    fin_para
+
+    // Abrir archivo y procesar registros
+    ABRIR(ARCH)
+
+    MIENTRAS NFDA(ARCH) HACER
+        LEER(ARCH, REG)
+        i:=reg.ciu_ori
+        j:=reg.ciu_dest
+        M[i, j]:= M[i, j] + Reg.Pasajeros
+        M[7, j]:= M[7, j] + Reg.Pasajeros // total por destino
+        M[i, 11]:= M[i, 11] + Reg4.Pasajeros // total por origen
+        M[7, 11]:= M[7, 11] + Reg.Pasajeros // total general
+    FIN_MIENTRAS
+
+    CERRAR(ARCH)
+
+fin_accion
+
+
+    
+    
+
+
+

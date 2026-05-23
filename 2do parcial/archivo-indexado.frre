@@ -1,0 +1,126 @@
+//! Ej Chat-GPT Arch Index
+/*
+ ✅ Archivo indexado: permite acceso directo por clave (lectura o actualización).
+
+ ✅ Archivo secuencial ordenado: se recorre en orden (por cliente o factura).
+
+ ✅ Se combinan ambos cuando necesitamos procesar en bloque pero consultar por clave puntual.
+*/
+
+
+ACCION Ejemplo_Indexado_ListadoClientesFacturas ES
+AMBIENTE
+    FACTURAS = REGISTRO
+        NRO_CLIENTE: N(5);
+        NRO_FACTURA: N(5);
+        FECHA = REGISTRO
+            AA: N(4);
+            MM: 1..12;
+            DD: 1..31;
+        fin_registro;
+        IMPORTE: N(8);
+    fin_registro;
+
+    AFACTURAS: Archivo ordenado por NRO_CLIENTE, NRO_FACTURA; //Arch Sec
+    RFACTURAS: FACTURAS;
+
+    CLIENTES = REGISTRO
+        NRO_CLIENTE: N(5);
+        NOMBRE: AN(20);
+        DNI: N(8);
+        CUIT: N(11);
+        DOMICILIO: AN(30);
+    fin_registro;
+
+    ACLIENTES: Archivo indexado por NRO_CLIENTE; //Arch Index
+    RCLIENTES: CLIENTES;
+
+    RES_NROCLIENTE: N(5);
+
+
+PROCESO
+    ABRIR E/(AFACTURAS);
+    ABRIR E/(ACLIENTES);
+
+    LEER(AFACTURAS, RFACTURAS);
+
+    ESC("| Nro_Cliente | Nombre | Nro_Factura | Importe |");
+
+    MIENTRAS NFDA(AFACTURAS) HACER
+        RES_NROCLIENTE := RFACTURAS.NRO_CLIENTE;
+        RCLIENTES.NRO_CLIENTE := RES_NROCLIENTE;
+        LEER(ACLIENTES, RCLIENTES);
+
+        SI EXISTE ENTONCES
+            //El cliente existe en el archivo indexado
+            MIENTRAS NFDA(AFACTURAS) Y (RES_NROCLIENTE = RFACTURAS.NRO_CLIENTE) HACER
+                ESC(RFACTURAS.NRO_CLIENTE, RCLIENTES.NOMBRE, RFACTURAS.NRO_FACTURA, RFACTURAS.IMPORTE);
+                LEER(AFACTURAS, RFACTURAS);
+            fin_mientras;
+        SINO
+            //Cliente no encontrado en el indexado: solo avanzar facturas
+            MIENTRAS NFDA(AFACTURAS) Y (RES_NROCLIENTE = RFACTURAS.NRO_CLIENTE) HACER
+                LEER(AFACTURAS, RFACTURAS);
+            fin_mientras;
+        fin_si;
+    fin_mientras;
+
+    CERRAR(AFACTURAS);
+    CERRAR(ACLIENTES);
+FINACCION.
+
+
+
+/*
+ Queremos actualizar el domicilio de un cliente en el archivo indexado ACLIENTES.
+ El archivo está indexado por el campo NRO_CLIENTE.
+
+ Si el cliente existe, pedimos su nuevo domicilio y lo grabamos.
+ Si no existe, informamos que no se encontró.
+*/
+ACCION Actualizar_Cliente_Domicilio ES
+AMBIENTE
+    CLIENTES = REGISTRO
+        NRO_CLIENTE: N(5);
+        NOMBRE: AN(30);
+        DNI: N(8);
+        DOMICILIO: AN(40);
+        CUIT: N(11);
+    fin_registro;
+
+    ACLIENTES: Archivo indexado por NRO_CLIENTE;
+    RCLIENTES: CLIENTES;
+
+PROCESO
+    ABRIR E/S(ACLIENTES); //E/S = entrada/salida, porque vamos a leer y modificar
+ 
+    ESC("Ingrese número de cliente a actualizar: ");
+    LEER(RCLIENTES.NRO_CLIENTE);            
+
+    LEER(ACLIENTES, RCLIENTES); //Búsqueda por clave
+
+    SI EXISTE ENTONCES
+        ESC("Cliente encontrado: ", RCLIENTES.NOMBRE);
+        ESC("Domicilio actual: ", RCLIENTES.DOMICILIO);
+        ESC("Ingrese nuevo domicilio: ");
+        LEER(RCLIENTES.DOMICILIO);
+
+        GRABAR(ACLIENTES, RCLIENTES); //Se actualiza el registro
+        ESC("Domicilio actualizado correctamente.");
+    SINO
+        ESC("No existe cliente con ese número.");
+    FIN_SI;
+
+    CERRAR(ACLIENTES);
+FIN_ACCION
+
+/*
+Ingrese número de cliente a actualizar:
+- 102
+Cliente encontrado: López Ana
+Domicilio actual: Av. Belgrano 1450
+Ingrese nuevo domicilio:
+- Av. San Martín 2300
+Domicilio actualizado correctamente.
+*/
+

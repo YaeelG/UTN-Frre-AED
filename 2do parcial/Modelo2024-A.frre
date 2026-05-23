@@ -1,0 +1,217 @@
+/* 
+! Ejercicio N° 2
+ Santa Claus y su equipo desean conocer cómo se distribuyen los regalos entregados por región y categoría de niños según su nivel de comportamiento (registrado en el archivo NIÑOS del Ejercicio 1).
+ 
+ Para ello, cuentan con un archivo indexado que contiene la información de las regiones donde Santa Claus realiza sus entregas de regalos (importante: las regiones abarcan varios países).
+ 
+ Archivo REGIONES (indexado por id_pais) 
+ id_pais| nombre_pais| id_region | nombre_region
+
+
+ Santa Claus solicita un informe con la siguiente estructura:
+ __________________________________________________________
+               | Excelente | Buena | Regular | TotXRegión |
+ Nom. Región 1 |           |       |         |            |
+      ...      |           |       |         |            |
+ Nom. Región 15|           |       |         |            |
+ TotXCategoria |           |       |         |            |
+ ______________|___________|_______|_________|____________|
+
+ La categoría del niño dependerá de su nivel de comportamiento:
+ - Puntaje mayor o igual a 80: Categoría Excelente.
+ - Puntaje entre 50 y 79: Categoría Buena.
+ - Puntaje menor a 50: Categoría Regular.
+ 
+ Nota: Incluir únicamente los niños que no hayan sido retirados de la lista de Navidad.
+*/
+
+Accion ej_n2 es
+AMBIENTE
+     FECHA = Registro
+          Día: 1..31
+          mes: 1..12
+          año: N(4)
+     fin_registro
+
+     NINOS = Registro
+          id_pais : entero
+          id_niño : entero
+          nomyapell : AN(40)
+          puntaje_buen_comportamiento : N(2)
+          id_regalo : entero
+          nombre_regalo : AN(30)
+          fecha_registro : FECHA
+          fecha_retiro : FECHA
+     fin_registro
+
+     aninos: archivo de NINOS ordenado por id_pais, id_niño //acceso secuencial
+     rninos: NINOS
+
+
+     REGIONES = Registro
+          id_pais: Entero
+          nombre_pais: AN(30)
+          id_region: Entero
+          nombre_region: AN(30)
+     fin_registro
+
+     aregiones: archivo indexado por id_pais
+     rregiones: REGIONES
+
+     M: arreglo de [1..16, 1..4] de real
+     i: 1..16 //filas
+     j: 1..4 //columnas
+
+     TotExc, TotBue, TotReg, TotGral: ENTERO
+
+
+PROCESO
+     ABRIR E/ (aninos)
+     ABRIR E/ (aregiones)
+
+     //Inicializar Matriz
+     para i:=1 hasta 16 hacer
+          para j:=1 hasta 4 hacer
+               M[i,j] := 0
+          fin_para
+     fin_para
+
+     //Recorrido del archivo niños
+     LEER(aninos, rninos)
+
+     Mientras NFDA(aninos) hacer
+          si rninos.fecha_retiro.año  = 0 entonces
+               //Buscar region por id_pais
+               //recordar que regiones es indexado
+               rregiones.id_pais := rninos.id_pais
+
+               LEER(aregiones, rregiones)
+ 
+               si existe entonces
+                    i:= rregiones.id_region
+
+                    //clasifico por puntaje
+                    segun rninos.puntaje_buen_comportamiento hacer
+                         >=80 : j:=1
+                         >=50 : j:=2
+                         <=50 : j:=3
+                    fin_segun
+
+                    M[i, j] := M[i, j] + 1  //Acumula x región y categoría
+                    M[i, 4] := M[i, 4] + 1  //Tot x región (fila)
+                    M[16, j] := M[16, j] + 1 //Tot x categoría (columna)
+                    M[16, 4] := M[16, 4] + 1 //Total general
+
+               sino
+                    ESCRIBIR("País ", rninos.id_pais, "no encontrado en REGIONES.")
+               fin_si
+          fin_si
+
+          LEER(aninos, rninos)
+     fin fin_mientras
+
+     CERRAR(aregiones)
+     CERRAR(aninos)
+
+     ESCRIBIR("        | Excelente | Buena | Regular | TotXRegión ")
+     para i:=1 hasta 16 hacer
+          si (i=16) ENTONCES
+               ESCRIBIR("TotXCategoria", "  ", M[i,1], "     ", M[i,2], "     ", M[i,3], "     ", M[i,4])
+          SINO
+               rregiones.id_region := i
+               ESCRIBIR(region)
+               ESCRIBIR("Región ", i, "      ", M[i,1], "       ", M[i,2], "       ", M[i,3], "       ", M[i,4])
+          FIN_SI
+
+               ESCRIBIR("- - -")
+     fin_para
+fin_accion
+
+
+
+
+
+
+
+
+/* 
+! Ejercicio N° 1
+     la Navidad. Cada niño está registrado en un archivo secuencial llamado NIÑOS, donde se guarda información sobre su comportamiento y su deseo principal.
+
+     Al final de la temporada previa a Navidad, los duendes recopilan los eventos ocurridos durante el mes en un archivo secuencial llamado EVENTOS, que detalla las novedades, incluyendo cambios de comportamiento, solicitudes de regalos, y demás actualizaciones.
+     
+*    Archivo NIÑOS (ordenado por id_pais, id_niño)
+     id_pais | id_niño | nombre y apellido | puntaje_buen_comportamiento | id_regalo | nombre_regalo | fecha_registro | fecha_retiro
+
+     • id_pais: Identificador del País del niño.
+     • id_niño: Identificador único del niño.
+     • puntaje_buen_comportamiento: Puntaje que indica el comportamiento del niño (puede ser positivo o negativo).
+     • regalo_deseado: Nombre del regalo que desea recibir.
+     • fecha_registro: Fecha en la que se registró al niño.
+     • fecha_retiro: Fecha en la que fue retirado de la lista de navidad (si corresponde).
+
+
+*    Archivo EVENTOS (ordenado por id_pais, id_niño, cod_evento)
+     id_pais | id_niño | cod_evento (0..99) | fecha_evento | detalle | puntaje_cambio | tipo | id_regalo_deseado | regalo_deseado
+
+     • cod_evento: 0: Alta de un nuevo niño; 99: Retiro de un niño de la lista; 1-98: Actualización de puntaje de comportamiento o cambio de regalo deseado.
+     • detalle: Descripción del evento (por ejemplo, "Ayudó a su hermano", "Se peleó en la escuela", etc.).
+     • puntaje_cambio: Valor que se sumará o restará al puntaje de comportamiento del niño.
+     • tipo: "A" si el evento mejora el puntaje (positivo), "R" si lo reduce (negativo), vacío si es un cambio de regalo.
+     • regalo_deseado: Nuevo regalo deseado (si corresponde a un cambio).
+
+
+*    SE PIDE: 
+     Desarrollar un algoritmo que permita mantener actualizado el archivo NIÑOS con los eventos registrados en el archivo EVENTOS.
+
+     El algoritmo debe ajustar los puntajes de comportamiento y actualizar los regalos deseados si corresponde.
+
+     Informar por pantalla cualquier tipo de error que considere pertinente durante el proceso.
+
+     Además indicar:
+     a) La cantidad total de niños nuevos que se registraron durante el proceso.
+     b) El nombre del niño con mejor puntaje de buen comportamiento.
+*/
+
+ACCION ej_n1 ES
+    Ambiente
+     FECHA = Registro
+          Día: 1..31
+          mes: 1..12
+          año: N(4)
+     fin_registro
+
+     NINOS = Registro
+          id_pais : entero
+          id_nino : entero
+          nomyapell : AN(40)
+          puntaje_buen_comportamiento : N(2)
+          id_regalo : entero
+          nombre_regalo : AN(30)
+          fecha_registro : FECHA
+          fecha_retiro : FECHA
+     fin_registro
+
+     aninos: archivo de ninos, ordenado por id_pais, id_nino
+     rninos: NINOS
+
+     EVENTOS = registrados   
+          id_pais : entero
+          id_niño : entero
+          cod_evento: 0..99
+          fecha_evento: FECHA
+          detalle: AN(30)
+          puntaje_cambio : entero
+          tipo: ("A", "R", " ") //"A" evento mejora el puntaje(positivo), "R" si lo reduce(negativo), " " si es un cambio de regalo.
+          id_regalo_deseado : entero
+          regalo_deseado AN(30) 
+     fin_registro
+
+     aeventos: archivo de EVENTOS ordenado por id_pais, cod_evento
+     reventos: EVENTOS
+
+     i:
+
+    Proceso
+        
+FIN_ACCION

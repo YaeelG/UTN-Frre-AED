@@ -1,0 +1,69 @@
+//! Ejercicio 3.24 - Procesos Estadísticos
+/*
+ Se cuenta con información acerca de los cajeros de un Supermercado, el cual se halla estructurado en 10 cajas registradoras. 
+ 
+ Dicha información está registrada en una secuencia que contiene Apellido y Nombre del empleado, número de caja que tiene asignada, importe facturado y horario de facturación; la secuencia está ordenada alfabéticamente por Apellido y Nombre. 
+ 
+ Se solicita una estadística de los importes facturados, discriminado por número de caja y franja de horas y además los montos totales, según el siguiente formato:
+*/
+
+Accion 3.24 es
+AMBIENTE
+    e = registro
+        apynom: AN(30)
+        nro_caja: 1..10
+        importe: real
+        horario: real
+    fin_registro
+    
+    empleado: archivo de e, ordenado por apynom
+    reg: e
+
+    M: arreglo de [1..11, 1..6] de real
+    i: 1..11
+    j: 1..6
+
+Proceso
+    para i:=1 hasta 11 hacer //igualo todos los campos a 0
+        para j:=1 hasta 6 hacer
+            M[i,j] := 0
+        fin_para
+    fin_para
+
+    ABRIR E/(empleado)
+    LEER(empleado, reg)
+
+    Mientras NFDA(empleado) hacer
+        i := reg.nro_caja
+
+        segun reg.horario hacer
+            =< 10 : j:=1
+            =< 12 : j:=2
+            =< 16 : j:=3
+            =< 18 : j:=4
+            =< 20 : j:=5
+        fin_segun
+
+        M[i,j] = M[i,j] + reg.importe
+        M[i,6] = M[i,6] + reg.importe
+        M[11,j] = M[11,j] + reg.importe
+        M[11,6] = M[11,6] + reg.importe
+
+        LEER(empleado, reg)
+    fin_mientras
+
+    Esc("8-10   10-12   12-16   16-18   18-20   total x caja")
+    para i:=1 hasta 11 hacer
+        si i=11 entonces
+            esc("Total x horas")
+        sino
+            esc("Caja N:", i)
+        fin_si
+
+        para j:=1 hasta 6 hacer
+            esc(M[i,j])
+        fin_para
+    fin_para
+
+    CERRAR(empleados)
+fin_accion

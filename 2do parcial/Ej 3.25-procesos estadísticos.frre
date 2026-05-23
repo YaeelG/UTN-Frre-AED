@@ -1,0 +1,174 @@
+/*
+! Ej 3.25  PROCESOS ESTADÍSTICOS, ARREGLOS (MATRIZ MULTIDIMENSIONAL)
+
+* Una Fábrica que posee 4 plantas de producción en nuestro país y compra materia prima a 3 proveedores distintos, 
+* desea realizar un control de los montos totales correspondientes a compras realizadas en cada planta durante el último año, discriminados por proveedor y por mes. 
+* Para ello dispone de un archivo con los datos de las facturas correspondientes. (Aclaración: el archivo no está ordenado por ningún criterio)
+
+Compras:
+Nro_Factura | Proveedor (A, B, C) | Fecha (dd/mm/aaaa) | Nro_Planta (1..4) | Importe |
+
+
+PRUEBAS DE ESCRITORIO
+https://docs.google.com/spreadsheets/d/1Sx6u7ibfeKKU2VoGqBoNTZ0YU5xQov2-LQFaFXUe-0Y/edit?usp=sharing
+
+Requiere un arreglo tipo matriz de 3 dimenciones: Proveedores, plantas, fechas. 
+Hicimos en clase dos versiones...
+*/
+
+
+//* Matriz BIDIMENSIONAL: Proveedores, plantas 
+Accion Ej3.25 es 
+    AMBIENTE
+        FECHA = Registro
+            día: (1..31)
+            mes: (1..12)
+            año: numerico(4)
+        Fin_Registro
+
+
+        R = Registro
+            Nro_Factura: entero
+            Proveedor: 'A'..'C'
+            Ffact: FECHA 
+            Planta: 1..4
+            Importe: real
+        Fin_Registro
+
+        facturas: archivo de REG
+        reg: R
+
+        M: Arreglo de [1..5, 'A'..'D'] de real // Real por si llega a haber decimales en el importe
+        i: 1..5 // filas
+        j: 'A'..'D' // calumnas
+
+        // Procesos con Estadísticas identifico filas, columnas, campos con indices.
+
+    PROCESO
+        // Inicializar matriz en 0, cada campo es igual a 0
+        Para i:=1 hasta 5 hacer 
+            para j:='A' a 'D' hacer 
+                M[i,j] := 0
+            fin_para
+        fin_para
+
+        ABRIR E/ (facturas)
+        LEER(facturas, reg)
+
+        Mientras NoFDA(facturas) hacer  
+            i:=reg.Planta
+            j:= reg.Proveedor
+
+            M[i, j] := M[i, j] + reg.importe
+            M[i, 'D'] := M[i, 'D'] + reg.importe  // Dejo fija la columna D(total) y voy modificando i.
+            M[5, j] := M[5, j] + reg.importe  // Dejo fija la fila 5(total) y voy modificando j.
+            M[5, 'D'] := M[5, 'D'] + reg.importe // Total final
+
+            LEER(facturas, reg)
+        FIN_MIENTRAS
+
+        // Imprimir en pantalla matriz 
+        ESCRIBIR('     A     B     C     Totales por planta')
+        Para i:=1 hasta 5 hacer 
+            SI (i=5) ENTONCES
+                ESCRIBIR('Totales por proveedor')
+            SINO
+                ESCRIBIR('Planta', i)
+            FIN_SI
+
+            Para j:='A'..'D' hacer
+                ESCRIBIR(M[i,j])
+            fin_para
+        fin_para
+
+        CERRAR(facturas)
+fin_accion
+
+
+
+
+
+//* Matriz MULTIDIMENSIONAL: Proveedores, plantas, fecha(último año)
+Accion Ej3.25 es 
+    AMBIENTE
+        FECHA = Registro
+            día: (1..31)
+            mes: (1..12)
+            año: numerico(4)
+        Fin_Registro
+
+
+        R = Registro
+            Nro_Factura: entero
+            Proveedor: 'A'..'C'
+            Ffact: FECHA 
+            Planta: 1..4
+            Importe: real
+        Fin_Registro
+
+        facturas: archivo de R
+        reg: R
+
+        M: Arreglo de [1..5, 'A'..'D', 1..13] de real // Real por si llega a haber decimales en el importe
+        i: 1..5 // filas
+        j: 'A'..'D' // calumnas
+        K: 1..13 //! meses
+
+        // Procesos con Estadísticas identifico filas, columnas, campos con indices.
+
+    PROCESO
+        // Inicializar matriz en 0, cada campo es igual a 0
+        Para k:=1 hasta 12 hacer //! y meses
+            Para i:=1 hasta 5 hacer 
+                para j:='A' a 'D' hacer 
+                    M[i,j] := 0
+                fin_para
+            fin_para
+        fin_para
+
+        ABRIR E/ (facturas)
+        LEER(facturas, reg)
+
+        Mientras NoFDA(facturas) hacer  
+            i:=reg.Planta
+            j:= reg.Proveedor
+            k:= reg.Ffact.mes
+
+            //! con meses
+            M[i, j, k] := M[i, j, k] + reg.importe
+            M[i, 'D', k] := M[i, 'D', k] + reg.importe  // Dejo fija la columna D(total) y voy modificando i.
+            M[5, j, k] := M[5, j, k] + reg.importe  // Dejo fija la fila 5(total) y voy modificando j.
+            M[i, j, 13] := M[i, j, 13] + reg.importe  //! Dejo fija la tabla 13 y voy modificando k. Entiendo que la tabla 13 es una tabla extra con los totales de todas las tablas, los meses llegan hasta el 12.
+            M[5, 'D', 13] := M[5, 'D', 13] + reg.importe // Total final
+
+            LEER(facturas, reg)
+        FIN_MIENTRAS
+
+        CERRAR(facturas)
+
+
+        // Imprimir en pantalla matriz 
+        Para k:=1 hasta 13 hacer  //! por mes
+            SI k<=12 ENTONCES
+                ESC("Mes ", k)
+            SINO
+                ESC("Totales anuales")
+            FIN_SI
+
+            ESCRIBIR('     A     B     C     Totales por planta')
+            Para i:=1 hasta 5 hacer 
+                SI (i=5) ENTONCES
+                    ESCRIBIR('Totales por proveedor')
+                SINO
+                    ESCRIBIR('Planta', i)
+                FIN_SI
+
+                Para j:='A'..'D' hacer
+                    ESCRIBIR(M[i,j,k], " ")
+                fin_para
+                ESC("")
+            fin_para
+            ESC("---------------------------")
+        fin_para
+
+fin_accion
