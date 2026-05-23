@@ -1,0 +1,173 @@
+//! GUÍA de LISTAS: ¿Cuándo usar cada estructura y cada “caso”?
+
+/*
+* Listas Simplemente Enlazadas
+
+ Usás lista simple cuando:
+
+ ✔ Vas a recorrer SIEMPRE hacia adelante
+ → Ejemplo: totalizar ventas, buscar un valor, sumar pares/impares.
+
+ ✔ Insertar ordenado “lógico”
+ Los casos siempre son 3:
+    Caso A: Lista vacía
+    Caso B: Insertar al principio
+    Caso C: Insertar en el medio/final
+
+ Con estructura:
+ */
+    P := prim
+    ANT := NIL
+
+    Mientras P<>NIL y dato > *P.dato hacer
+        ANT := P
+        P := *P.prox
+    FinMientras
+
+    Si ANT = NIL entonces
+    //primer lugar
+
+    Sino
+    //medio o final
+    FinSi
+
+
+/*
+* Listas Doblemente Enlazadas
+ Usás lista doble cuando:
+
+ ✔ Necesitás eliminar nodos sin recorrer dos veces
+ → Porque tenés ant disponible.
+
+ ✔ Necesitás recorrer hacia adelante y hacia atrás
+ → Ejemplo: eliminar elementos con condición, procesar ambos lados.
+
+ Los casos para eliminar son 4:
+    Caso A: Lista vacía
+    Caso B: Nodo único  (prim = ult = p)
+    Caso C: Primer nodo (p = prim)
+    Caso D: Último nodo (p = ult)
+    Caso E: Nodo del medio
+
+!    Este patrón NO cambia jamás.
+*/
+
+
+/*
+* Listas + Archivos Secuenciales
+
+ Se usa esta estructura cuando:
+
+    - los datos del archivo NO están ordenados
+    - la lista sí lo está
+    - necesitás cruzar información
+
+ La forma siempre es:
+*/
+    Abrir E/S (archivo)
+    Leer(arch, reg)
+
+    Mientras NoFDA hacer
+        procesar registro
+        Leer(arch, reg)
+    FinMientras
+
+    Cerrar(archivo)
+
+// El archivo no lo buscás, lo vas leyendo de arriba a abajo.
+// Para buscar coincidencias, buscás en la lista, no en el archivo.
+
+
+/*
+* Recursividad
+ La usás cuando te piden:
+    - procesar dígitos de un número
+    - procesar un árbol
+    - una operación que se define en función de sí misma
+
+ La estructura siempre es:
+
+ 🎯 CASO BASE → condición que corta la recursión
+
+ 🎯 CASO RECURSIVO → llamada a la función con menos “tamaño”
+
+ Ejemplos típicos:
+*/
+    Si n < 10 entonces
+        devolver n (o su versión par/impar)
+    Sino
+        devolver f(n div 10) +/- (n mod 10)
+
+/*
+ Si identificás:
+    - qué es lo más chico posible (1 dígito, NIL, altura 0)
+
+    - qué se reduce en cada llamada (n div 10, p.izq o p.der)
+
+ ya sabés armar recursividad.
+*/
+
+
+/*
+* ¿Cuándo usar PRIM solamente y cuándo PRIM + ULT?
+
+ ✔ Solo PRIM
+    Cuando solo necesitás:
+        - insertar ordenado
+        - buscar
+        - recorrer
+        - eliminar con ANT
+
+ ✔ PRIM + ULT
+    Cuando necesitás:
+        - insertar al final eficientemente
+        - saber cuál es el último para un caso especial
+        - lista doble (casi siempre hay prim y ult)
+
+*/
+
+
+/*
+* ¿Cómo sé qué aplicar en un ejercicio nuevo?
+
+ 📌 1. Debo recorrer siempre en un sentido?
+    → Sí → lista simple
+    → No / debo retroceder → lista doble
+
+ 📌 2. Debo insertar ordenado?
+    → Caso clásico de lista simple:
+    prim, ant, p, insertar entre ant y p
+
+ 📌 3. Debo eliminar nodos frecuentemente?
+    → Lista doble (porque tenés ant directo)
+
+ 📌 4. Debo totalizar ventas por código?
+    → Lista resultado + insertar/buscar ordenado
+
+ 📌 5. Debo procesar dígitos?
+    → Recursividad
+
+ 📌 6. Debo recorrer un archivo?
+    → Estructura "ABRIR – LEER – MIENTRAS – LEER – CERRAR"
+
+*/
+
+/*
+* ⭐ Ejemplo de cómo pensar rápido
+
+ Ejercicio te pide → Eliminar nodos cuyo número promedio coincida con X.
+
+ Preguntas rápidas:
+    
+    - ¿Es lista doble? → Sí → Debo usar los 4 casos de eliminación.
+
+    - ¿La condición compara con un cálculo recursivo? → Sí → defino función recursiva.
+
+    - ¿Debo procesar todos los nodos? → Sí → un recorrido while p ≠ NIL.
+
+    - ¿Necesito buscar un valor exacto? → No → el recorrido normal me alcanza.
+
+ Resultado:
+ Estructura completa sale sola solo con responder 5 preguntas.
+ 
+*/

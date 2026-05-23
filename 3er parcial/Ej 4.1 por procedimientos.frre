@@ -1,0 +1,127 @@
+---------------------------------------------------------------------------
+1. Diseñar un algoritmo para ACCEDER al k-ésimo elemento de una lista.
+
+     - Si la lista está  vacía o si el valor de k está  fuera del rango del índice de la lista, invocar al procedimiento de ERROR.
+     - En cualquier otro caso, retornar el valor solicitado.
+---------------------------------------------------------------------------
+
+Procedimiento Ej.4.1.acceder (K:entero, PRIMERO:punt) es
+AMBIENTE
+Tipos
+     punt= puntero a elto;
+     elto= Registro
+	   valor: entero;
+	   proximo: punt;
+     Freg;
+Variables
+     T: punt; //puntero aux para recorrer la lista sin perder el punt PRIMERO. Puntero de recorrido.
+     I: entero; //contador que lleva la posición actual dentro de la lista.
+
+ALGORITMO
+     //Se considera que la lista está CARGADA
+     Si PRIMERO = NIL entonces //si no hay elementos
+		Escribir ('ERROR, Lista Vacía')
+
+	Sino
+
+		I := 1; //posición del nodo actual
+	    T := PRIMERO; //Puntero de recorrido.
+
+	    Mientras (I <> K) y (T <> NIL) hacer
+		      I := I + 1;
+		      T := *T.PROXIMO;
+	    Fmientras;
+
+	    Si (T = NIL) entonces
+			Escribir ('ERROR, ', K, '> que elementos de la Lista')
+		Sino Escribir ('VALOR: ', *T.VALOR);
+	    Fsi;
+
+     Fsi;
+Facción
+
+
+
+
+---------------------------------------------------------------------------
+2. Diseñar un algoritmo para eliminar el k-ésimo elemento de una lista.
+     - Si la lista está  vacía o si el valor de k está  fuera del rango del índice de la lista, invocar al procedimiento de ERROR.
+     - En cualquier otro caso, efectuar el procedimiento de ELIMINACION.
+---------------------------------------------------------------------------
+
+Prcoedimiento Ej.4.1.eliminar (K:entero, PRIMERO:punt) es
+AMBIENTE
+Tipos
+     punt= puntero a elto;
+     elto= Registro
+	   valor: entero;
+	   proximo: puntero a elto;
+     Freg;
+Variables
+     RESG, T, ANT: punt;
+     I: entero;
+
+ALGORITMO
+     { Se considera que la lista está  cargada }
+     Si PRIMERO = NIL entonces
+		Escribir ('ERROR, Lista Vacía')
+	Sino Si K = 1 entonces
+			RESG:=PRIMERO 
+               PRIMERO := *PRIMERO.PROXIMO;
+               DISPONER(RESG);
+		Sino I := 1; ANT := NIL;
+		     T := PRIMERO;
+		     Mientras (T <> NIL) y (I <> K)  hacer
+			     I := I + 1; ANT := T;
+			     T := *T.PROXIMO;
+		     Fmientras;
+		     Si (T = NIL) entonces
+				Escribir ('ERROR, ', K, '> que eltos de la Lista')
+			Sino *ANT.PROXIMO := *T.PROXIMO;
+                    DISPONER(T);
+		     Fsi;
+	     Fsi;
+     Fsi;
+Facción
+
+---------------------------------------------------------------------------
+3. Diseñar un algoritmo para insertar un nuevo elemento en el  k-ésimo lugar de una lista.
+     - Si la lista está  vacía o si el valor de k está  fuera del rango del índice de la lista, invocar al procedimiento de ERROR.
+     - En cualquier otro caso, efectuar el procedimiento de INSERCION.
+---------------------------------------------------------------------------
+
+Procedimiento Ej.4.1.insertar (K:entero, PRIMERO:punt, DATO:entero) es
+AMBIENTE
+Tipos
+     punt= puntero a elto;
+     elto= Registro
+	   valor: entero;
+	   proximo: puntero a elto;
+     Freg;
+
+Variables
+     P, T, ANT: punt;
+     I: entero;
+
+ALGORITMO
+     { Se considera que la lista está cargada }
+     Si K = 1 entonces
+		NUEVO(P);
+	     *P.PROXIMO := PRIMERO;
+	     PRIMERO	:= P;
+	     *P.VALOR	:= DATO;
+	Sino I := 1; ANT := NIL;
+	     T := PRIMERO;
+	     Mientras (T <> NIL) y (I <> K)  hacer
+		      I := I + 1; ANT := T;
+		      T := *T.PROXIMO;
+	     Fmientras;
+	     Si (I <> K) entonces
+			Escribir ('ERROR, ', K, '> que eltos de la Lista')
+		Sino NUEVO(P);
+		     *P.PROXIMO  := *ANT.PROXIMO;  { o bien, T }
+		     *ANT.PROXIMO := P;
+		     *P.VALOR	:= DATO;
+	     Fsi;
+     Fsi;
+Facción

@@ -1,0 +1,33 @@
+/*
+ Siendo a la base  y  b el exponente  ( a^b )
+
+ Caso Base
+  si b=0  entonces  pot:=1
+  si b=1  entonces  pot:=a
+
+  Caso Recursivo
+   si b>1  entonces  pot:=a*pot(a, b-1)
+
+
+
+   
+*/
+
+//pot(base, exponente)
+Funcion pot(a, b: entero): entero es:
+    si b=0 entonces
+        pot := 1
+    sino
+        si b=1 entonces
+            pot := a 
+        sino
+            pot := a * pot(a, b-1)
+            //Llama a la función nuevamente con el exponente reducido en 1.
+            //Cuando esa llamada retorna, multiplica el resultado por a.
+            //Esto va "desarmando" el cálculo desde a^b hasta llegar a a^0.
+            //pot(2,2) = 2 * pot(2,1) = 2 * 2 = 4
+
+        FIN_SI
+    FIN_SI
+fin_funcion
+

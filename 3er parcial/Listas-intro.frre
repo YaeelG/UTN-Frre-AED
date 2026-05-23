@@ -1,0 +1,245 @@
+//! LISTAS - Segun ChatGPT:
+
+/* 
+* 1. Lista simplemente enlazada
+ Una lista enlazada es una estructura dinámica compuesta por nodos, donde cada nodo contiene:
+    - un dato (ej. un número o cadena),
+    - y un puntero al siguiente nodo.
+*/
+//Pseudocódigo - Definicion del nodo
+Nodo = REGISTRO
+    dato: tipo
+    prox: puntero a Nodo
+FIN_REGISTRO
+
+//C - Definicion del nodo
+typedef struct nodo {
+    int dato;
+    struct nodo *prox;
+} nodo;
+
+// Y la lista se referencia por un puntero llamado Prim, que apunta al primer nodo, o NULL si está vacía.
+
+
+
+/*
+* 2. BUSQUEDA en listas:
+ La búsqueda recorre la lista desde el principio hasta encontrar un valor (o llegar al final).
+*/
+//Pseudocodigo
+LEER(valor)
+p := Prim
+
+MIENTRAS (p <> NIL) y (*p.dato <> valor) HACER
+    p := *p.prox
+FIN_MIENTRAS
+
+SI (p <> NIL) ENTONCES
+    ESC("Se encontró el elemento")
+SINO
+    ESC("No se encontró el elemento")
+FIN_SI
+
+//C
+nodo *p = prim;
+int valor;
+scanf("%d", &valor);
+
+while (p != NULL && p->dato != valor) {
+    p = p->prox;
+}   
+
+if (p != NULL)
+    printf("Se encontró el elemento\n");
+else
+    printf("No se encontró el elemento\n");
+
+//Recorre uno por uno los nodos. Complejidad: O(n) (lineal).
+
+
+/*
+* 3. CARGA APILADA (PILA → LIFO)
+
+ 👉 “Last In, First Out” → el último que entra es el primero que sale.
+    
+    Cada nuevo nodo se agrega al frente de la lista, como si fuera una pila (LIFO).
+*/
+//Pseudocódigo
+Prim := NIL
+LEER(valor)
+
+MIENTRAS (valor <> '*') HACER
+    NUEVO(p)
+    *p.dato := valor
+    *p.prox := Prim
+    Prim := p
+    LEER(valor)
+FIN_MIENTRAS
+
+//C
+nodo *prim = NULL, *p;
+int valor;
+
+scanf("%d", &valor);
+while (valor != -1) { // -1 o * según el criterio de corte
+    p = malloc(sizeof(nodo));
+    p->dato = valor;
+    p->prox = prim;
+    prim = p;
+    scanf("%d", &valor);
+}
+//Resultado: Los elementos se guardan en orden inverso al que se leen. 
+//Ingreso: 1 2 3 *    Lista Resultante: 3 → 2 → 1
+
+
+/*
+* 4. Carga encolada (COLA → FIFO)
+
+ 👉 “First In, First Out” → el primero que entra es el primero que sale.
+    Cada nuevo nodo se agrega al final, como en una cola (FIFO).
+*/
+//Pseudocodigo
+Prim := NIL
+LEER(valor)
+
+MIENTRAS (valor <> '*') HACER
+    NUEVO(p)
+    *p.dato := valor
+    *p.prox := NIL
+
+    SI (Prim = NIL) ENTONCES
+        Prim := p
+    SINO
+        *a.prox := p
+    FIN_SI
+
+    a := p
+    LEER(valor)
+FIN_MIENTRAS
+
+
+//C
+nodo *prim = NULL, *p, *a = NULL;
+int valor;
+
+scanf("%d", &valor);
+while (valor != -1) {
+    p = malloc(sizeof(nodo));
+    p->dato = valor;
+    p->prox = NULL;
+
+    if (prim == NULL)
+        prim = p;
+    else
+        a->prox = p;
+
+    a = p; // último
+    scanf("%d", &valor);
+}
+//Resultado: Los elementos se guardan en el mismo orden que se leen.
+//Ingreso: 1 2 3 *      Lista Resultante: 1 → 2 → 3
+    
+
+
+/*
+* 4. CARGA ORDENADA
+ Se inserta en orden creciente (o decreciente) según el valor del dato.
+*/
+//Pseudocódigo
+LEER(valor)
+NUEVO(p)
+*p.dato := valor
+q := Prim
+
+MIENTRAS (q <> NIL) y (*q.dato < valor) HACER
+    a := q
+    q := *q.prox
+FIN_MIENTRAS
+
+SI (a = NIL) ENTONCES
+    *p.prox := Prim
+    Prim := p
+SINO
+    *p.prox := q
+    *a.prox := p
+FIN_SI
+
+//C
+nodo *prim = NULL, *p, *q, *a;
+int valor;
+
+scanf("%d", &valor);
+while (valor != -1) {
+    p = malloc(sizeof(nodo));
+    p->dato = valor;
+
+    q = prim;
+    a = NULL;
+
+    while (q != NULL && q->dato < valor) {
+        a = q;
+        q = q->prox;
+    }
+
+    if (a == NULL) {
+        p->prox = prim;
+        prim = p;
+    } else {
+        p->prox = q;
+        a->prox = p;
+    }
+
+    scanf("%d", &valor);
+}
+//Resultado: Siempre queda ordenada (sin recorrer toda la lista luego).
+//Ingreso: 3 1 4 2 *     Lista resultante: 1 → 2 → 3 → 4
+
+
+
+/*
+* 5. ELIMINACIÓN
+ Busca el valor y, si existe, lo saca de la lista liberando la memoria.
+*/
+//Pseudocódigo
+LEER(valor)
+q := Prim
+
+MIENTRAS (q <> NIL) y (*q.dato <> valor) HACER
+    a := q
+    q := *q.prox
+FIN_MIENTRAS
+
+SI (q = NIL) ENTONCES
+    ESC("Error: el valor no existe")
+SINO
+    SI (a = NIL) ENTONCES
+        Prim := *q.prox
+    SINO
+        *a.prox := *q.prox
+    FIN_SI
+    DISPONER(q)
+FIN_SI
+
+//C
+int valor;
+nodo *q = prim, *a = NULL;
+
+scanf("%d", &valor);
+
+while (q != NULL && q->dato != valor) {
+    a = q;
+    q = q->prox;
+}
+
+if (q == NULL)
+    printf("Error: el valor no existe\n");
+else {
+    if (a == NULL)
+        prim = q->prox;
+    else
+        a->prox = q->prox;
+
+    free(q);
+}
+
+

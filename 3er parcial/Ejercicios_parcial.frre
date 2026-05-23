@@ -1,0 +1,692 @@
+//! Ejercicios de modelos de parcial de años anteriores
+
+/*
+ Ejercicio 1:
+  La empresa “El Dormilón” se dedica a la venta de colchones posee el siguiente archivo secuencial con información de todas las ventas del último mes (cada entrada del archivo significa una venta), el mismo no se encuentra ordenado por ningún campo:
+
+    VENTAS (archivo secuencial)
+
+    Id_Venta: N(8) | Cod_Articulo: N(8) | Precio: N(18,2) |Dimensión X: N(3) | Dimensión Y: N(3)
+
+
+  El dato "Cod_Articulo" es un dato único, los cuales están almacenados en una lista simplemente encadenada ordenada por el campo tipo, con los siguientes datos:
+
+    ARTICULOS
+
+    Cod_Articulo: N(8) | Modelo: AN(40) | Fabricante: AN(40) | Comision: N(2)
+
+ 
+  La comisión es el porcentaje con el cual se queda la fábrica por el producto vendido.
+
+  La empresa le ha solicitado que escriba un algoritmo que permita:
+
+    a) Generar una lista simplemente encadenada que posea por lo menos los siguientes datos: Cod_Articulo, Fabricante, Modelo y cantidad vendida en el último mes. La lista debe estar ordenada por Cod_Articulo.
+
+    b) Informar la ganancia total de “El Dormilón”. Por cada venta se debe calcular: 
+      precio - (precio * comisión/100)
+*/
+
+
+
+
+
+ACCION EJ1 ES
+AMBIENTE
+  //Archivo Secuencial
+  //No está Ordenado, pueden haber varias ventas de un mismo art
+  VENTAS = Registro 
+    Id_Venta: N(8)
+    Cod_Articulo: N(8)
+    Precio: N(18,2)
+    DimensionX: N(3)
+    DimensionY: N(3)
+  Fin_Registro
+
+  Aventas: Archivo de VENTAS
+  Rventas: VENTAS
+
+  //Nodo de lista simplemente encadenada ordenada por Articulos
+  //nodos unicos, hay un solo nodo por articulo. 
+  ARTICULOS = Registro
+      Cod_Articulo: N(8)
+      Modelo: AN(40)
+      Fabricante: AN(40)
+      Comision: N(2)
+      prox: puntero a nodo
+  Fin_Registro
+
+  prim, P, ant: puntero a nodo  //para ARTICULOS
+
+  //Nodo nueva lista simplemente enlazada ordenada por cod_articulo
+  //No es copia exacta de ARTICULOs, sino una lista con totales.
+  Nodo = Registro
+      Cod_Articulo: N(8)
+      Fabricante: AN(40)
+      Modelo: AN(40)
+      Cant_Vendida: entero
+      prox: puntero a nodo
+  Fin_Registro
+
+  prim2, Q, P2, ANT2: puntero a nodo  //para lista totalizada
+
+  precio, total_ganancia, ganancia: real  //para el b)
+  cod: N(8)
+
+
+PROCESO
+  //Inicializaciones
+  prim2 := NIL       //lista resultado vacía
+
+  ABRIR E/ (Aventas)     //abrir archivo ventas para lectura
+  LEER(Aventas, Rventas) //leer primer registro
+
+  //Comienza a leer Arch sec
+  Mientras NoFDA(Aventas) HACER
+    cod := Rventas.Cod_Articulo
+    precio := Rventas.Precio
+
+    // ------------------------------------------------
+    // 1) Buscar datos del artículo en la lista ARTICULOS
+    // ------------------------------------------------
+    P := prim      //cabeza de ARTICULOS
+    Mientras (P <> NIL) y (*P.Cod_Articulo < cod) HACER
+       P := *P.prox
+    Fin_Mientras
+
+    //Caso Lista vacía o art no encontrado. Optamos por ignorar la venta y continuar.
+    Si (P = NIL) O (*P.Cod_Articulo <> cod) entonces
+      Escribir("Aviso: venta con Cod ", cod, " no encontrado en ARTICULOS. Se ignora.")
+
+    Sino //si *P contiene Modelo, Fabricante y Comision
+      // ------------------------------------------------
+      // 2) Buscar/actualizar en la lista totalizada (prim2)
+      // ------------------------------------------------
+      P2 := prim2
+      ANT2 := NIL
+      Mientras (P2 <> NIL) y (*P2.Cod_Articulo < cod) HACER
+        ANT2 := P2
+        P2 := *P2.prox
+      Fin_Mientras
+
+      //Gestionar contador del nodo de Lista Totalizada
+      Si (P2 <> NIL) y (*P2.Cod_Articulo = cod) entonces
+        //Ya existe nodo en prim2: +incrementar contador
+        *P2.Cant_Vendida := *P2.Cant_Vendida + 1
+
+      Sino
+        //No existe: crear nuevo nodo ordenado
+        NUEVO(Q)
+        *Q.Cod_Articulo := cod
+        *Q.Fabricante := *P.Fabricante
+        *Q.Modelo := *P.Modelo
+        *Q.Cant_Vendida := 1
+        *Q.prox := P2
+
+        Si ANT2 = NIL entonces
+          prim2 := Q
+        Sino
+          *ANT2.prox := Q
+        Fin_Si
+        
+        Escribir("Articulo", P.Cod_Articulo, "Registrado")
+      Fin_Si
+
+      //(opcional para b) calcular ganancia con comision de *P
+      ganancia := precio - (precio * (*P.Comision) / 100.0)
+      total_ganancia := total_ganancia + ganancia
+      Escribir("Ganancia por venta", Ganancia)
+    Fin_Si
+
+  //Leer siguiente venta
+  LEER(Aventas, Rventas)
+  Fin_Mientras
+
+  Escribir("Ganancia total", total_ganancia)
+
+  CERRAR(Aventas)
+FIN_ACCION
+
+
+
+
+
+// ============================================== 
+// VERSIÓN MODULARIZADA
+// ============================================== 
+
+ACCION EJ1_REFACTORIZADO ES
+AMBIENTE
+  //Archivo Secuencial
+  //No está Ordenado, pueden haber varias ventas de un mismo art
+  VENTAS = Registro 
+    Id_Venta: N(8)
+    Cod_Articulo: N(8)
+    Precio: N(18,2)
+    DimensionX: N(3)
+    DimensionY: N(3)
+  Fin_Registro
+
+  Aventas: Archivo de VENTAS
+  Rventas: VENTAS
+
+  //Nodo de lista simplemente encadenada ordenada por Articulos
+  //nodos unicos, hay un solo nodo por articulo. 
+  ARTICULOS = Registro
+      Cod_Articulo: N(8)
+      Modelo: AN(40)
+      Fabricante: AN(40)
+      Comision: N(2)
+      prox: puntero a ARTICULOS
+  Fin_Registro
+
+  prim, P, ant: puntero a ARTICULOS  //para ARTICULOS
+
+  //Nodo nueva lista simplemente enlazada ordenada por cod_articulo
+  //No es copia exacta de ARTICULOs, sino una lista con totales.
+  Nodo = Registro
+      Cod_Articulo: N(8)
+      Fabricante: AN(40)
+      Modelo: AN(40)
+      Cant_Vendida: entero
+      prox: puntero a Nodo
+  Fin_Registro
+
+  prim2, Q, P2, ANT2: puntero a Nodo  //para lista totalizada
+
+  precio, total_ganancia, ganancia: real  //para el b)
+  cod: N(8)
+
+
+  // ---------- FUNCIÓN: BuscarArticulo ----------
+  Funcion BuscarArticulo(cod: N(8)): puntero a ARTICULOS ES
+      P := prim
+      Mientras (P <> NIL) y (*P.Cod_Articulo < cod) HACER
+          P := *P.prox
+      Fin_Mientras
+
+      Si (P <> NIL) y (*P.Cod_Articulo = cod) entonces
+          BuscarArticulo := P
+      Sino
+          BuscarArticulo := NIL
+      Fin_Si
+  Fin_Funcion
+
+
+  // ---------- PROCEDIMIENTO: ActualizarTotalizado ----------
+  Procedimiento ActualizarTotalizado(cod: N(8); pArt: puntero a ARTICULOS) ES
+      P2 := prim2
+      ANT2 := NIL
+
+      //buscar posición por cod en prim2
+      Mientras (P2 <> NIL) y (*P2.Cod_Articulo < cod) HACER
+          ANT2 := P2
+          P2 := *P2.prox
+      Fin_Mientras 
+
+      //si existe, incrementar
+      Si (P2 <> NIL) y (*P2.Cod_Articulo = cod) entonces
+          *P2.Cant_Vendida := *P2.Cant_Vendida + 1
+      Sino
+          NUEVO(Q)
+          *Q.Cod_Articulo := cod
+          *Q.Fabricante := *pArt.Fabricante
+          *Q.Modelo := *pArt.Modelo
+          *Q.Cant_Vendida := 1
+          *Q.prox := P2
+
+          Si ANT2 = NIL entonces
+              prim2 := Q
+          Sino
+              *ANT2.prox := Q
+          Fin_Si
+      Fin_Si
+  Fin_Procedimiento
+
+
+  // ---------- FUNCIÓN: CalcularGanancia ----------
+  Funcion CalcularGanancia(precio: real; comision: entero): real ES
+      CalcularGanancia := precio - (precio * comision / 100.0)
+  Fin_Funcion
+
+
+  // ---------- PROCEDIMIENTO: ProcesarVenta ----------
+  Procedimiento ProcesarVenta(reg: VENTAS) ES
+      cod := reg.Cod_Articulo
+      precio := reg.Precio
+
+      //buscar en ARTICULOS (FUNCIÓN)
+      pArt := BuscarArticulo(cod)
+
+      Si pArt = NIL entonces
+          Escribir("Aviso: venta con Cod ", cod, " no encontrado en ARTICULOS. Se ignora.")
+      Sino
+          //actualizar lista totalizada (PROCEDIMIENTO)
+          ActualizarTotalizado(cod, pArt)
+
+          //calculo de ganancia y acumulador (FUNCIÓN)
+          gan := CalcularGanancia(precio, *pArt.Comision)
+          total_ganancia := total_ganancia + gan
+          //opcional: Escribir("Ganancia por venta: ", gan)
+      Fin_Si
+  Fin_Procedimiento
+
+
+// ---------- ACCIÓN principal ----------
+PROCESO
+    prim2 := NIL
+    total_ganancia := 0.0
+
+    ABRIR E/ (Aventas)      //abrir archivo ventas para lectura
+    LEER(Aventas, Rventas)  //leer primer registro
+
+    Mientras NoFDA(Aventas) HACER
+        ProcesarVenta(Rventas)
+        LEER(Aventas, Rventas)
+    Fin_Mientras
+
+    CERRAR(Aventas)
+
+    Escribir("Ganancia total: ", total_ganancia)
+
+FIN_ACCION
+
+
+
+
+/*
+ Ejercicio 2:
+  Dada una lista DOBLEMENTE encadenada de números naturales, se desea eliminar de la lista todos los elementos cuyo  “número promedio”  sea igual a un valor ingresado por el usuario. Para calcular el número promedio de un número, se debe utilizar una función RECURSIVA.
+
+  Dado un número natural, definiremos como su número promedio al número que se obtiene de 
+      SUMAR sus dígitos impares y 
+      RESTAR sus dígitos pares.
+  
+  Por ej.: el número promedio de 318547 es 4 esto es,
+  numeroPromedio(318547) = numeroPromedio(31854)+7 = numeroPromedio(3185) - 4 + 7 = … 
+
+  = 3 + 1 - 8 + 5 - 4 + 7 = 4
+
+
+  CASO BASE
+    si n<10  entonces  
+        si n MOD 2 = 0  entonces  numeroPromedio := -n //Par
+        sino numeroPromedio := n //Impar
+
+  CASO RECURSIVO
+  //  Si n>10  entonces  numeroPromedio := numeroPromedio(n DIV 10) + numeroPromedio(n MOD 10)
+
+*/
+/*
+ACCION EJ2 (prim, ult: puntero a Nodo) es:
+AMBIENTE
+  Nodo = registro
+    num: N(10)
+    ant, prox: puntero a Nodo
+  Fin_Registro
+
+  p: puntero a Nodo
+  ValorUsu: N(10)
+
+  //Funcion Recursiva
+  Funcion numeroPromedio(n:N(10)):entero //asumimos que ese resultado puede ser negativo
+    //CASO BASE
+    si (n<10) entonces
+      si n MOD 2 = 0 entonces
+        numeroPromedio := -n //Par
+      sino 
+        numeroPromedio := n //Impar
+      Fin_Si
+
+    //CASO RECURSIVO
+    Sino
+      // // numeroPromedio := numeroPromedio(n DIV 10) + numeroPromedio(n MOD 10)
+      ultDig := n MOD 10  //541 > 1
+      resto := n DIV 10   //541 > 54 > 5 con cada recursion quita un digito
+
+      //Evasluar si el ÚLTIMO dígito es par o impar?
+      si ultDig MOD 2 = 0 entonces  //Par
+        numeroPromedio := numeroPromedio(resto) - ultDig
+
+      sino                     //Impar
+        numeroPromedio := numeroPromedio(resto) + ultDig
+
+      Fin_Si
+    Fin_Si
+  Fin_funcion
+
+  //Función buscar Nodo
+  Funcion BuscarNodo(n:N(10)):puntero a Nodo
+    p := prim
+
+    MIENTRAS (p<>NIL) y (*p.num<>n) HACER
+        p := *p.prox
+    FIN_MIENTRAS
+
+    BuscarNodo := p
+    
+    Otra opción, pero de todos modos p llegaría a nil si no encuentra el valor de n:
+    Si (p <> NIL) y (*p.num = n) entonces
+          BuscarNodo := p
+      Sino
+          BuscarNodo := NIL
+      Fin_Si
+    
+
+  Fin_funcion
+
+
+PROCESO
+
+  //Pedir valor al usuario y procesarlo
+  ESCRIBIR("Ingresar un número promedio a eliminar de la lista")
+  leer(ValorUsu)
+
+  num
+
+
+  p := prim
+  MIENTRAS (p<>NIL) HACER
+    num := BuscarNodo(ValorUsu)
+    p := numeroPromedio(num)
+
+    //CASO primer Nodo
+    si p=prim entonces
+      prim := *p.prox
+      *(*p.prox).ant := NIL
+      DISPONER(P)
+      ESCRIBIR("Valor eliminado exitosamente de lista")
+
+    //CASO último Nodo
+    sino si p=ult entonces
+      ult := *p.ant
+      *(*p.ant).prox := NIL
+      DISPONER(p)
+      ESCRIBIR("Valor eliminado exitosamente de lista")
+
+    //CASO único Nodo
+    Sino si prim=ult entonces
+      prim := NIL
+      ult := Nil
+      DISPONER(p)
+      ESCRIBIR("Valor eliminado exitosamente de lista")
+
+    //CASO Medio
+    sino si p<>NIL entonces
+      *(*p.ant).prox := *p.prox
+      *(*p.prox).ant := *p.ant
+      DISPONER(P)
+      ESCRIBIR("Valor eliminado exitosamente de lista")
+    sino
+      ESCRIBIR("Valor no encontrado")
+    Fin_Si
+  
+  FIN_MIENTRAS
+FIN_ACCION
+*/
+
+ACCION EJ2 (prim, ult: puntero a Nodo) ES
+AMBIENTE
+  Nodo = REGISTRO
+    num: N(10)
+    ant, prox: puntero a Nodo
+  FIN_REGISTRO
+
+  p, sig: puntero a Nodo
+  ValorUsu: entero
+  ultDig, resto: entero
+
+  // -----------------------------------------------------
+  //  FUNCIÓN RECURSIVA: numeroPromedio
+  // -----------------------------------------------------
+  FUNCION numeroPromedio(n: entero): entero ES
+
+    //CASO BASE: un solo dígito
+    SI n < 10 ENTONCES
+      SI (n MOD 2 = 0) ENTONCES
+        numeroPromedio := -n      //dígito par → se resta
+      SINO
+        numeroPromedio := n       //dígito impar → se suma
+      FIN_SI
+
+    //CASO RECURSIVO
+    SINO
+      ultDig := n MOD 10          //último dígito
+      resto  := n DIV 10          //parte restante
+
+      SI (ultDig MOD 2 = 0) ENTONCES
+        numeroPromedio := numeroPromedio(resto) - ultDig
+      SINO
+        numeroPromedio := numeroPromedio(resto) + ultDig
+      FIN_SI
+    FIN_SI
+
+  FIN_FUNCION
+
+
+
+  // -----------------------------------------------------
+  // PROCEDIMIENTO BORRAR NODO (correcto para lista doble)
+  // -----------------------------------------------------
+  PROCEDIMIENTO BorrarNodo(p: puntero a Nodo) ES
+
+    //CASO: único nodo
+    SI prim = ult ENTONCES
+      prim := NIL
+      ult := NIL
+
+    //CASO: borrar primer nodo
+    SINO SI p = prim ENTONCES
+      prim := *p.prox
+      *prim.ant := NIL
+
+    //CASO: borrar último nodo
+    SINO SI p = ult ENTONCES
+      ult := *p.ant
+      *ult.prox := NIL
+
+    //CASO: borrar nodo del medio
+    SINO
+      *(*p.ant).prox := *p.prox
+      *(*p.prox).ant := *p.ant
+    FIN_SI
+
+    DISPONER(p)
+
+  FIN_PROCEDIMIENTO
+
+
+
+PROCESO
+
+  ESCRIBIR("Ingrese un valor y eliminaremos de la lista los números cuyo número promedio sea ese valor.")
+  LEER(ValorUsu)
+
+  p := prim
+
+  //RECORRER TODA LA LISTA
+  MIENTRAS p <> NIL HACER
+
+    sig := *p.prox     //guardar siguiente antes de borrar
+
+    SI numeroPromedio(*p.num) = ValorUsu ENTONCES
+        BorrarNodo(p)
+    FIN_SI
+
+    p := sig
+
+  FIN_MIENTRAS
+
+FIN_ACCION
+
+
+
+
+
+
+/*
+ Ejercicio 1 (2)
+  Una empresa de helados llamada FRREze trabaja actualmente con listas para manejar los pedidos que recibe y, al final de la jornada, los vuelca al disco rígido. Sin embargo desea ampliar las funcionalidades del sistema actual para ofrecer mayor información sobre las ventas diarias a los administradores.
+
+  Se posee una lista simplemente enlazada, ordenada, de los gustos de la empresa con sus correspondientes nombres y precio por unidad.
+   | CodGusto N(10) | Nombre Gusto AN(50) | Precio Unitario N(5,2) | 
+
+  A su vez se posee otra lista simplemente encadenada, de pedidos por día ordenada por CodPedido y Cod Gusto. Cada vez que un cliente compra un helado se almacena el código del pedido, el código del gusto de helado escogido, el nombre del vendedor y la cantidad de unidades del mismo. 
+   | CodPedido N(10) | CodGusto N(10) | Nombre vendedor AN(30) | Cantidad N(10) | 
+
+
+  Las dos funcionalidades adicionales que se desean son:
+
+    1. Generar una lista doblemente enlazada de los gustos de helado vendidos en el día, indicando código del gusto y su cantidad total.
+  
+    2. Una opción para consultar que, a partir del nombre de un gusto, ingresado por teclado, muestre el monto ($) obtenido en el día por ese gusto. Considerar que solo se realiza una sola consulta y en caso de errores en el ingreso informar por pantalla.
+
+*/
+
+ACCION EJ1_2 (primG: puntero a Gustos, primP: puntero a Pedidos)es
+AMBIENTE
+  //Nodo gustos
+  Gustos = registro
+    CodGusto: N(10)
+    NomGusto: AN(50)
+    PrecioUni: N(5,2)
+    prox: puntero a Gustos
+  Fin_Registro
+
+  pG: puntero a Gustos 
+
+  //Nodo pedidos
+  Pedidos = registro
+    CodPedido: N(10)
+    CodGusto: N(10)
+    NomVendedor: AN(30)
+    Cantidad: N(10)
+    prox: puntero a Pedidos
+  Fin_Registro
+
+  pP: puntero a Pedidos
+
+  //Nodo ventas
+  Ventas = registro
+    CodGusto: N(10)
+    CantTot: N(10)
+    ant, prox: puntero a Ventas
+  Fin_Registro
+
+  primV, ultV, pV, qV,: puntero a Ventas
+  cod: N(10)
+  cant: N(10)
+
+
+
+  // ---------------------------------------------------------------------
+  // 1) BUSCAR EN LA LISTA TOTALIZADA (VENTAS)
+  // ---------------------------------------------------------------------
+  Funcion BuscarListaTot(cod: N(10)): puntero a Ventas
+    pV := primV
+
+    Mientras (pV <> NIL) y (cod > *pV.CodGusto) hacer
+      pV := *pV.prox
+    Fin_Mientras
+
+    //Caso encontrado
+    Si (pV <> NIL) y (*pV.CodGusto = cod) entonces
+      BuscarListaTot := pV
+    Sino
+      BuscarListaTot := NIL
+    Fin_Si
+  Fin_Funcion
+
+
+  // ---------------------------------------------------------------------
+  // 2) INSERTAR ORDENADO EN LDE
+  // ---------------------------------------------------------------------
+  Procedimiento InsertarOrdenadoLDE(cod, cant: N(10))
+    pV := primV
+    antV := NIL
+
+    Mientras (pV <> NIL) y (cod > *pV.CodGusto) hacer
+      antV := pV
+      pV := *pV.prox
+    Fin_Mientras
+
+    //crear nodo
+    Nuevo(qV)
+    *qV.CodGusto := cod
+    *qV.CantTot := cant
+
+    //Caso lista vacía
+    Si primV = NIL entonces
+      *qV.ant := NIL
+      *qV.prox := NIL
+      primV := qV
+      ultV := qV
+
+    //Insertar al principio
+    Sino si antV = NIL entonces
+      *qV.ant := NIL
+      *qV.prox := primV
+      *primV.ant := qV
+      primV := qV
+
+    //Insertar al final
+    Sino si pV = NIL entonces
+      *qV.prox := NIL
+      *qV.ant := ultV
+      *ultV.prox := qV
+      ultV := qV
+
+    //Insertar en el medio
+    Sino
+      *qV.ant := antV
+      *qV.prox := pV
+      *antV.prox := qV
+      *pV.ant := qV
+    Fin_Si
+  Fin_Procedimiento
+
+
+  // ---------------------------------------------------------------------
+  // 3) SUMAR CANTIDADES
+  // ---------------------------------------------------------------------
+  Procedimiento SumarCant(nodo: puntero a Ventas; cant: N(10))
+    *nodo.CantTot := *nodo.CantTot + cant
+  Fin_Procedimiento
+
+
+  // ---------------------------------------------------------------------
+  // 4) GENERAR LA LISTA TOTALIZADA
+  // ---------------------------------------------------------------------
+  Procedimiento GenerarListaTotalizada es
+    primV := NIL
+    ultV := NIL
+
+    pP := primP   //recorrido de la lista PEDIDOS
+
+    Mientras pP <> NIL hacer
+      cod := *pP.CodGusto
+      cant := *pP.Cantidad
+
+      //aquí se invocarán los otros módulos
+      //agregar cod y cant a la nueva lista doble
+      pV := BuscarListaTot(cod)
+
+      Si pV = NIL entonces
+        InsertarOrdenadoLDE(cod, cant)
+      sino
+        SumarCant(pV, cant)
+      Fin_Si
+
+      pP := *pP.prox
+    Fin_Mientras
+  Fin_Procedimiento
+
+  
+
+PROCESO
+  Escribir("Bienvenido al sistema de gestión de FRREze")
+
+  GenerarListaTotalizada()
+
+
+FIN_ACCION
+

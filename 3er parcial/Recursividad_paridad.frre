@@ -1,0 +1,92 @@
+
+/*
+ 5.1.5 
+ Dados dos números enteros, divídalos (división entera) y muestre el resultado, usando sólo la operación resta.
+
+
+*/
+
+
+
+/*
+ 5.1.6
+ Determine recursivamente si un número dado es PAR o IMPAR, usando sólo la operación RESTA. 
+
+ Caso Base:
+ Si n = 0 → el número es par  
+ Si n = 1 → el número es impar
+ 
+ Caso Recursivo:
+ n := EsPar(n - 2)
+
+Si el número no es 0 ni 1, se llama de nuevo al procedimiento, pero restando 2.
+
+De esa forma, el número va “bajando” de dos en dos hasta alcanzar una de las bases.
+
+Ejemplo 1: n = 6
+| Llamada  | Valor de `n` | Acción                    |
+| -------- | -------------- | ------------------------- |
+| EsPar(6) | 6 ≠ 0 y ≠ 1    | Llama a EsPar(4)          |
+| EsPar(4) | 4 ≠ 0 y ≠ 1    | Llama a EsPar(2)          |
+| EsPar(2) | 2 ≠ 0 y ≠ 1    | Llama a EsPar(0)          |
+| EsPar(0) | 0 = 0          | Escribir("Número es par") |
+
+Ejemplo 2: n = 5
+| Llamada  | Valor de `n`   | Acción                      |
+| -------- | -------------- | --------------------------- |
+| EsPar(5) | 5 ≠ 0 y ≠ 1    | Llama a EsPar(3)            |
+| EsPar(3) | 3 ≠ 0 y ≠ 1    | Llama a EsPar(1)            |
+| EsPar(1) | 1 = 1          | Escribir("Número es impar") |
+
+*/
+
+//Como Procedimiento
+ACCION EJ_5.1.6 ES
+AMBIENTE
+    Procedimiento EsPar(n: n(3)) es
+        Si n = 0 entonces  //Caso Base
+            Escribir("El número es par")
+        Sino
+            Si n = 1 entonces  //Caso Base
+                Escribir("El número es impar")
+            Sino  //Caso Recursivo
+                n := EsPar(n - 2)
+            FinSi
+        FinSi
+    Fin_Procedimiento
+
+PROCESO
+    Repetir
+        Escribir("Ingrese un número (0 para terminar): ");
+        Leer(n);
+        Si n <> 0 entonces
+            EsPar(n);
+        FinSi;
+    Hasta (n = 0);
+FIN_ACCION
+
+//Como Función
+ACCIOON EJ_5.1.6 ES
+AMBIENTE
+    Funcion EsPar(n: entero):logico es
+        Si n = 0 entonces  //Caso Base
+            EsPar := VERDADERO
+        Sino
+            Si n = 1 entonces   //Caso Base
+                EsPar := Falso
+            Sino   //Caso Recursivo
+                EsPar := EsPar(n - 2)
+            Fin_Si
+        Fin_Si
+
+        //Una función no debe imprimir nada. Solo debe retornar un valor.
+    Fin_funcion
+
+PROCESO
+    LEER(n);
+    Si EsPar(n) entonces
+        ESC("El número es par")
+    Sino
+        ESC("El número es impar")
+    FinSi;
+FIN_ACCION

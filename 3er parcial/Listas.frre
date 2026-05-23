@@ -1,0 +1,468 @@
+//! LISTAS
+
+/*
+ 4.2 (COMPLEMENTARIO)
+  Dada una lista simplemente encadenada de números enteros,
+  
+  diseñar un algoritmo que a partir de ella genere otra lista conteniendo los nodos cuyos datos sean múltiplos de 3, dichos elementos deberán ser eliminados de la lista original. 
+  
+  Se asume que la lista está cargada y que el algoritmo recibe como parámetro de entrada la dirección del primer elemento.
+*/
+ACCIÓN ej4.2 (PRIM: puntero a nodo) es
+AMBIENTE
+    Nodo = Registro
+        num: entero
+        prox: puntero a nodo
+    fin_registro
+
+    P, Q: puntero a nodo
+    PRIM2: puntero a nodo
+
+PROCESO
+    PRIM2 := NIL
+    P := PRIM
+    ANT := NIL
+
+    Mientras P <> NIL hacer
+        
+        Si (*P.num MOD 3 = 0) entonces
+            
+            //MOVER nodo de la lista original
+            Q := P //Guardamos el valor de P en Q
+            
+            Si P = PRIM entonces
+                PRIM := *P.prox
+            Sino
+                *ANT.prox := *P.prox
+            Fin_Si
+            
+            P := *Q.prox //AVANZAMOS P
+
+            //INSERTAR Q al principio de PRIM2
+            *Q.prox := PRIM2
+            PRIM2 := Q
+
+        Sino
+            //NO es múltiplo → seguimos
+            ANT := P
+            P := *P.prox
+        FinSi
+
+    FinMientras
+
+    //Al finalizar, PRIM tiene la lista sin múltiplos de 3
+    //y PRIM2 tiene solo los múltiplos de 3
+FinAccion
+
+/*
+ 4.3
+  Dada una lista simplemente encadenada de números diseñar un algoritmo que calcule en forma independiente: 
+    - La suma de los números impares, y 
+    - la suma de los números pares.
+*/
+ACCION EJ4_3(Prim: puntero a nodo)
+AMBIENTE
+    Nodo = Registro
+        dato: N(10)
+        prox: puntero a Nodo
+    fin_registro
+
+    P: Puntero a Nodo
+    SumaPares, SumaImpares: entero
+
+PROCESO
+    P := Prim
+    SumaPares := 0
+    SumaImpares := 0
+
+    Mientras P<>NIL hacer
+        si (*P.dato MOD 2) = 0 entonces
+            SumaPares := SumaPares + *P.dato
+        Sino
+            SumaImpares := SumaImpares + *P.dato
+        Fin_Si
+
+        P := *P.prox
+    Fin_Mientras
+
+    //No disponemos P porque ahora mismo P vale NIL. Disponer se usaría al eliminar un nodo. 
+    // // Disponer(P)
+    
+    ESCRIBIR("Las suma de numeros pares da como resultado", SumaPares)
+    ESCRIBIR("Las suma de numeros impares da como resultado", SumaImpares)
+
+Fin_accion 
+
+
+
+/*
+ 4.4
+  Se dispone de una lista simplemente encadenada cuyos registros están ordenados en forma ascendente por una clave de tipo entero; diseñar un algoritmo que invierta el orden de la lista.
+
+  Algoritmo para invertir la lista sin una segunda lista...
+*/
+ACCIÓN ej4_4 (prim: puntero a nodo) es
+AMBIENTE
+    //Lista orginal
+    Lista = Registro
+         dato: entero
+         Prox: puntero a nodo
+    Fin_Registro
+
+    P, Q, ULT: puntero a nodo
+
+PROCESO
+    ULT := NIL            
+    P := PRIM 
+
+    Mientras P <> NIL hacer
+        Q := *P.prox
+        *P.prox := ULT
+        ULT := P
+        P := Q 
+    FinMientras
+
+    PRIM := ULT
+
+FIN_ACCION
+
+
+
+/*
+ 4.5 
+  Dada una lista simplemente encadenada que contiene datos de todas las provincias de la República Argentina: 
+  - nombre, 
+  - capital, 
+  - cantidad total de habitantes y 
+  - cantidad de analfabetos, 
+
+  y está ordenada en forma decreciente(\) por número de HABITANTES ANALFABETOS
+  PRIM  →  [Prov1| ]  →  [Prov2| ]  →  [Prov3| ]  →  … 
+
+  
+  , generar otras tres listas que contengan el nombre, la capital y el porcentaje de analfabetos de las Provincias que respondan a las siguientes restricciones.
+
+    L1: <= 10 % analfabetos
+    L2: 16 a 25 % analfabetos
+    L3: => 26 % analfabetos
+
+
+    | Lista | Condición    | Significado           |
+    | ----- | ------------ | --------------------- |
+    | L1    | <= 10%       | provs con bajo índice |
+    | L2    | 16% a 25%    | índice medio          |
+    | L3    | >= 26%       | índice alto           |
+
+
+*/
+
+ACCION Ej4_5 (prim: puntero a prov)ES
+Ambiente
+    Prov = Registro //Formato Lista original
+        Nombre    : AN(40)
+        Capital   : AN(40)
+        cantHab   : N(16)
+        cantAnalf : N(16)
+        prox      : Puntero a Prov
+    Fin_Registro
+
+    //Lista de entrada
+    P : Puntero a Prov //y prim que lo pasamos como parametro al algoritmo
+
+    ProvAnalf = Registro //Formato Listas filtradas
+        Nombre    : AN(40)
+        Capital   : AN(40)
+        PorcAnalf : FLOTANTE
+        prox      : Puntero a ProvAnalf
+    Fin_Registro
+
+    //Listas de salida
+    L1Prim, L1Ult : Puntero a ProvAnalf
+    L2Prim, L2Ult : Puntero a ProvAnalf
+    L3Prim, L3Ult : Puntero a ProvAnalf
+    LQ : Puntero a ProvAnalf
+
+    porc : FLOTANTE
+
+    //Procedimiento, Imprimir mensaje de error
+    Procedimiento ERROR(err : AN(80)) ES
+        ESC("ERROR: " + err)
+    Fin_Procedimiento
+
+    //Procedimiento para inicializar listas
+    Procedimiento InicializarListas ES
+        L1Prim := NIL; L1Ult := NIL
+        L2Prim := NIL; L2Ult := NIL
+        L3Prim := NIL; L3Ult := NIL
+    Fin_Procedimiento
+
+    //Procedimiento para inserta ese nuevo nodo al final de la lista L1, L2 o L3. Recibe como parámetro...
+    //SumarProvAnalf(nodo actual, l1 l2 l3, aux de l1 l2 l3)
+    Procedimiento SumarProvAnalf(P_val : Puntero a Prov; porc_val : FLOTANTE, LiPrim : Puntero a ProvAnalf, LiUlt: Puntero a ProvAnalf) ES
+        NUEVO(LQ)
+        *LQ.Nombre := *P_val.Nombre
+        *LQ.Capital := *P_val.Capital
+        *LQ.PorcAnalf := porc_val
+        *LQ.prox := NIL
+        Si LiPrim = NIL ENTONCES
+            LiPrim := LQ
+            LiUlt := LQ
+        Sino
+            *LiUlt.prox := LQ
+            LiUlt := LQ
+        Fin_Si
+    Fin_Procedimiento
+
+    //Procedimiento principal, donde generamos las listas
+    Procedimiento GenerarListas ES
+        //si NO HAY nodos en la lista orginal, Prov.
+        Si Prim = NIL ENTONCES
+            ERROR("lista vacía")
+        Sino
+            InicializarListas  //Procedimiento
+            P := Prim
+
+            //mientras SÍ HAYA nodos en la lista orginal, Prov.
+            Mientras P <> NIL HACER 
+                //porcentaje con división en flotante
+                porc := ( (*P.cantAnalf) * 100.0 ) / (*P.cantHab)
+
+                //L1: <= 10 % analfabetos
+                Si porc <= 10.0 ENTONCES
+                    SumarProvAnalf(P, porc, L1Prim, L1Ult)
+
+                //L2: 16 a 25 % analfabetos
+                Sino Si (porc >= 16.0) Y (porc <= 25.0) ENTONCES
+                    SumarProvAnalf(P, porc, L2Prim, L2Ult)
+
+                //L3: => 26 % analfabetos
+                Sino Si porc >= 26.0 ENTONCES
+                    SumarProvAnalf(P, porc, L3Prim, L3Ult)
+                Fin_Si
+
+                P := *P.prox
+            Fin_Mientras
+        Fin_Si
+    Fin_Procedimiento
+Fin_Ambiente
+
+Proceso
+    GenerarListas
+    //Resultados en L1Prim, L2Prim, L3Prim
+Fin_Proceso
+FIN_ACCION
+
+
+/*
+ 4.6
+  En el restaurante ÑOQUIS se está pensando en una solución informática para el soporte de datos del nuevo sistema de atención a clientes. Se han decidido por LISTAS por su dinamismo en cuanto a la cantidad de elementos. Diseñe un algoritmo que realice las siguientes funciones:
+
+  - Añadir cliente al ser atendido (lista simple ordenada por Nombre del Cliente).
+  
+  - Registrar su consumo (Acumular el Total Consumido en valores de montos).
+
+  - Realizar el cobro (emitir ticket con Nombre, Fecha, Número de Mesa y Total).
+  
+  - Eliminar del listado de atención.
+
+ La información almacenada debe mantenerse ordenada por Nombre del cliente. 
+
+*/
+ACCION EJ4_6 es
+AMBIENTE
+    FECHA = Registro
+        Día: 1..31
+        Mes: 1..12 
+        Año: N(4)
+    fin_registro
+
+    Cliente = Registro
+        nombre: AN(50)
+        Fecha: FECHA
+        nro_mesa: N(2)
+        tot_consum: entero
+        prox: puntero a Cliente
+    fin_registro
+
+    P, prim, ANT, Q: puntero a Cliente
+    nom: AN(50)
+    consumo: entero
+    opcion: N(1)
+
+
+    Procedimiento AñadirCli ES
+        // Crear nuevo nodo
+        NUEVO(Q)
+        escribir("Introducir nombre de cliente: ")
+        leer(*Q.nombre)
+
+        escribir("Introducir número de mesa: ")
+        leer(*Q.nro_mesa)
+
+        *Q.tot_consum := 0
+        *Q.prox := NIL
+
+        // --- CASO LISTA VACÍA ---
+        Si prim = NIL entonces
+            prim := Q
+            //prim era NIL. Ahora prim es Q, así que Q es el primer.
+
+        Sino
+            // --- BUSCAR LUGAR DE INSERCIÓN ORDENADA ---
+            P := prim
+            ANT := NIL
+
+            //prim<>NIL entonces tiene al menos un nodo la lista y p=prim. Entonces buscamos donde poner nuestro nuevo cliente Q.
+            Mientras (P <> NIL) y ( *Q.nombre > *P.nombre ) hacer
+                ANT := P
+                P := *P.prox
+            Fin_Mientras
+            
+
+            // --- INSERTAR ENCONTRADO ---
+            //El "mientras" encontró donde va Q. Ahora evaluamos si ese lugar es al principio o en el medio o final.
+
+            // caso insertar al principio
+            Si ANT = NIL entonces
+                *Q.prox := prim
+                prim := Q
+
+            // insertar entre ANT y P (medio o final)
+            Sino
+                *Q.prox := P
+                *ANT.prox := Q
+            Fin_Si
+
+        Fin_Si
+    Fin_Procedimiento
+
+
+    Procedimiento RegConsumo ES
+        consumo := 0
+
+        //Pedir nombre cliente
+        escribir("Ingresa Nombre de cliente:")
+        leer(nom)
+
+        //Pedir valor de consumo
+        escribir("Ingresa valor de consumo:")
+        leer(consumo)
+
+        P := prim
+        // // ANT := NIL
+        //Realmente no necesita ANT este procedimiento
+
+        //Buscar cliente por nombre
+        Mientras (P <> NIL) y (nom <> *P.nombre) hacer
+            // // ANT := P 
+            P := *P.prox
+        Fin_Mientras
+
+        //Caso Listas vacia o cliente no encontrado
+        Si P=NIL entonces
+            Escribir("Cliente no registrado en el sistema.")
+
+        //Caso Medio y Caso ultimo elemento
+        Sino
+            //acumular consumo
+            *P.tot_consum := *P.tot_consum + consumo
+            Escribir("Consumo registrado exitosamente!!")
+            Escribir("Consumo Total de cliente: ", *P.tot_consum)
+        fin_si
+
+        //Recordar que no se puede hacer BUSQUEDAS BINARIAS ni otro tipo de busqueda no lineal, las listas se acceden de manera secuencial únicamente y avanzamos con P := *P.prox
+    Fin_Procedimiento
+
+
+    Procedimiento Cobrar ES
+        //Pedir nombre cliente
+        escribir("Ingresa Nombre de cliente:")
+        leer(nom)
+
+        P := Prim
+
+        MIENTRAS (P <> NIL) y (nom <> *P.nombre) HACER
+            P := *P.prox
+        FIN_MIENTRAS
+
+        //Caso Lista Vacía o cliente no encontrado
+        Si P=NIL entonces
+            Escribir("Cliente no registrado en el sistema.")
+
+        //Caso Medio y Caso ultimo elemento
+        Sino
+            Escribir("Emitiendo ticket...")
+            Escribir("_____________________________")
+            Escribir(" --- Restaurante ÑOQUIS ---")
+            Escribir("Cliente: ", *P.nombre)
+            Escribir("Fecha: ", *P.Fecha.Día, "/", *P.Fecha.Mes, "/", *P.Fecha.Año)
+
+            Escribir("Nro. mesa: ", *P.nro_mesa)
+            Escribir("Total consumido: ", *P.tot_consum)
+            Escribir("_____________________________")
+            
+            Escribir("Muchas gracias por comprar :D")
+        fin_si
+
+    Fin_Procedimiento
+
+
+    Procedimiento EliminarCli ES
+        //Pedir nombre cliente
+        escribir("Ingresa Nombre de cliente:")
+        leer(nom)
+
+        //Recorrer Lista
+        P := Prim
+        ANT := NIL
+        Mientras (P<>NIL) y (nom<>*P.nombre) hacer
+            ANT := P
+            P:=*P.prox
+        fin_mientras
+
+        //Caso Listas vacia o cliente no encontrado
+        si P = NIL entonces
+            escribir("Cliente no registrado en el sistema.")
+        sino
+            //Caso primer nodo
+            si ANT=NIL entonces  
+                prim := *P.prox
+                Disponer(P)
+
+            //Caso en medio o al final
+            sino
+                *ANT.prox := *P.prox
+                Disponer(P)
+            fin_si
+            escribir("CLiente eliminado.")
+
+        fin_si
+    Fin_Procedimiento
+
+
+PROCESO
+    prim := NIL
+    Escribir("--- Bienvenido al sistema de gestión de clientes de ÑOQUIS ---")
+
+    Escribir("Seleccione una opción:")
+    Escribir("1. Añadir nuevo cliente")
+    Escribir("2. Registrar consumo")
+    Escribir("3. Cobrar y generar ticket")
+    Escribir("4. Eliminar cliente")
+    Escribir("5. Salir")
+
+    leer(opcion)
+
+    Escribir("_________________________________________________")
+
+    Mientras opcion <> 5 hacer
+        SEGUN opcion HACER
+            1: AñadirCli()
+            2: RegConsumo()
+            3: Cobrar()
+            4: EliminarCli()
+        FIN_SEGUN
+    fin_mientras
+
+    Escribir("Adios :)")
+Fin_accion

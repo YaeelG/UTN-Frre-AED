@@ -1,0 +1,152 @@
+//! ÁRBOLES
+
+/*
+ 5.3.7
+   Escribir una función recursiva que encuentre el número de nodos de un árbol binario.
+
+   CASO BASE
+   Si p=NIL  entonces  contar:=0
+
+   CASO RECURSIVO
+   Si p<>NIL  enotnces  1 + contar(*p.izq) + contar(*p.der)
+   
+   1 por la raiz + nodos subárbol izq + nodos subárbol der
+*/
+Funcion Contar(p: punteros a nodo): entero es
+    si p = NIL entonces
+        contar := 0
+    sino
+        contar := 1 + contar(*p.izq) + contar(*p.der)
+    fin_si
+fin_funcion
+
+
+
+/*
+ 5.3.8
+   Escribir una función recursiva que encuentre la altura de un árbol binario.
+
+   CASO BASE
+   Si p=NIL  entonces  Altura:=0
+
+   CASO RECURSIVO
+   Si p<>NIL  entonces 
+   1. Aizq:=Altura(*p.izq) Calcula altura de hijo izq
+   2. Ader:=Altura(*p.der) Calcula altura de hijo der
+   3. si (Aizq > Ader) entonces
+        Altura := Aizq + 1
+      sino
+        Altura := Ader + 1
+      fin_si   Altura del árbol es la altura máxima entre los dos +1 por la raíz
+
+*/
+Funcion Altura (p: puntero a nodo): entero es
+    si (p <> NIL) entonces
+        si (*p.izq <> NIL) entonces
+            Altura = 1
+        sino
+            Aizq := Altura(*p.izq)
+            Ader := Altura(*p.der)
+
+            si (Aizq > Ader) entonces
+                Altura := Aizq + 1
+            sino
+                Altura := Ader + 1
+            fin_si
+        fin_si
+    sino
+        Altura := 0
+    fin_si
+fin_funcion
+
+//ChatGPT dice que la forma correcta de calcular la altura es:
+Función Altura(p: puntero a nodo): entero es
+    si p = NIL entonces
+        Altura := 0                // CASO BASE
+    sino
+        Aizq := Altura(*p.izq)     // CASO RECURSIVO
+        Ader := Altura(*p.der)
+
+        si Aizq > Ader entonces
+            Altura := Aizq + 1
+        sino
+            Altura := Ader + 1
+        fin_si
+    fin_si
+FinFunción
+
+
+
+/*
+ 5.3.9
+   Se dispone de un árbol binario de enteros. Escribir funciones que calculen:
+
+   1. La suma de sus elementos.
+   2. La suma de sus elementos que son múltiplos de 3.
+
+
+   CASO BASE
+   Si p = NIL  entonces  Sumar := 0
+
+   CASO RECURSIVO
+   Si p MOD 3 = 0  entonces  Sumar := *p.dato + Sumar(*p.izq) + Sumar(*p.der)
+   Si p MOD 3 <> 0  entonces  Sumar:= Sumar(*p.izq) + Sumar(*p.der)
+*/
+Funcion Sumar(p: punteros a nodo): entero es
+    si p = NIL entonces
+        Sumar := 0
+    sino
+        si *p.dato MOD 3 = 0 entonces
+            Sumar := *p.dato + Sumar(*p.izq) + Sumar(*p.der)
+        sino
+            Sumar:= Sumar(*p.izq) + Sumar(*p.der)
+        fin_si
+    fin_si
+fin_funcion
+
+
+
+/*
+ 5.3.13
+    Supongamos que tenemos una función valor tal que dado un valor de tipo char (una letra del alfabeto) devuelve un valor entero asociado a dicho identificador. 
+    
+    Supongamos también la existencia de un árbol de expresión T cuyos nodos hoja son letras del alfabeto y cuyos nodos interiores son los caracteres *, +, -, / 
+    
+    Diseñar una función que tome como parámetros un nodo y un árbol binario y devuelva el resultado entero de la evaluación de la expresión representada.
+
+
+    Los nodos hoja son letras: A, B, C, D...
+    Los nodos internos son operadores: +, -, *, /
+
+         +      A + (B * C)
+        / \
+       A   *
+          / \
+         B   C
+
+
+    CASO BASE
+    Si si p = NIL  entonces  Aex := NIL
+    Si p es una hoja  entonces  Aex := Valor(*p.dato)
+
+    CASO RECURSIVO
+    Si p es un operador  entonces  evaluar sus subárboles y aplicar la operación. Aex(*P.izq) [OPERADOR] Aex(*P.der)
+*/
+Función Aex(p: puntero a nodo): real es
+    si p = NIL entonces
+        Aex := NIL  //Casos Base
+
+    sino
+        SEGUN *p.dato HACER
+            //Casos Recursivos
+            "+": Aex := Aex(*P.izq) + Aex(*P.der)  
+            "-": Aex := Aex(*P.izq) - Aex(*P.der)
+            "*": Aex := Aex(*P.izq) * Aex(*P.der)
+            "/": Aex := Aex(*P.izq) / Aex(*P.der)
+
+            //Caso Base también
+            otros: Aex := Valor(*p.dato)
+
+        FIN_SEGUN
+    fin_si
+fin_funcion

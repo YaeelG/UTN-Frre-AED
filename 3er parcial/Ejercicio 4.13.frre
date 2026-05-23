@@ -1,0 +1,80 @@
+//! Ejercicio 4.13
+
+// Dada una lISTA DOBLEMENTE ENCADENADA de enteros, ordenada en forma creciente, escriba un algoritmo que elimine las entradas repetidas. 
+
+// El algoritmo debe verificar al inicio que la lista que se pasa como argumento está ordenada; en caso afirmativo realizar la depuración y emitir un mensaje de 'ÉXITO'; en caso contrario, emitir un mensaje de 'ERROR'.
+
+ACCION EJ13 (PRIM, ULT: puntero a nodo) es
+AMBIENTE
+	nodo= registro
+		dato: entero
+		ant, prox: puntero a nodo
+	fin registro
+
+	p: PUNTERO A NODO;
+	band: LOGICO;
+
+	//Evaluar si está ordenada en forma creciente
+	funcion está_ordenada(cab: puntero a nodo): lógico es
+		P:=cab
+
+		//Mientra el proximo nodo no sea el último   y   el dato del nodo actual sea  menor o igual  al dato del proximo nodo   entonces
+		//var aux := proximo nodo
+		Mientras *P.prox <> ULT y *p.dato <= *(*p.prox).dato hacer
+			P:=*P.prox
+		fin mientras
+		
+		//Si dato del nodo actual es  menor o igual  al dato del proximo nodo entonces
+		//está_ordenada:=VERDADERO  sino  está_ordenada:=FALSO
+		si  *p.dato <= *(*p.prox).dato entonces
+			está_ordenada:=verdadero
+		sino
+			está_ordenada:= falso
+		fin si
+	fin subaccion
+
+	//Eliminar las entradas repetidas
+	subaccion eliminar(T:puntero a nodo) es
+		Si PRIM = T entonces   //elimina el primero
+			*(*T.SIG).ANT:=NIL;
+			PRIM:=*T.SIG;
+		Sino          				//eliminar un nodo intermedio
+			*(*T.ANT).SIG:=*T.SIG;
+			*(*T.SIG).ANT:=*T.ANT;
+		Fsi;
+		disponer (T)
+
+		//solo casos 2 (1er elemento) y 3 (elemento en el medio),
+		//ya que si es caso 1 (único elemento) no habrá repetidos y
+		//si está analizando el caso 4 (último elemento) ya paso por los anteriores y ya ha detectado los duplicados.
+	fin subaccion
+
+Proceso
+    si prim = nil entonces
+    	escribir(´error LISTA VACIA')
+    sino
+     si prim=ult entonces
+        escribir('LA LISTA TIENE UN SOLO ELEMENTO POR LO TANTO NO EXISTEN ENTRADAS REPETIDAS')
+		//Acá sí analiza el caso 1 (único elemento), no hay repetidos
+     sino 	
+
+		Si está_ordenada(prim) entonces
+		 	//depurar
+		   	P:=PRIM
+			Mientras P <> ULT hacer
+			    Si *p.dato = *(*p.prox).dato entonces
+                    eliminar(p)
+			    finsi
+			    P:=*P.prox
+			fin mientras
+			//fin depurar
+		   Escribir ('ÉXITO, la lista ha sido depurada')
+		sino
+			Escribir ('ERROR la lista no está ordenada')
+		fin si
+	 fin si
+	fin si 
+
+FIN ACCION
+
+
