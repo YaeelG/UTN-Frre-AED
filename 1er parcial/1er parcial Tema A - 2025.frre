@@ -1,0 +1,178 @@
+//! Modelo 1er Parcial AED
+
+/*
+* Ejercicio 1 - Presentado por profesores en clase
+
+
+    Durante la Feria del Libro se relevó información sobre las editoriales participantes y los libros que presentan. Los  datos fueron almacenados en dos secuencias de caracteres, las cuales deben ser procesadas para obtener distintos  informes. 
+    
+    Datos de Entrada 
+    A. Secuencia de Editoriales: 
+        Cada editorial está representada de la siguiente manera: 
+            - Nombre de la editorial 
+                (cantidad indeterminada de caracteres, finaliza con ‘&’) 
+            - Provincia 
+                (2 caracteres que representan un número del ‘01’ al ‘23’) 
+
+            Ejemplo: Planeta&01Sudamericana&03... 
+    
+    B. Secuencia de Libros: 
+        Por cada editorial hay una cantidad indeterminada de libros, separados por el carácter ‘@’. Cada libro contiene los  siguientes campos: 
+            - Tema (1 carácter): 
+                L = Literatura / 
+                C = Ciencia / 
+                A = Autoayuda y desarrollo personal / 
+                I = Infantiles 
+            - Cantidad de páginas: (3 caracteres, por ejemplo 245) 
+            - Nombre del libro: (cantidad indeterminada de caracteres, finaliza con ‘&’) 
+            - Resumen: texto libre (finaliza con el carácter ‘#’). 
+            Las palabras están separadas por una cantidad variable de espacios en blanco. 
+
+            Ejemplo: 
+            L245Elprincipito&Una vida a vivir y aprender.#@C120FisicaParaTodos&Conceptos basicos para jovenes.#...  
+
+    Se solicita escribir un algoritmo en pseudocódigo que permita: 
+
+    a) Generar una secuencia de salida con los nombres de los libros de tema ‘Literatura’ (tema = ‘L’) que tengan más  de 200 y hasta 300 páginas inclusive. 
+
+    b) Para cada editorial, informar la longitud promedio de los resúmenes, expresada en cantidad de palabras (una  palabra se define como una secuencia de caracteres alfabéticos, separada por espacios en blanco). 
+    
+    c) Indicar en qué provincia se encuentra la editorial con mayor cantidad de libros presentados. En caso de ser necesario, escribir una función auxiliar para convertir secuencias de caracteres a valores numéricos. 
+*/
+
+Accion Parcial_Ej1 es
+
+    AMBIENTE
+        Editoriales, libros, literaturas: secuencia de caracteres
+        e, lib, p1, p2: caracter
+        mayor, clib, cpal, cpag, i: entero
+
+    PROCESO
+        Arrancar(Editoriales)
+        Arrancar(Libros)
+
+        Crear(Literatura)
+
+        Avanzar(Editoriales, e)
+        Avanzar(Libros, lib)
+
+        Mayor := 0
+
+        Mientras NoFDS(Editoriales) hacer //* Sec EDITORIALES---------
+            Escribir('Editoriales:')
+
+            Mientras e <> '&'  hacer //? --Nombre de Editorial--------
+                Escribir(e)
+                Avanzar(Editoriales, e)
+            Fin_Mientras
+
+            Avanzar(Editoriales, e) //Salto el & y estoy en el primer caracter de provincia
+
+            clip := 0
+            cpal := 0
+
+            Mientras lib <> '@' hacer     //* Sec LIBROS------------
+                clib := clib + 1
+                
+                Si lib := 'L'  entonces  //? --Tema-----------
+                    //solo nos interesaaa Literatura para nuestra secuencia de salida. 
+                    Avanzar(Libros, lib)
+
+                    cpag := 0
+
+                    //Ahora quiero tomar los tres caracteres(que son números) de la cantidad de páginas de la secuencia Libros y volverlos un solo número entero.
+                    Para i:=1 a 3 hacer //? --Cantidad de Páginas--------
+                        cpag := cpag * 10 + convaDig(lib) 
+                        //Se asume una funcion que convierte el caracter a entero, o hacemos unosotro una función que lo haga. 
+                        //Las funciones devuelven un valor, los procedimientos no.
+
+                        Avanzar(Libros, lib)
+                    fin_Para
+
+                                        //? --Nombre Libro--------
+                    Si (cpag > 200) y (cpag <= 300) entonces 
+
+                        Mientras lib <> '&' hacer
+                            escribir(Literatura, lib) //guardar nombre del libro en la secuencuencia de salida Literatura
+                            Avanzar(Libros, lib)
+                        Fin_Mientras
+
+                        Escribir(Literatura, '$'); //Separar nombre libros
+
+                    Sino    //si no tiene de 200 hasta 300 páginas no lo guardo en la sec de salida
+                        Mientras lib <> '&' hacer   
+                            Avanzar(Libros, lib)
+                        Fin_Mientras
+                    fin_si
+
+                Sino //Salto los temas que no sean igual a L
+                    Mientras lib <> '&' hacer   
+                        Avanzar(Libros, lib)
+                    Fin_Mientras
+                fin_si
+
+                Avanzar(Libros, lib)  //Salto el &
+
+                Mientras lib <> '#' hacer  //? --Resumen libro--------
+                    
+                    Mientras lib = ' ' hacer //salto los espacios en blanco del texto
+                        Avanzar(Libros, lib)
+                    Fin_Mientras
+
+                    cpal := cpal + 1 //Cuento la siguiente palabra. Estoy Asumiendo que está bien construida, que no hay espacios repetidos
+
+                    Mientras (lib <> ' ') y (lib <> '#') hacer //Avanzo la palabra
+                        Avanzar(Libros, lib)
+                    Fin_Mientras
+                Fin_Mientras
+
+            Fin_Mientras     //* termino de analizar Sec LIBROS-------
+
+            Avanzar(Libros, lib) / Salto el @
+
+            Escribir('Promedio de palabras de resumenes:', cpal/clib) //punto b)
+
+            //Punto c) :
+            //Si contador libros es mayor que la variaable mayor...
+            //En la primer iteración mayor=0 entonces si o si entro al si
+            Si clib > mayor entonces //? --Provincia Editoriales--------
+                mayor := clib
+                p1 := e
+
+                Avanzar(Editoriales, e) //Estoy en el segundo caracter del número de la provincia, en la sec Editoriales
+
+                p2 := e 
+
+                //p1 es el 1er caracter,  p2 es el 2do caracter
+            Sino
+                Avanzar(Editoriales, e)
+            Fin_Si
+
+            Avanzar(Editoriales, e) //Avanzo a la proima editorial
+
+        Fin_Mientras       //* termino de analizar Sec Editoriales-------
+
+        Escribir('La mayor cantidad de libros es:', mayor, 'y la provincia ese:', p1, p2) //out: La mayor cantidad de libros es: 25 y la provincia ese: 03
+
+        CERRAR(Editoriales)
+        CERRAR(Libro)
+        CERRAR(Literatura)
+
+Fin_Accion
+
+
+ 
+
+
+
+
+
+
+
+                    
+
+
+
+
+                
+
