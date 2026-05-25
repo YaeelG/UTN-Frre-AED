@@ -1,0 +1,119 @@
+//! Práctica  2025
+/*
+
+Secuencia Jugadores:
+  UEFA-Real Madrid-Luka Modric*3801#Vinicius Jr*2402#Jude Bellingham*2103#%
+  Manchester City-Kevin De Bruyne*3304#Erling Haaland*2405#Phil Foden*2306#%$
+ CONMEBOL-Fluminense-Germán Cano*3607#André Trindade*2208#%Boca Juniors-Edinson Cavani*
+ 3709#Luis Advíncula*3410#%$*
+ 
+  Confederación-
+    NomEquipo-
+    NomJugador*Edad(2)NroJugador(2)#
+    NomJugador*Edad(2)NroJugador(2)#
+    NomJugador*Edad(2)NroJugador(2)#%
+    NomEquipo-
+    NomJugador*Edad(2)NroJugador(2)#
+    NomJugador*Edad(2)NroJugador(2)#
+    NomJugador*Edad(2)NroJugador(2)#%$
+  
+ 
+Secuencia Estadística:
+  Goles(2caracteres)Asistencias(2caracteres)MinutosJugado(4caracteres)TarjetasAmarillas(1caracter)TarjetasRojas(1caracter)#...
+  0101027000#0403031210#0201024500#0501030010#0600028001#* 
+
+*/
+
+
+
+ACCION MODELO_PARCIAL ES 
+ AMBIENTE 
+  SecJ: Secuencia de Caracter
+  SecE: Secuencia de Caracter
+  SecS: Secuencia de Caracter
+  v1,v2: Caracter
+  
+  cantgol, cantasis: Entero 
+ 
+  FUNCION ConvertirCarEnt(x:Caracter): Entero es 
+   Segun x hacer 
+    "0": ConvertirCarEnt:= 0
+    "1": ConvertirCarEnt:= 1
+    "2": ConvertirCarEnt:= 2
+    ...
+    ...
+    "9": ConvertirCarEnt:= 9
+   FinSegun  
+  FinFuncion
+  
+  
+ PROCESO 
+  ARR(SecJ), AVZ(Secj,v1)
+  ARR(SecE), AVZ(SecE,v2)
+  CREAR(SecS)
+  
+  
+  Mientras NFDS(Secj) y NFDS(SecE) hacer 
+   jugconamarillas:=0  //3) ?????
+   
+    Mientras v1 <> "$" hacer //marca de fin de equipo
+      Mientras v1 <> "-" hacer //SecJ: Confederación-------------
+       AVZ(Secj,v1)
+      FinMientras
+      
+      AVZ(SecJ,v1) 
+      
+      Mientras v1 <> "-" hacer //SecJ: NombreEquipo----------------
+       ESC(SecS,v1)   //Guardo en la Secuencia de salida
+       Escribir(v1)  //Así imprimimos en pantalla el nombre del equipo
+       AVZ(Secj,v1)
+      FinMientras 
+      
+      AVZ(SecJ,v1) // Me quede posicion en el primer caracter del nombre del jugador! 
+      
+      acumedad:=0
+      totjugxequip:=0
+      
+      Mientras v1 <> "%" hacer 
+       //SecE: Goles(2) ---------------------------------
+       cantgol:= ConvertirCarEnt(v2) * 10
+       AVZ(SecE,v2)
+       cantgol:= cantgol + ConvertirCarEnt(v2)
+       
+       //SecE: Asistencias(2) -------------------------------
+       AVZ(SecE,v2)
+       cantasis := ConvertirCarEnt(v2) * 10
+       AVZ(SecE,v2)
+       cantasis:= cantasis + ConvertirCarEnt(v2)
+      
+        Si cantasis >= 1 y cantgol >= 1 entonces
+          //el jugador pasa a la lista de salida!
+          
+          Mientras v1 <> "*" hacer  //SecJ: Nombre Jugador----------------
+           ESC(SecS,v1)  //Guarda Nombre del jugador en SecS
+           AVZ(Secj,v1)
+          FinMientras
+          AVZ(SecJ, v1)  //avanzamos al primer caracter de edad, edad tiene 2 caracteres
+          
+          ESC(SecS, "_") 
+         
+        Sino 
+          Mientras v1 <> "*" hacer 
+           AVZ(SecJ,v1)
+          FinMientras
+          AVZ(SecJ, v1)  //avanzamos al primer caracter de edad, edad tiene 2 caracteres
+        FinSi 
+        
+         //trabajar la edad del jugador!
+        Para i:=1 hasta 2 hacer //2)
+          acumedad := acumedad*10 + ConvertirCarEnt(v1)
+          AVZ(SecJ, v1)
+        Fin_para
+        totjugxequip := totjugxequip + 1
+        
+         
+      FinMientras //Termina de analizarse un Equipo completo
+      Escribir("Promedio de edad de los jugadores", acumedad/totjugxequip) 
+    FinMientras //Termina de analizarse toda la confederación 
+    
+  FinMientras
