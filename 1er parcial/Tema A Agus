@@ -1,0 +1,139 @@
+// Tema A 2025 - por Agustin Medina
+
+Accion Ej 1 -1er PARCIAL – Julio 2025 TEMA A es 
+
+ AMBIENTE 
+  SecE, SecL, SecS: Secuencia de Caracter 
+  v1,v2: Caracter 
+  
+  NroPag: Entero 
+  
+  prom: Real 
+  cantpal,cantlib: Entero
+  
+  FUNCION ConvertirCarEnt(x:Caracter): Entero es 
+   Segun x hacer 
+    "0": ConvertirCarEnt:= 0
+    "1": ConvertirCarEnt:= 1
+    "2": ConvertirCarEnt:= 2
+    ...
+    ...
+    "9": ConvertirCarEnt:= 9
+   FinSegun  
+  FinFuncion
+  
+ 
+ 
+ // Ejemplo: Planeta&01Sudamericana&03...
+ // Ejemplo: L245Elprincipito&Una vida a vivir y aprender.#@C120FisicaParaTodos&Conceptos basicos para jovenes.#...
+ 
+ 
+ PROCESO 
+ 
+  ARR(SecE); AVZ(SecE, v1)
+  ARR(SecL); AVZ(SecL, v2) 
+  
+  CREAR(SecS)
+  
+  libromax:=0
+  Mientras NDFS(SecE) y NFDS(SecL) hacer 
+   cantpal:= 0
+   Mientras v2 <> "@" hacer 
+          
+    Si v2 = "L" entonces 
+     AVZ(SecL, v2) //2459
+     NroPag:=0 // 24
+     
+     Para i:= 1 hasta 3 hacer 
+      NroPag:= NroPag * 10 + ConvertirCarEnt(v2)
+      AVZ(SecL, v2)
+     FinPara
+     
+     Si NroPag > 200 y NroPag <= 300 entonces
+      //Copiar el titulo a la Salida!
+      Mientras v2 <> "&" hacer 
+       ESC(SecS,v2)
+       AVZ(SecS,v2)
+      FinMientras
+      
+      AVZ(SecS,v2)
+      
+      Mientras v <> "#" hacer 
+       Mientras v<> " " y v<> "#" hacer 
+        AVZ(SecS,v2)
+       FinMientras 
+       
+       cantpal:= cantpal + 1
+       
+       Mientras v = " "  hacer 
+        AVZ(SecS,v2)
+       FinMientras 
+      FinMientras
+      
+     sino 
+      Mientras v2 <> "&" hacer 
+       AVZ(SecS,v2)
+      FinMientras
+      AVZ(SecS,v2)
+      Mientras v <> "#" hacer 
+       Mientras v<> " " y v<> "#" hacer 
+        AVZ(SecS,v2)
+       FinMientras 
+       cantpal:= cantpal + 1
+       Mientras v = " "  hacer 
+        AVZ(SecS,v2)
+       FinMientras 
+      FinMientras
+     FinSi 
+      
+    sino 
+     Para i:= 1 hasta 4 hacer 
+      AVZ(SecL, v2) 
+     FinPara 
+     Mientras v2 <> "&" hacer 
+       AVZ(SecS,v2)
+     FinMientras
+     AVZ(SecS,v2)
+     Mientras v <> "#" hacer 
+      Mientras v<> " " y v<> "#" hacer 
+       AVZ(SecS,v2)
+      FinMientras 
+      cantpal:= cantpal + 1
+      Mientras v = " "  hacer 
+       AVZ(SecS,v2)
+      FinMientras 
+     FinMientras 
+    FinSi 
+    cantlib:= cantlib + 1
+    AVZ(SecL,v2)   
+   FinMientras
+   
+   Mientras v1 <> "&" hacer 
+    ESC(v1)
+    AVZ(SecE,v1)
+   FinMientras
+   prom:= cantpal/cantlib
+   ESC("Promedio de palabras de resumen de la editorial:", prom)
+   AVZ(SecE,v1)
+   Si cantlib > libromax entonces
+    prov:= ConvertirCarEnt(v1)*10
+    AVZ(SecE,v1)
+    prov:= prov + ConvertirCarEnt(v1)
+    AVZ(SecE,v1)
+    libromax:= cantlib
+    provmax:= prov
+   sino 
+    AVZ(SecE,v1)
+    AVZ(SecE,v1)
+   FinSi 
+   AVZ(SecE,v1) 
+  
+  FinMientras 
+ 
+  ESC("La Editorial con mayor cantidad de libros se encuentra en la Provincia:", provmax)
+ 
+  CERRAR(SecE)
+  CERRAR(SecL)
+  CERRAR(SecS) 
+ 
+FINACCION

@@ -1,0 +1,44 @@
+// Ejercicio 2.2.3
+
+Accion biblioteca es
+	AMBIENTE
+		Socio = Registro
+			nro_socio: entero
+			nro_rel: entero 
+			AyN: AN(40)
+			carrera: ('ISI', 'IEM', 'IQ', 'LAR')
+			domicilio: AN(70)
+			cant_uni_prestadas: N(2)
+		fin_registro
+		
+		Arch_soc: Archivo de Socio
+		Reg_soc: Socio
+		
+		Arch_sal: Archivo de Socio
+		Reg_sal: Socio
+		
+	PROCESO
+		Abrir E/ (Arch_soc)
+		Leer(Arch_soc, Reg_soc)
+		Abrir /S(Arch_soc)
+		
+		Mientras NoFDA(Arch_soc) hacer
+			Si (Reg_soc.carrera = 'ISI') entonces
+				
+				//Guardo en la secuencia de salida solo si Reg_soc.cant_uni_prestadas es mayor que 4 unidades (libros que sacaron de la biblioteca)
+				
+				//Reg_soc.cant_uni_prestadas: accede a Reg_soc y dentro accede al campo cant_uni_prestadas
+				
+				Si (Reg_soc.cant_uni_prestadas > 4) entonces
+					escribir(Arch_sal, Reg_soc)
+				Fin_si
+				Leer(Arch_soc, Reg_soc)
+			Fin_si
+		Fin_Mientras
+		
+		Cerrar(Arch_soc)
+		Cerrar(Arch_sal
+Fin_Accion
+	
+	
+		

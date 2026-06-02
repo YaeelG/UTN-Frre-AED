@@ -117,15 +117,12 @@ Accion Funcion_cuadrat_mult11 es
 
 
         Funcion mult_11  (n: entero): logico es
-        	// La lógica en esto es que, el número de ejemplo, 5481 para ver si es multiplo de 11 hacemos:
-        	// 5 + 4 = 8 + 1  ==Despejo==>  0 = -5 -4 +8 +1
-        
             AMBIENTE
                 invertir = -1 //al multiplicar ppor opeación cambia el signo
                 operacion: entero
                 sum: entero
             PROCESO
-                multi_11 := falso //??? Esto creo que no va si no la funcion va a devolver falso y no va a procesar todo lo otro.
+                multi_11 := falso
                 operación := 1 //inicializo operacion en positivo???
                 sum := 0
 
@@ -136,7 +133,7 @@ Accion Funcion_cuadrat_mult11 es
                 HASTA QUE (n=0)
 
                 si sum = 0 entonces
-                    multi_11 := verdadero 
+                    multi_11 := verdadero
                 finsi
         Fin_Funcion
 
@@ -228,4 +225,5 @@ Accion MultiFcCuadratica es
 
                     nro := nro div 10
                 Fin_Mientras
-  // . . .
+
+                

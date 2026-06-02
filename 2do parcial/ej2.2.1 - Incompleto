@@ -1,0 +1,37 @@
+// Clase 27/05/2026
+
+
+Accion Ej2_2_1
+	AMBIENTE
+		
+	PROCESO
+			Abrir E/ (Alumnos)
+			...
+			Abrir /S(Sal_iem)
+			
+			Mientras NoFDA(ALumnos) hacer
+				Escribir(Reg_alu.NroLeg, Reg_alu.ApyNomm, Reg_alu.DNI, Reg_alu.Carrera)
+				
+				Si Reg_alu.Carrera = 'ISI' entonces
+					Reg_sal := Reg_alu  //Solo se puede hacer si el formato es el mismo
+				
+				Sino
+					si Reg_alu.Carrera = 'IEM? entonces
+						Reg_iem.ApyNom := Reg_alu.ApyNom
+						Reg_iem.NroLeg := Reg_alu.NroLeg
+						Reg_iem.DNI := Reg_alu.DNI
+						Escirbir(Sal_iem, Reg_iem)
+					Fin_si
+				Fin_si
+				
+				Leer(Alumnos, Reg_alu)
+			Fin_mientras
+			
+			Cerrar(Alumnos)
+
+Fin_accion
+			
+			
+	
+	
+	

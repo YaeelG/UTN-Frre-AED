@@ -1,0 +1,41 @@
+// Clase 27/05/2026
+
+// Ejercicio 2.2.2
+//Con este ejercicio la profesora Ilse muestra cómo podemos crear un registro contenido, un registro fecha, al qué luego preguntaremos al usuario que valores asignar. 
+
+Accion Ej2.2.2 es
+	AMBIENTE
+		Fecha = registro
+			aa, mm, dd: entero
+		fin_registro
+		
+		Fact = registro
+			nro: entero
+			fe_fact: Fecha
+			Imp: Real
+		fin_registro
+		
+		Arch_f: Archivo de factura
+		Reg_f: factura
+		
+		Fe_us: Fecha //Fecha usuario
+		
+	PROCESO
+		Abrir E/(Arch_f)
+		Leer(Arch_f, Reg_f)
+		
+		Escribir("Ingrese fecha deseada, día, mes y año")
+		Leer(Fe_us.dd, Fe_us.mm, Fe_us.aa)
+		
+		Mientras Nofda(Arch_f)
+			Si(Reg_f.fe_fact > Fe_us) y (Reg_f.Imp < 1000) entonces
+				Escribir(Reg_f.nro, Reg_f.fe_fact.dd, '/', Reg_f.fe_fact.mm, '/', Reg_f.fe_fact.aa, Reg_f.Imp)
+			fin_si
+			
+			Leer(Arch, Reg_f)
+		fin_mientras
+		
+		Cerrar()
+		
+	Fin_accion
+		

@@ -1,0 +1,172 @@
+//! Práctica  2025
+/*
+  La FIFA desea analizar la participación de los jugadores por equipo en el Mundial de
+  Clubes. Para ello cuenta con dos secuencias de caracteres:
+
+  SECUENCIA_JUGADORES:
+
+    Confederación-NombreEquipo-NombreJugador*Edad(2)NroJugador(2)#NombreJugado
+    r*Edad(2)NroJugador(2)#...%NombreEquipo-NombreJugador*….$Confederación-..
+    
+    El guión - separa Confederaciones y nombre del equipo, El nombre del jugador termina con
+    *, Confederación finaliza con $, Equipo finaliza con %, jugador termina con #, Por cada
+    confederación existen varios equipo y por cada equipo existen varios jugadores
+  
+    Ejemplo secuencia jugadores: UEFA-Real Madrid-Luka Modric*3801#Vinicius
+    Jr*2402#Jude Bellingham*2103#%Manchester City-Kevin De Bruyne*3304#Erling
+    Haaland*2405#Phil Foden*2306#%$CONMEBOL-Fluminense-Germán Cano*3607#André
+    Trindade*2208#%Boca Juniors-Edinson Cavani*3709#Luis Advíncula*3410#%$*
+
+  SECUENCIA_ESTADISTICAS:
+    Goles(2caracteres)Asistencias(2caracteres)MinutosJugados(4caracteres)Tarje
+    tasAmarillas(1caracter)TarjetasRojas(1caracter)#...
+
+    0101027000#0403031210#0201024500#0501030010#0600028001#*
+
+  Se pide:
+
+    1. Generar una secuencia de salida con los Equipos (al final del nombre poner un “/”) y
+    sus Jugadores que hayan tenido al menos un gol y una asistencia, separando los
+    jugadores con “_” y los equipos con “%” (Suponer que si o si todos los equipos tienen al
+    menos un jugador que cumple la condición)
+    NombreEquipo/NombreJugador_..._NombreJugador_%NombreEquipo/NombreJugador_..._%*
+
+    2. Informar por pantalla el promedio de edad de los jugadores por cada equipo. 
+    EJ
+    (Real madrid 23,4)
+
+    3. Informar cuántos jugadores tuvieron más de tres amarillas por confederación
+
+
+
+
+  Secuencia Jugadores:
+    UEFA-Real Madrid-Luka Modric*3801#Vinicius Jr*2402#Jude Bellingham*2103#%
+    Manchester City-Kevin De Bruyne*3304#Erling Haaland*2405#Phil Foden*2306#%$
+    CONMEBOL-Fluminense-Germán Cano*3607#André Trindade*2208#%Boca Juniors-Edinson Cavani*3709#Luis Advíncula*3410#%$*
+  
+    Confederación-
+      NomEquipo-
+      NomJugador*Edad(2)NroJugador(2)#
+      NomJugador*Edad(2)NroJugador(2)#
+      NomJugador*Edad(2)NroJugador(2)#%
+      NomEquipo-
+      NomJugador*Edad(2)NroJugador(2)#
+      NomJugador*Edad(2)NroJugador(2)#
+      NomJugador*Edad(2)NroJugador(2)#%$
+    
+  
+  Secuencia Estadística:
+    Goles(2caracteres)Asistencias(2caracteres)MinutosJugado(4caracteres)TarjetasAmarillas(1caracter)TarjetasRojas(1caracter)#...
+    0101027000#0403031210#0201024500#0501030010#0600028001#* 
+
+*/
+
+
+
+ACCION MODELO_PARCIAL ES 
+AMBIENTE 
+  SecJ: Secuencia de Caracter
+  SecE: Secuencia de Caracter
+  SecS: Secuencia de Caracter
+  v1,v2: Caracter
+    
+  cantgol, cantasis: Entero 
+ 
+  FUNCION ConvertirCarEnt(x:Caracter): Entero es 
+    Segun x hacer 
+      "0": ConvertirCarEnt:= 0
+      "1": ConvertirCarEnt:= 1
+      "2": ConvertirCarEnt:= 2
+      ...
+      ...
+      "9": ConvertirCarEnt:= 9
+    FinSegun  
+  Fin_Funcion
+  
+  
+PROCESO 
+  ARR(SecJ), AVZ(Secj,v1)
+  ARR(SecE), AVZ(SecE,v2)
+  CREAR(SecS)
+  
+  
+  Mientras NFDS(Secj) y NFDS(SecE) hacer 
+    jugconamarillas:=0  //3) ?????
+   
+    Mientras v1 <> "$" hacer //marca de fin de la confederación
+      Mientras v1 <> "-" hacer //SecJ: Confederación===============
+        AVZ(Secj,v1)
+      Fin_Mientras
+      
+      AVZ(SecJ,v1) 
+      
+      Mientras v1 <> "-" hacer //SecJ: NombreEquipo================
+        ESC(SecS,v1)   //Guardo en la Secuencia de salida
+        Escribir(v1)  //Así imprimimos en pantalla el nombre del equipo
+        AVZ(Secj,v1)
+      Fin_Mientras 
+      
+      AVZ(SecJ,v1) //Me quede posicion en el primer caracter del nombre del jugador! 
+      
+      acumedad := 0
+      totjugxequip := 0
+      
+      Mientras v1 <> "%" hacer ////marca de fin de equipo
+        //SecE: Goles(2) ---------------------------------
+        cantgol:= ConvertirCarEnt(v2) * 10
+        AVZ(SecE,v2)
+        cantgol:= cantgol + ConvertirCarEnt(v2)
+        
+        //SecE: Asistencias(2) -------------------------------
+        AVZ(SecE,v2)
+        cantasis := ConvertirCarEnt(v2) * 10
+        AVZ(SecE,v2)
+        cantasis:= cantasis + ConvertirCarEnt(v2)
+        
+        Si cantasis >= 1 y cantgol >= 1 entonces
+          //el jugador pasa a la lista de salida!
+          Mientras v1 <> "*" hacer  //SecJ: Nombre Jugador ==================
+            ESC(SecS,v1)  //Guarda Nombre del jugador en SecS
+            AVZ(Secj,v1)
+          Fin_Mientras
+
+          ESC(SecS, "_")
+
+          AVZ(SecJ, v1)  //SecJ: avanzamos al primer caracter de edad, edad tiene 2 caracteres =================
+          
+        Sino 
+          Mientras v1 <> "*" hacer 
+            AVZ(SecJ,v1)
+          Fin_Mientras
+            
+          AVZ(SecJ, v1)  //SecJ: avanzamos al primer caracter de edad, edad tiene 2 caracteres
+        Fin_Si 
+          
+        //trabajar la edad del jugador!
+        Para i:=1 hasta 2 hacer //2) SecJ: Edad Jug ===============
+          acumedad := acumedad*10 + ConvertirCarEnt(v1)
+          AVZ(SecJ, v1)
+        Fin_para
+        totjugxequip := totjugxequip + 1
+
+        //Tarjeta amarrilla
+        //Quedé en 2do caracter de asistencia, si pondo 5 avanzo hasta el caracter de taerjetas amarillas
+        Para i:=1 hasta 5 hacer //SecE: Min jugados ----------------
+          AVZ(SecE, v2)
+        Fin_para
+
+        //SecE: Tarjetas Amarrillas ----------------
+        jugconamarillas := jugconamarillas + ConvertirCarEnt(v2)
+
+        //SecE: Tarjetas rojas y marca # ----------------
+        AVZ(SecE, v2)
+        AVZ(SecE, v2)
+        
+      Fin_Mientras //Termina de analizarse un Equipo completo
+
+      Escribir("Promedio de edad de los jugadores", acumedad/totjugxequip) 
+
+    Fin_Mientras //Termina de analizarse toda la confederación 
+    
+  Fin_Mientras
