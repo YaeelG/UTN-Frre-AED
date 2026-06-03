@@ -1,0 +1,140 @@
+//! Modelo 1er Parcial AED - Yael G 
+
+/*
+* Ejercicio – Análisis de múltiples funciones cuadráticas
+
+
+    Desarrollar un algoritmo que permita analizar varias funciones cuadráticas de la forma:
+*    Y = aX^2 + bX + c
+
+    Para cada función, ingresar los valores de a, b y c, 
+    y generar las coordenadas (X,Y) haciendo variar X en el intervalo [20,-20] 
+    con decrementos de 2.
+
+    Resolver considerando estas 2 opciones:
+        - Opcion 1: El algoritmo deberá solicitar inicialmente la cantidad de funciones a procesar.
+        - Opcion 2: cantidad indeterminada de funciones, el usuario indica cuando terminar
+
+    Para cada valor calculado de Y:
+
+        1. Mostrar por pantalla la coordenada correspondiente (X,Y).
+
+        2. Determinar si el valor de Y es múltiplo de 11 aplicando la siguiente propiedad:
+            Un número es divisible por 11 cuando la suma de sus dígitos alternos es igual.
+            Ejemplo:
+            Para el número 5841 --> 5 + 4 = 8 + 1
+
+        3. Informar junto a cada coordenada si el valor de Y es o no múltiplo de 11.
+
+
+    Al finalizar el procesamiento de cada función, informar:
+        - Cantidad de valores de Y múltiplos de 11.
+        - Cantidad de valores de Y no múltiplos de 11.
+    
+    Requisitos
+        - Implementar una función que reciba un número y retorne verdadero o falso según sea múltiplo de 11.
+        - Implementar al menos un procedimiento para mostrar resultados en pantalla.
+        - Considerar valores negativos de Y trabajando con su valor absoluto para verificar divisibilidad.
+*/
+
+Accion es funcCuadraticas es
+	AMBIENTE
+		a, b, c: entero  //Entrada
+		x, y: entero   //Salida
+		contym11, contyNOm11: entero  //Cant de multiplos y no multiplos de 11 en Y
+		cantfunc: entero //Cantidad de funciones para la opcion 1
+		op: entero //opcion 1 o 2
+		r: caracter
+		
+		
+		Funcion mult11(n: entero): Lógico es   //pto 1) y 1er requisito
+        	// La lógica  en esto es que, el número de ejemplo, 5481 para ver si es multiplo de 11 hacemos:
+        	// 5 + 4 = 8 + 1  ==Despejo==>  0 = -5 -4 +8 +1
+			AMBIENTE
+				signo, sum: entero
+				
+			PROCESO
+				signo := 1 //inicializo en positivo
+				sum := 0
+				
+				Repetir
+					sum := sum + (n mod 10 * signo)
+					signo := signo * (-1)   //cambio el signo del siguiente n mod 10
+					n := n div 10  //Si tengo un numero de una sola cifra me devolverá el mismo valor ya que es el resto. 5mod10= 5, 5div10= 0.
+				hasta que (n=0)
+				
+				si sum = 0 enotnces
+					mult11 := verdadero
+				Sino
+					mult11 := falso
+				fin_si
+		fin_Funcion
+		
+		Procedimiento Imprimir(x, y) es //2do requisito, pto 3) y pto 1)
+			Escribir("(x=", x, "; y=", y,")") //ej: (x=1; y=1)
+		
+			Si mult11(y) entonces
+				Escribir("Y es multiplo de 11")
+				cantym11 := cantym11 + 1
+			Sino
+				Escribir("Y no es múltiplo de 11")
+				cantyNOm11 := cantyNOm11 + 1
+			fin_si
+    	Fin_Procedimiento
+		
+			
+	
+	PROCESO
+		a := 0; b := 0; c := 0; x := 0; y := 0; //Inicializo todas las variables globales
+		
+		Escribir("Ingrese una opción")
+		Escribir("1: Ingresar cantidad de funciones a procesar.")
+		Escribir("2: Cantidad de funciones indeterminada.")
+				  
+		Leer(op)
+		
+		Si op = 1 entonces
+			Escribir("Indique la cantidad de funciones que desea procesar")
+			Leer(cantfunc)
+			
+			Para i=1 hasta cantfunc hacer
+				contym11 := 0; contyNOm11 := 0;  //Inicializo los contadores 
+				Escribir("Trabajando función nº", i)
+
+				Escribir("Ingrese los valores de a, b y c para la ecuación 'aX^2+bX+c=0'")
+				Leer(a, b, c)
+
+
+				Para x := 20 hasta -20, -2 hacer
+					y := a * (x ** 2) + b * x + c //aX^2 + bX + c=
+					Imprimir(x, y) //pto 3)
+				Fin_para
+			Fin_Para
+
+		Sino si op = 2 entonces
+			Repetir
+				Escribir("Ingrese los valores de a, b y c para la ecuación 'aX^2+bX+c=0'")
+				Leer(a, b, c)
+
+				Para x := 20 hasta -20, -2 hacer
+					y := a * (x ** 2) + b * x + c //aX^2 + bX + c=
+					Imprimir(x, y) //pto 3)
+				Fin_para
+
+				Escribir("Desea continuar? s/n")
+    			Leer(r)
+			Hasta que r = "n"
+		Sino 
+			Escribir("ERROR. Opción no disponible")
+		fin_si
+
+		//pto 3)
+		Escribir("Cantidad de Y multiplos de 11: ", cantym11)
+		Escribir("Cantidad de Y NO multiplos de 11: ", cantyNOm11)
+
+FIN_ACCION
+
+
+// En el proceso llamamos al procedimiento "Imprimir" para que imprima (x,y), "Imprimir" llama a la funcion "mult11" para evaluar si "y"(el resultado de la funcion) para la "x" actual es multiplo de 11.
+
+// Si bien lo correcto sería evaluar si sum mod 11 = 0 directamente, vamos a seguir lo que nos dice el enunciado a menos que los profesores digan otra cosa el día del examen.
