@@ -1,0 +1,129 @@
+//! Ejercicio 2.2.13 
+// Visto en clase 17/06/2026 - https://aed-frre.github.io/practica/2.2/
+
+Ambiente
+    FECHA = Registro
+        año: 1900..2099  //es un rango
+        mes: 1..12
+        dia: 1..31
+    Fin_Registro
+    
+    Reparacion = Registro
+        suc: entero
+        marca: AN(20)
+        modelo: 
+        cod_tg: entero
+        f_rep: FECHA
+        costo: real
+    Fin_Registro
+
+    Rep: archivo de Reparacion
+    tg: Reparacion
+
+    res_suc: entero;  res_mar: AN(20);  res_mod: entero;  res_trag: entero  //resguardo sucursal
+    cant_trag, cant_mod, cant_mar, cant_suc, cant_gral: entero
+    costo_trag, costo_mod, costo_mar, costo_suc, costo_gral: real
+
+
+    Procedimiento CORTE_TRAG es
+        ESCRIBIR("La cantidad de reparaciones del tragamonedas:", res_trag, "es:" cant_trag, "y el costo:", costo_trag)
+
+        cant_mod := cant_mod + cant_trag
+        costo_mod: costo_mod + costo_trag
+
+        cant_trag := 0 
+        costo_trag := 0
+
+        res_trag := tg.cod_tg             
+    Fin_Procedimiento
+
+
+    Procedimiento CORTE_MOD es
+        CORTE_TRAG
+        ESCRIBIR("La cantidad de reparaciones del modelo:", res_mod, "es:" cant_mod, "y el costo:", costo_mod)
+
+        cant_mar := cant_mar + cant_mod
+        costo_mar := costo_mar + costo_mod
+
+        cant_mod := 0
+        costo_mod := 0
+
+        res_mod := tg.modelo
+    Fin_Procedimiento
+
+    Procedimiento CORTE_MARCA es
+        CORTE_MOD
+        ESCRIBIR("La cantidad de reparaciones del modelo:", res_mar, "es:" cant_mar, "y el costo:", costo_mar)
+
+        cant_suc := cant_suc + cant_mar
+        costo_suc := costo_suc + costo_mar
+
+        cant_mar := 0
+        costo_mar := 0
+
+        res_mar := tg.modelo
+    Fin_Procedimiento
+
+    Procedimiento CORTE_SUC es
+        CORTE_MARCA
+        ESCRIBIR("La cantidad de reparaciones de la sucursal:", res_suc, "es:" cant_suc, "y el costo:", costo_suc)
+
+        cant_gral := cant_gral + cant_suc
+        costo_gral := costo_gral + costo_suc
+
+        cant_suc := 0
+        costo_suc := 0
+
+        res_suc := tg.suc
+    Fin_Procedimiento
+
+
+Proceso
+    //Inicializar_totalizadores
+    cant_trag := 0; cant_mod := 0; cant_mar := 0;  cant_suc := 0;  cant_gral := 0;
+    costo_trag := 0; costo_mod := 0; costo_mar := 0; costo_suc := 0; costo_gral := 0
+
+    //Inicializar_archivos
+    Abrir E/ (Rep); LEER(Rep, tg);
+
+    //Inicializar_resguardos
+    res_suc := 0;  res_mod := 0;  res_trag := 0; 
+
+    Mientras NOFDA(Rep) hacer
+        //Tratar_corte
+        si res_suc <> tg.suc entonces
+            CORTE_SUC
+
+        sino si res_mar <> tg.marca entonces
+            CORTE_MARCA
+
+            sino si res_trag <> tg.trag entonces
+                CORTE_TRAG
+
+                sino si res_mod <> tg.modelo entonces
+                    CORTE_MOD
+                fin_si
+
+            fin_si
+        fin_si
+
+        cant_trag := cant_trag + 1
+        costo_trag := costo_trag + tg.costo
+
+        leer(Rep, tg) //Leer_registro
+
+    fin_mientras
+
+    CORTE_SUC
+
+    //Emitir_totales
+    ESCRIBIR("La cantidad total de reparaciones es:", cant_gralm, "y el costo total:", costo_gral)
+    Cerrar (Rep)
+
+fin_accion
+                
+
+                
+
+
+            
