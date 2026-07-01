@@ -1,0 +1,71 @@
+//! Ejercicio de parcial 2025 - Tema A - Pto 2
+//* Clase 24/06/2026
+// INCOMPLETO
+
+// Solo 2 cortes por registro, en nro_estacion y tipo_vehiculo
+Accion ej2 es
+	AMBIENTE
+		FECHA = registro
+			dia: 1..31
+			mes: 1..12
+			año: 2000..2090
+		fin_registro
+		
+		//ARCHIVO A PROCESAR
+		Cargas = registros
+			nro_estacion: entero
+			tipo_vehiculo: ("SD", "SV", "UT")   
+			nro_carga: entero
+			fecha: FECHA
+			duracion_car: entero
+			costo: real
+		fin_registro
+		
+		Acar: Archivo de Cargas ordenado por nro_carga, tipo_vehiculo, nro_carga
+		car: Cargas
+		
+		//ARCH SALIDA
+		Recaudacion = registro
+			nro_estacion: entero
+			recaidacion: real
+		fin_registro
+		
+		Asal: archivo de Recaudacion
+		rec: Recaudacion
+
+		//Resguardos:
+		res_estacion: entero
+		res_vehiculo: ("SD", "SV", "UT")
+		res_nrocarga: entero
+		
+		Procedimiento CORTE_ESTACION es
+			//Acumulo costo para mi arch sal
+			
+		fin_PROCEDIMIENTO
+		
+		
+		Procedimiento CORTE_VEHICULO es
+			//"Listar" = escribir
+			
+			si res_vehiculo <> 
+			
+			// No hace falta acumular, solo reesguardar
+		fin_PROCEDIMIENTO
+		
+	PROCESO
+		//Inicializar_archivos
+    Abrir E/ (Acar); LEER(Acar, car);
+    
+    Mientras NoFDS(Acar) entonces
+    	
+    	si res_estacion <> Cargas.nro_carga entonces
+    		CORTE_ESTACION
+    		
+    	Sino si res_vehiculo <> Cargas.tipo_vehiculo entonces
+    		CORTE_VEHICULO
+    		
+    	fin_si
+    	
+    	CORTE_ESTACION
+  	fin_mientras
+  	

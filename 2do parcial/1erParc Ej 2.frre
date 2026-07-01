@@ -1,0 +1,36 @@
+//! Ejercicio de parcial 2024 - Tema A - Com D - Pto 2
+//* Clase 24/06/2026
+
+// INCOMPLETO
+
+Accion ej2 es
+	AMBIENTE
+		FECHA = registro
+			dia: 1..31
+			mes: 1..12
+			año: 2000..2090
+		fin_registro
+		
+		... = registro 
+			nro_hotel: entero
+			tipo_hab: ("IND", "DOB", "SUITE")
+			nro_reserva: entero
+			fecha_ingreso: FECHA
+			Cant_noches: entero
+			importe: real
+		fin_registro
+		
+		Arch
+		reg
+		
+		sal = registro
+		...
+		
+	PROCESO
+		Abrir E/ ()
+		Leer(Arch, reg)
+		
+		
+		Mientras NoFDS(Arch) es
+			si res_hotel <> reg.nro_hotel entonces
+				

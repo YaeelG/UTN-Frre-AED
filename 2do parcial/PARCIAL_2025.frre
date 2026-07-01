@@ -1,0 +1,116 @@
+//! Ejercicio de parcial 2025 - Tema A - Pto 2
+//* Clase 24/06/2026
+
+ACCION PARCIAL_25 ES
+AMBIENTE
+    FECHA = REGISTRO
+        AA: N(4);
+        MM: 1..12;
+        DD: 1..31; 
+    FINREGISTRO
+
+    ESTACION = REGISTRO
+        NRO_ESTACION: N(2);
+        VEHICULO: ("SD", "SV", "UT");
+        NRO_CARGA: N(3);
+        FECHA_CARGA: FECHA;
+        DURACION: 1..60;
+        COSTO: N(4,2);
+    FINREGISTRO
+
+    ARCH_ESTACION: Archivo de ESTACION ordenado por NRO_ESTACION, VEHICULO, NRO_CARGA;
+    REG_ESTACION: ESTACION;
+
+    SALIDA = REGISTRO
+        NRO_ESTACION: N(2);
+        TOTAL_UT: N(4,2); 
+    FINREGISTRO
+
+    ARCH_SAL: Archivo de SALIDA;
+    REG_SAL: SALIDA;
+
+    Tot_Vehiculo: real;   
+    Tot_Estacion: real;    
+    Tot_UT_Estacion: real; 
+    Tot_SD_Estacion: real; 
+
+    RESG_NRO_ESTACION: N(2);
+    RESG_VEHICULO: ("SD", "SV", "UT");
+
+    PROCEDIMIENTO INICIALIZAR() ES
+        Tot_Vehiculo := 0;
+        Tot_Estacion := 0;
+        Tot_UT_Estacion := 0;
+        Tot_SD_Estacion := 0;
+
+        RESG_NRO_ESTACION := REG_ESTACION.NRO_ESTACION;
+        RESG_VEHICULO := REG_ESTACION.VEHICULO;
+    FINPROCEDIMIENTO
+
+    PROCEDIMIENTO CorteVehiculo() ES
+        ESC("VEHICULO: ", RESG_VEHICULO);
+        ESC("Total recaudado en la estacion ", RESG_NRO_ESTACION, ": $", Tot_Vehiculo);
+
+        Tot_Estacion := Tot_Estacion + Tot_Vehiculo;
+
+        SI RESG_VEHICULO = "SD" ENTONCES
+            Tot_SD_Estacion := Tot_SD_Estacion + Tot_Vehiculo;
+        SINO
+            SI RESG_VEHICULO = "UT" ENTONCES
+                Tot_UT_Estacion := Tot_UT_Estacion + Tot_Vehiculo;
+            FINSI
+        FINSI
+
+        Tot_Vehiculo := 0;
+
+        RESG_VEHICULO := REG_ESTACION.VEHICULO;
+    FINPROCEDIMIENTO
+
+    PROCEDIMIENTO CorteEstacion() ES
+        CorteVehiculo();
+        ESC("ESTACION: ", RESG_NRO_ESTACION);
+        ESC("Total general recaudado: $", Tot_Estacion);
+
+        REG_SAL.NRO_ESTACION := RESG_NRO_ESTACION;
+        REG_SAL.TOTAL_UT := Tot_UT_Estacion;
+        ESC(ARCH_SAL, REG_SAL);
+
+        SI Tot_SD_Estacion > Tot_UT_Estacion ENTONCES
+            ESC("La estacion ", RESG_NRO_ESTACION, " tuvo mayor recaudaciOn en vehIculos SEDAN que en UTILITARIOS.");
+        FINSI
+
+        Tot_Estacion := 0;
+        Tot_UT_Estacion := 0;
+        Tot_SD_Estacion := 0;
+
+        RESG_NRO_ESTACION := REG_ESTACION.NRO_ESTACION;
+    FINPROCEDIMIENTO
+
+PROCESO
+    ABRIR E/(ARCH_ESTACION); ABRIR /S(ARCH_SAL);
+    LEER(ARCH_ESTACION, REG_ESTACION);
+
+    INICIALIZAR();
+
+    MIENTRAS NFDA(ARCH_ESTACION) HACER
+        SI RESG_NRO_ESTACION <> REG_ESTACION.NRO_ESTACION ENTONCES
+            CorteEstacion();
+        SINO 
+            SI RESG_VEHICULO <> REG_ESTACION.VEHICULO ENTONCES
+                CorteVehiculo();
+            FINSI
+        FINSI
+
+        SI REG_ESTACION.FECHA_CARGA.DD <= 15 ENTONCES
+            ESC("Carga en 1ra Quincena");
+            ESC("| Estacion: ", REG_ESTACION.NRO_ESTACION, "| Vehiculo: ", REG_ESTACION.VEHICULO, "| Fecha: ", REG_ESTACION.FECHA_CARGA.DD, "-", REG_ESTACION.FECHA_CARGA.MM);
+        FINSI
+
+        Tot_Vehiculo := Tot_Vehiculo + REG_ESTACION.COSTO;
+
+        LEER(ARCH_ESTACION, REG_ESTACION);
+    FINMIENTRAS
+    CorteEstacion();
+
+    CERRAR(ARCH_ESTACION); CERRAR(ARCH_SAL);
+FINACCION
