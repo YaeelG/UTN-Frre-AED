@@ -1,0 +1,121 @@
+//! Parcial 2026 - com C - TEMA B EJ2
+//* Clase 01/7/2026 - Ejercicios desarrollados por profesores
+
+ACCION EJ2 es
+    AMBIENTE
+        ...
+
+        FUNCION caracterAEntero(c: caracter): entero es
+            SEGUN c HACER
+                "0": caracterAEntero := 0
+                "1": caracterAEntero := 1
+                "2": caracterAEntero := 2
+                "3": caracterAEntero := 3
+                "4": caracterAEntero := 4
+                "5": caracterAEntero := 5
+                "6": caracterAEntero := 6
+                "7": caracterAEntero := 7
+                "8": caracterAEntero := 8
+                "9": caracterAEntero := 9
+                otros : caracterAEntero := 0
+            FIN_SEGUN
+        fin_funcion
+
+        FUNCION enteroACaracter(n: entero): caracter es
+            SEGUN n HACER
+                0: enteroACaracter := "0"
+                1: enteroACaracter := "1"
+                2: enteroACaracter := "2"
+                3: enteroACaracter := "3"
+                4: enteroACaracter := "4"
+                5: enteroACaracter := "5"
+                6: enteroACaracter := "6"
+                7: enteroACaracter := "7"
+                8: enteroACaracter := "8"
+                9: enteroACaracter := "9"
+                otros : enteroACaracter := " "
+            FIN_SEGUN
+        fin_funcion
+
+
+    PROCESO
+        totFinalesPromo := 0
+
+        ARR(SecAlumnos)
+        ARR(SecNotas)
+        CREAR(SecSalida)
+
+        AVZ(SecAlumnos, vA)
+        AVZ(SecNotas, vN)
+
+        MIENTRAS NFDS(SecAlumnos) HACER
+
+            //escribo los 5 caracteres del legajo en salida
+            //esto lo comentaron los profesores tambien, así copia todo hasta # en SecSalida:
+            //PARA i := 1 HASTA 5 HACER
+                //ESCRIBIR(SecSalida, vA)
+                //AVZ(SecAlumnos, vA)
+            //FIN_PARA
+            
+            //escribo el nombre completo en salida
+            MIENTRAS vA <> "#" HACER
+                ESCRIBIR(SecSalida, vA)
+                AVZ(SecAlumnos, vA)
+            FIN_MIENTRAS
+
+            ESCRIBIR(SecSalida, "#")  //escribo aal final #
+            AVZ(SecAlumnos, vA)
+
+            //avanzo los finales aprobados
+            PARA i := 1 HASTA 2 HACER
+                AVZ(SecAlumnos, vA)
+            FIN_PARA
+
+            finalesRend := 0 //contador de finales rendidos en 2025 el alumno
+
+            //guardo la cantidad de finales rendidos
+            PARA i := 1 HASTA 2 HACER
+                finalesRend := finalesRend * 10 + caracterAEntero(vA)
+                AVZ(SecAlumnos, vA)
+            FIN_PARA
+
+            desaprobado := 0 //contador de examen desaprobados
+            
+            //usamos las N notas que le corresponden a este estudiante
+            PARA i := 1 HASTA finalesRend HACER
+                AVZ(SecNotas, vN)
+
+                nota :=  vN
+                SI nota < 6 ENTONCES
+                    desaprobados := desaprobados + 1
+
+                SINO
+                    SI nota >= 8 ENTONCES
+                        totFinalesPromo := totFinalesPromo + 1
+                    FIN_SI
+                FIN_SI
+
+                AVZ(SecNotas, vN)
+
+                totFinalesGen := totFinalesGen + 1
+            FIN_PARA
+
+            totalDecena := desaprobado DIV 10
+            totalUnidad := desaprobado MOD 10
+            caracDecena := enteroACaracter(totalDecena)
+            caracUnidad := enteroACaracter(totalUnidad)
+
+            ESCRIBIR(SecSalida, caracDecena)
+            ESCRIBIR(SecSalida, caracUnidad)
+        FIN_MIENTRAS
+
+        SI totFinalesGen > 0 ENTONCES
+            porcentajePromo := (totFinalesPromo / totFinalesGen) * 100
+            ESCRIBIR("Porcentaje general e finales promocionados en 2025: ", porcentajePromo, "%")
+            ESCRIBIR("En el ciclo lectivo 2025 no se registraron finales promocionados en la facultad")
+        FIN_SI
+
+        CERRAR(SecAlumnos)
+        CERRAR(SecNotas)
+        CERRAR(SecSalida)
+FIN_ACCION

@@ -1,0 +1,121 @@
+//! Parcial 2026 - com C - TEMA A EJ2
+//* Clase 01/7/2026 - Ejercicios desarrollados por profesores
+
+
+ACCION ActualizarHistorialAlumnos es
+    AMBIENTE
+        SecAlumnos: secuencia de caracter
+        SecNotas: secuencia de entero
+        SecSalida: secuencia de caracter
+
+        vA, caracDecena, caracUnidad: caracter
+        vN, i, nota, totFinalesRendiddosGen: entero
+        totFinalesAprobadosGen, historico, finales, totalDecena, totalUnidad: entero
+        porcentajeAprobación: real
+        
+        FUNCION ConvertirANumero(c: caracter): entero es
+        fin_funcion
+
+        FUNCION enteroACaracter(n: entero): caracter es
+            SEGUN n HACER
+                0: enteroACaracter := "0"
+                1: enteroACaracter := "1"
+                2: enteroACaracter := "2"
+                3: enteroACaracter := "3"
+                4: enteroACaracter := "4"
+                5: enteroACaracter := "5"
+                6: enteroACaracter := "6"
+                7: enteroACaracter := "7"
+                8: enteroACaracter := "8"
+                9: enteroACaracter := "9"
+                otros : enteroACaracter := " "
+            FIN_SEGUN
+        fin_funcion
+
+
+    PROCESO
+        totFinalesRendiddosGen := 0
+        totFinalesAprobadosGen := 0
+        totalDecena := 0
+        totalUnidad := 0
+
+        ARR(SecAlumnos)
+        ARR(SecNotas)
+        CREAR(SecSalida)
+
+        AVZ(SecAlumnos, vA)
+        AVZ(SecNotas, vN)
+
+        MIENTRAS NFDS(SecAlumnos) HACER
+            
+            //guarado los 5 caracteres del legajo en salida
+            PARA i := 1 HASTA 5 HACER
+                ESCRIBIR(SecSalida vA)
+                AVZ(SecAlumnos, vA)
+            FIN_PARA
+
+            //guardo el nombre completo y agrego al final #
+            MIENTRAS vA <> "#" HACER
+                ESCRIBIR(SecSalida, vA)
+                AVZ(SecAlumnos, vA)
+            FIN_MIENTRAS
+
+            ESCRIBIR(SecSalida, "#")
+            AVZ(SecAlumnos, vA)
+
+            historico := 0 //uso para guardar y actualizar las materia
+
+            //guardo el historico de materias aprobadas del alumno
+            PARA i := 1 HASTA 2 HACER
+                historico := historico * 10 + ConvertirANumero(vA)
+                AVZ(SecAlumnos, vA)
+            FIN_PARA
+
+            finales := 0 //finales rendidos
+
+            //guardo la cantidad e finales rendidos
+            PARA i := 1 HASTA 2 HACER
+                finales := finales * 10 + ConvertirANumero(vA)
+                AVZ(SecAlumnos, vA)
+            FIN_PARA
+
+            totFinalesRendiddosGen := totFinalesRendiddosGen + finales
+            //guardo los finales rendidos del 2025
+
+            //usamos las N notas que le corresponden a este estudiante
+            nota := 0
+            PARA i := 1 HASTA finales HACER
+                AVZ(SecNotas vN)
+                nota := vN
+
+                SI nota >= 6 ENTONCES
+                    historico := historico + 1
+                    totFinalesAprobadosGen := totFinalesAprobadosGen + 1
+                FIN_SI
+
+                AVZ(SecNotas, vN)
+            FIN_PARA
+
+            totalDecena := historico DIV 10
+            totalUnidad := historico MOD 10
+            caracDecena := enteroACaracter(totalDecena)
+            caracUnidad := enteroACaracter(totalUnidad)
+
+            ESCRIBIR(SecSalida, caracDecena)
+            ESCRIBIR(SecSalida, caracUnidad)
+        FIN_MIENTRAS
+
+        SI totFinalesAprobadosGen > 0 ENTONCES
+            porcentajeAprobación := (totFinalesAprobadosGen / totFinalesRendiddosGen) * 100
+            ESCRIBIR("Porcentaje general de finales aprobados en 2025: ", porcentajeAprobación, "%")
+
+        SINO
+            ESCRIBIR("En el ciclo lectivo 2025 no se registraron finales rendidos en la facultad.")
+        FIN_SI
+
+        CERRAR(SecAlumnos)
+        CERRAR(SecNotas)
+        CERRAR(SecSalida)
+
+FIN_ACCION
+

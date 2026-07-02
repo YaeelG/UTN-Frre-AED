@@ -1,0 +1,87 @@
+//! Parcial 2026 - com C - TEMA B EJ1
+//* Clase 01/7/2026 - Ejercicios desarrollados por profesores
+
+Acción ej1 es
+
+AMBIENTE 
+    tipo_env: ("P", "N")
+    prioridad: ("E", "S") //s: estandar
+    peso, cue, costo_mayor, monto_total_empresa: real
+    cue_mayor: entero
+
+    //hay algunas variable que no declararon como...
+    total_envios, cant_s, nro_envio: entero
+    tot_costo_s, costo_final: real
+    
+    CodBinCon: entero //la variable que resive la salidad de la funcion
+
+    FUNCION DecaBin(nro: entero):entero es
+        AMBIENTE
+            nrobin, pot, resto: entero
+        PROCESO
+            nrobin := 0
+            pot := 0
+
+            MIENTRAS NRO > 0 hacer
+                resto := nro mod 2
+                nrobin := nrobin + resto * 2 ** pot
+                nro := nro div 2
+                pot := pot + 1
+            fin_mientras
+
+            DecaBin := nrobin
+    fin_funcion
+
+PROCESO
+    ESCRIBIR("Ingrese S para comenzar y N para terminar")
+    LEER(continuar)
+    costo_mayor := 0 
+    total_envios := 0
+    monto_total_empresa := 0 
+    cant_s := 0 
+    tot_costo_s := 0
+
+    MIENTRAS continuar <> "N" hacer
+        LEER(nro_envio) //otra opcio es tener un contaor
+        ESCRIBIR("Ingresee el peso, tipo de envio y prioridad")
+
+        LEER(peso, tipo_env, prioridad)
+
+        //costo_final := 0  no es necesario iniciarlizarlo dijeron en clases
+
+        SI tipo_env = "P" entonces
+            costo_final := peso * 900
+        SINO
+            costo_final := peso * 1800
+        FIN_SI
+
+
+        SI prioridad = "E" entonces
+            costo_final := costo_final * 1.03  //recargo del 3% 
+        SINO
+            costo_final := costo_final * 1.038  //recargo del 8%
+        fin_si
+        
+        CodBinCon := DecaBin(trunc(costo_final))
+
+        ESCRIBIR("Numero envio:", nro_envio)
+        ESCRIBIR("Tipo: ", tipo_env, "Prioridad: ", prioridad)
+        ESCRIBIR("Cod. binario de control:", CodBinCon)
+
+        total_envios := total_envios + 1
+        monto_total_empresa := monto_total_empresa + costo_final
+
+        //envios estandar
+        SI prioridad = "S" entonces
+            cant_s := cant_s + 1
+            tot_costo_s := tot_costo_s + costo_final
+        fin_si
+
+        ESCRIBIR("Ingrese S para comenzar y N para terminar")
+        LEER(continuar)
+    fin_mientras
+
+    ESCRIBIR("La cantidadd de envios son: ", total_envios, "y el monto total es:", monto_total_empresa)
+    ESCRIBIR("Promedioo e costo de los evios estándar: ", tot_costo_s/cant_s)
+
+fin_accion

@@ -1,0 +1,73 @@
+//! Parcial 2026 - com C - TEMA A EJ1
+//* Clase 01/7/2026 - Ejercicios desarrollados por profesores
+
+Acción ej1 es
+
+AMBIENTE
+    peso, cue costo_mayor, monto_total_empresa: real
+    tipo_env: ("N", "I")
+    prioridad: ("N", "E")
+    cue_mayor: entero
+    costo_final: entero
+
+
+    FUNCION suma_digitos(n:entero): entero es
+        AMBIENTE
+            suma:entero
+        PROCESO
+            suma:=0
+            MIENTRAS n>0 hacer
+                suma := suma + n mod 10
+                n := n div 10
+            fin_mientras
+            suma_digitos := suma
+    fin_funcion
+
+
+PROCESO
+    monto_total_empresa := 0
+    cue_mayor := 0
+    costo_mayor := 0
+     
+    ESCRIBIR("Ingrese S para comenzar y N para terminar")
+    LEER(continuar)
+
+    MIENTRAS continuar <> "N" hacer
+        ESCRIBIR("Ingrese el peso, tipo de envio y la prioridad")
+        LEER(peso, tipo_env, prioridad)}
+
+        costo_final := 0
+
+        SI tipo_env = "N" entonces
+            costo_final := peso * 1200
+        SINO
+            costo_final := peso * 2500
+        fin_si
+
+        SI prioridad = "N" entonces
+            costo_final := costo_final * 1.05  // recargo 5%
+        SINO
+            costo_final := costo_final * 1.15  // recargo 15%
+        fin_si
+
+        SD := suma_digitos(trunc(costo_final))
+        cue := random(SD)
+
+        ESCRIBIR("Código envio:", CUE, "Costo final:", costo_final)
+
+        monto_total_empresa := monto_total_empresa + costo_final
+
+        //envio mayor
+        SI costo_final > env_mayor_costo entonces //creo que quisieron poner costo_final > costo_mayor
+            cue_mayor := cue
+            costo_mayor := costo_final
+        fin_si
+
+        ESCRIBIR("Ingrese S para comenzar y N para terminar")
+        LEER(continuar)
+    fin_mientras
+
+    ESCRIBIR("El monto total recaudado es: ", monto_total_empresa)
+    ESCRIBIR("CUE Envío de mayor costo: ", cue_mayor, "con un costo de: ", costo_mayor)
+
+fin_accion

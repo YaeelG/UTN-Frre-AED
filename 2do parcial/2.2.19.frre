@@ -1,0 +1,28 @@
+//! Ejercicio 2.2.19
+//* Clase 01/7/2026
+//Ejercicios desarrollados por profesores https://aed-frre.github.io/practica/2.2/#ejercicio-2219
+//Incompleto
+
+
+ACCION FARMACIA ES
+    AMBIENTE
+        FECHA = Registro
+            año: 1900..2099
+            mes: 1..12
+            dia: 1..31
+        FIN_REGISTRO
+
+        REMEDIO = Registro
+            CLAVE = Registro
+                far: N(4)
+                medic: AN(15)
+            FIN_REGISTRO
+            cant_actual: N(4)
+            ffe_vence: FECHA
+        FIN_REGISTRO
+
+        mae
+
+
+    PROCESO
+
