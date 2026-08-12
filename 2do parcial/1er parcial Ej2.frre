@@ -2,55 +2,110 @@
 //* Clase 24/06/2026
 // INCOMPLETO
 
+/*
+	 Ejercicio Nº 2
+
+	 La red de estaciones de carga urbana para vehículos eléctricos (VE) dispone de un sistema de monitoreo que registra las sesiones de carga realizadas durante el mes de JUNIO. La información se encuentra ordenada por Número de Estación, Tipo de Vehículo, y Número de Carga, y para cada sesión de carga se registra:
+
+	 | Nro. de Estación | Tipo de Vehículo (SD, SV, UT) | Nro. Carga | Fecha de carga | Duración carga (minutos) | Costo carga |
+
+	 Nota:  SD: Sedan,  SV: SUV  y  UT: Utilitario
+
+	 Se pide escribir un algoritmo para:
+	 a) Listar todas las cargas de una fecha ingresada por el usuario.
+	 b) Mostrar el total recaudado por estación y por tipo de vehículo.
+	 c) Crear un archivo de salida que contenga, por cada estación:
+		 Número de Estación
+		 Total recaudado en vehículos tipo Sedan
+	 d) Informar cuáles son las estaciones que tuvieron mayor recaudación en vehículos tipo SUV que en vehículos tipo UTILITARIO.
+*/
+
 // Solo 2 cortes por registro, en nro_estacion y tipo_vehiculo
 Accion ej2 es
 	AMBIENTE
 		FECHA = registro
 			dia: 1..31
 			mes: 1..12
-			año: 2000..2090
+			año: 2000..2090 //o N(4)
 		fin_registro
 		
 		//ARCHIVO A PROCESAR
-		Cargas = registros
-			nro_estacion: entero
+		Carga = registros
+			nro_estacion: N(2)
 			tipo_vehiculo: ("SD", "SV", "UT")   
-			nro_carga: entero
+			nro_carga: N(4)
 			fecha: FECHA
-			duracion_car: entero
-			costo: real
+			duracion: 1..60
+			costo: Real
 		fin_registro
 		
-		Acar: Archivo de Cargas ordenado por nro_carga, tipo_vehiculo, nro_carga
-		car: Cargas
+		ACAR: Archivo de Carga ordenado por nro_estacion, tipo_vehiculo, nro_carga
+		CAR: Carga //! REG_ESTACION
 		
 		//ARCH SALIDA
 		Recaudacion = registro
-			nro_estacion: entero
-			recaidacion: real
+			nro_estacion: N(2)
+			recaudacion: real
 		fin_registro
 		
-		Asal: archivo de Recaudacion
-		rec: Recaudacion
+		AREC: archivo de Recaudacion
+		REC: Recaudacion
+
+		//Totalizadores
+		Tot_Vehiculo: real
+		Tot_Estacion: real
+		Tot_UT_Estacion: real
+		Tot_SD_Estacion: real
 
 		//Resguardos:
-		res_estacion: entero
+		res_nro_estacion: N(2)
 		res_vehiculo: ("SD", "SV", "UT")
-		res_nrocarga: entero
+
+
+		PROCEDIMIENTO INICIALIZAR() ES
+			Tot_Vehiculo := 0
+			Tot_Estacion := 0
+			Tot_UT_Estacion := 0
+			Tot_SD_Estacion := 0
+
+			res_estacion := CAR.nro_estacion
+			res_vehiculo := CAR.tipo_vehiculo
+		FIN_PROCEDIMIENTO
 		
-		Procedimiento CORTE_ESTACION es
-			//Acumulo costo para mi arch sal
-			
-		fin_PROCEDIMIENTO
-		
-		
-		Procedimiento CORTE_VEHICULO es
+		PROCEDIMIENTO CORTE_VEHICULO() ES
 			//"Listar" = escribir
+			ESC("VEHICULO: ", res_vehiculo)
+			ESC("Total recaudado en la estación ", res_nro_estacion, ": $", Tot_Vehiculo)
+
+			Tot_Estacion := Tot_Estacion + Tot_Vehiculo
+
+			SI res_vehiculo = "SD" ENTONCES
+				Tot_SD_Estacion := Tot_SD_Estacion + Tot_Vehiculo
+			SINO 
+				SI res_vehiculo = "UT" ENTONCES
+					Tot_UT_Estacion := Tot_UT_Estacion + Tot_Vehiculo
+				FIN_SI
+			FIN_SI
+
+			Tot_Vehiculo := 0
+
+			res_vehiculo := CAR.tipo_vehiculo
+		FIN_PROCEDIMIENTO
+		
+		
+		PROCEDIMIENTO CORTE_CARGA() ES
+			CORTE_VEHICULO()
+			ESC("ESTACION: ", res_nro_estacion)
+			ESC("Total general recaudado: $", Tot_Estacion)
+
+			REC.nro_estacion := 
 			
+			
+			//Acumulo costo para mi arch sal
 			si res_vehiculo <> 
 			
 			// No hace falta acumular, solo reesguardar
-		fin_PROCEDIMIENTO
+		FIN_PROCEDIMIENTO
 		
 	PROCESO
 		//Inicializar_archivos

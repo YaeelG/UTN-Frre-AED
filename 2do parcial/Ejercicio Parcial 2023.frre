@@ -1,0 +1,146 @@
+//! Ejercicio de parcial 2023 - Pto 2
+//* Clase 24/06/2026
+
+/*
+    La misma cadena de supermercados, además cuenta con un archivo secuencial con el stock de todos sus artículos con el siguiente formato:
+
+    **Stock**, ordenado por Código sucursal, Rubro y Código Artículo.
+
+    | Cod Suc N(2) | Rubro AN(20) | Cod Articulo N(5) | FechaUltRep | Stock de seguridad | Stock actual |
+    | --- | --- | --- | --- | --- | --- |
+
+
+    FechaUltRep: fecha última reposición
+
+    El stock de seguridad es el nivel mínimo de existencias que se debe mantener en almacén.
+
+    **Se le pide** escribir un algoritmo en pseudocódigo que permita:
+
+    1. Generar un informe que muestre todos los artículos (sucursal, rubro y código de artículo) cuyo stock actual esté por debajo del stock de seguridad, indicando cantidad total por sucursal, por rubro y total general.
+    2. Generar un archivo de salida que contenga la cantidad total de artículos que requieren reposición (stock actual menor a stock de seguridad) por Rubro, por cada sucursal. Debe contener: código sucursal, rubro y cantidad de artículos.
+*/
+
+//Hicieron algunas correcciones. 
+//Cambié el orden de CORTE_RUBRO() y CORTE_SUC(), primero se coloca el de menor jerarquía ya qué se lo llamará primero. También modifiqué los procedimientos en sí pero talvez haya otros detalles mal a raiz de que eso haya estado en el orden equivocado, si lo arreglo entonces anoto acá.
+//Pide como salida (pto 2) cant articulos, no cod articulos. Eso también falta.
+
+ACCION PARCIAL_23 ESCRIBIR
+    AMBIENTE
+        FECHA = REGRISTRO
+            DD: 1..31
+            MM: 1..12
+            AA: N(4)
+        FIN_REGISTRO 
+
+        STOCK = REGISTRO
+            CLAVE = REGISTRO
+                 COD_SUC: N(2)
+                 RUBRO: AN(20)
+                 COD_ARTICULO: N(5)
+            FIN_REGISTRO
+            FechaUltRep: FECHA
+            STOCK_SEGURIDAD: N(5)
+            STOCK_ACTUAL: N(5)
+        FIN_REGISTRO
+
+        ARCH_STOCK: Archivo de STOCK ordenado por CLAVE
+        REG_STOCK: STOCK
+
+        SALIDA = REGISTRO
+            COD_SUC: N(2)
+            RUBRO: AN(20)
+            CANTIDAD: N(5)
+        FIN_REGISTRO
+
+        ARCH_SAL: Archivo de SALIDA
+        REG_SAL: SALIDA
+
+        cont_rubro, cont_sucursal, cont_general: N(5)
+
+        resg_SUC: N(2)
+        resg_RUBRO: AN(20)
+        
+
+        PROCEDIMIENTO INICIALIZAR() ES
+            cont_rubro := 0
+            cont_sucursal := 0
+            cont_general := 0
+
+            resg_SUC := REG_STOCK.CLAVE.COD_SUC
+            resg_RUBRO := REG_STOCK.CLAVE.RUBRO
+        FIN_PROCEDIMIENTO
+
+        //ORDEN DE SUBACCIONES: primero se coloca el de MENOR jerarquía ya qué se lo llamará primero.
+
+        //Rubro--------------------------------------------------
+        PROCEDIMIENTO CORTE_RUBRO() ES
+            CORTE_SUC()
+            ESC("RUBRO: ", resg_RUBRO)
+            ESC("Total de artículos a reponer: ", cont_rubro)
+
+
+            
+            cont_general := cont_general + cont_rubro
+            
+            cont_rubro := 0
+            resg_RUBRO := REG_STOCK.CLAVE.RUBRO
+        FIN_PROCEDIMIENTO
+
+        //Sucursal--------------------------------------------------
+        PROCEDIMIENTO CORTE_SUC() ES
+            ESC("SUCUSAL: ", resg_SUC)
+            ESC("Total de artículos a reponer: ", cont_sucursal)
+            
+            REG_SAL.COD_SUC := resg_SUC
+            REG_SAL.RUBRO := resg_RUBRO
+            REG_SAL.CANTIDAD := cont_rubro
+            ESC(ARCH_SAL, REG_SAL)
+
+            cont_rubro := cont_rubro + corte_sucursal
+
+            cont_sucursal := 0
+            resg_SUC := REG_STOCK.CLAVE.COD_SUC
+        FIN_PROCEDIMIENTO
+
+
+
+
+    PROCESO
+        ABRIR E/ (ARCH_STOCK)
+        ABRIR S/ (ARCH_SAL)
+        LEER(ARCH_STOCK, REG_STOCK)
+
+        INICIALIZAR()
+
+        //acá los  cortes deben estar de mayor a menor jerarquía
+        MIENTRAS NFDA(ARCH_STOCK) HACER
+            SI resg_SUC <> REG_STOCK.CLAVE.COD_SUC ENTONCES
+                CORTE_SUC()
+            SINO
+                SI resg_RUBRO <> REG_STOCK.CLAVE.RUBRO ENTONCES
+                    CORTE_RUBRO()
+                FIN_SI
+            FIN_SI 
+
+            SI REG_STOCK.STOCK_ACTUAL < REG_STOCK.STOCK_SEGURIDAD ENTONCES
+                ESCRIBIR("Succurrsal: ", REG_STOCK.CLAVE.COD_SUC, " | Rubro: ", REG_STOCK.CLAVE.RUBRO, " | Artículo: ", REG_STOCK.CLAVE.COD_ARTICULO)
+
+                cont_rubro := cont_rubro + 1
+            FIN_SI
+
+            LEER(ARCH_STOCK, REG_STOCK)
+
+        FIN_MIENTRAS
+
+        CORTE_SUC()
+
+        ESCRIBIR("Total general de artículos a reponer: ", cont_general)
+
+        CERRAR(ARCH_STOCK)
+        CERRAR(ARCH_SAL)
+FIN_ACCION
+
+
+
+
+
