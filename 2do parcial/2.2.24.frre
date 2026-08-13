@@ -1,0 +1,45 @@
+
+
+// CLASE 08/07/2026 - Incompleto, clase grabada
+
+// Puede existr más de un registro por cada afiliado => Por lotes
+// De otro modo sería...
+// Existe un registro por cada afiliado => Unitario
+
+ACCION
+	AMBIENTE
+		FECHA = REGISTRO
+			dia: 1..31
+			mes: 1..12
+			año: n(4)
+		FIN_REGISTRO
+		
+		// MAESTRO
+		CostoXAfiliado = REGISTRO
+			Cod_Afiliado
+			Fecha_Alta
+			Fecha_Baja
+			cant_serv
+			costo 
+		FIN_REGISTRO
+		
+		
+		// MOVIMIENTOS
+		ServiciosSemanales = REGISTRO
+			Cod_Afiliado
+			Fecha_At
+			Cod_servicio
+			costo
+		FIN_REGISTRO
+		
+		PROCEDIMIENTO Leer_Maestro
+		PROCEDIMIENTO Leer_Moiviento
+		PROCEDIMIENTO Proceso_Movim ES
+			 SI reg_serv.Cod_servicio = 0 ENTONCES
+				// Eliminación lógica
+				Marca_registro
+				
+				// 
+			
+		
+	PROCESO

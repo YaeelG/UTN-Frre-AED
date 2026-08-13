@@ -1,0 +1,27 @@
+//! 2.3.1.a
+// Ejercicio hecho por profesores 
+// 12/08/2026
+
+ACCION 2_3_1_A ES
+	AMBIENTE
+		FECHA = REGISTRO
+			dd: 1..31
+			mm: 1..12
+			aa: 2000..2099
+		FIN_REGISTRO	
+		
+		Fact = REGISTRO
+			nro_cli: N(4)
+			nro_fact: AN(13)
+			f_fecha: FECHA
+			importe: N(6,2)
+		FIN_REGISTRO
+		
+		Cliente = REGISTRO 
+			nro_
+			
+
+MIENTRAS NFDA(
+
+
+(FOTO)

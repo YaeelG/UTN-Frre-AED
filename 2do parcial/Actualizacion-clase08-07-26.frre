@@ -1,0 +1,49 @@
+//! Clase 08/07/2026
+
+//* Ciclo excluyente
+	mientras arch1 y arch2
+	
+	si arch1 
+	si arch2 
+	
+//* Ciclo excluyente
+	mientras (reg_mae.clave <> HV) o (reg_mae.clave <> HV)
+		si
+		si
+	
+	
+//* Actualizacion secuencial
+// Archivos secuenciales solo puedo abrir en modo lectura, no puedo escribir.
+	Arch entrada: maestro, movimientos
+	arch ssalida: maestro actualizado
+	Tipos movimientos: altas, bajas, modificaciones
+	
+	Tipos de act:
+	 - Unitaria: 
+	 - Por lotes: el arch de mae y de movimientos deben tener clave y estar ordenados.
+				Varias modificaciones - una baja
+				Alta - varias modificaciones
+				Alta
+				Siempre en ese orden, siempre las altas primeros.
+				Baja una sola baja lógica o física(desaparece el registro, no lo escribo en el maestro actualizado)
+				
+				R_mae = registro
+					clave: 
+						campo1
+						campo2
+						campo3
+						marca_baja
+				fin_reg
+				
+				"fichero maestro" = "archivo maestro"
+				
+				"Maestro sin movimientos": avancé y resulta que el maestro no registra movimientos parar el maestro actual(sí para el siguiente).
+				
+				// PPT drive practica hay ejemplos de como trabajar con esto. Ejemplo de qué hacer cuando el maestro es menor que movimiento.
+				
+				
+				
+				
+	 
+	 
+	
