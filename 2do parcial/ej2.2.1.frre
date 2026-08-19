@@ -1,0 +1,80 @@
+//! Archivos
+// Clase 27/05/2026
+
+
+ACCION Ej2_2_1 ES
+	AMBIENTE
+		FECHA = registro
+			aa: entero
+			mm: 1..12
+			dd: 1..31
+		fin_registro
+
+		Alumno = registro
+			ApyNom: AN(40)
+			Carrera: ('ISI', 'IEM', 'IQ')
+			Legajo: N(6)
+			Fecha_nac: FECHA
+			Fecha_ing: FECHA
+			DNI: N(8)
+			Sexo: ('M', 'F')
+			Fecha_ult_ex: FECHA
+			nota: entero
+		fin_registro
+
+		Arch_alu, AlumnosIQ: Archivo de Alumno
+		Alu, AluIQ: Alumno
+
+		Alumno_ISI = registro
+			ApyNom: AN(40)
+			Legajo: N(6)
+			Fecha_ing: FECHA
+		fin_registro
+
+		AlumnosISI: Archivo de Alumno_ISI
+		AluISI: Alumno_ISI
+
+		
+	PROCESO
+			Abrir E/ (Arch_alu)	//Cuando vamos a solo leer el archivo
+			Leer(Arch_alu, Alu)
+			
+			Abrir /S(AlumnosIQ)  //Cuando vamos a crear un archivo
+			Abrir /S(AlumnosISI)
+
+
+			Escribir("Nro_Legajo  Apellido_Nombre  Documento  Carrera")
+
+			
+			Mientras NoFDA(Arch_alu) hacer
+				Escribir(Alu.Legajo, Alu.ApyNom, Alu.DNI, Alu.Carrera)
+				Leer(Arch_alu, Alu)
+				
+				Si Alu.Carrera = 'IQ' entonces
+					AluIQ := Alu  //Solo se puede hacer si el formato es el mismo
+					Escribir(AlumnosIQ, AluIQ)
+				
+				Sino
+					Si Alu.Carrera = 'ISI' entonces
+						AluISI.ApyNom := Alu.ApyNom
+						AluISI.Legajo := Alu.Legajo
+						AluISI.Fecha_ing := Alu.Fecha_ing
+						AluISI.DNI := Alu.DNI
+
+						Escirbir(AlumnosISI, AluISI)
+					Fin_si
+				Fin_si
+				
+				Leer(Arch_alu, Alu)
+			Fin_mientras
+			
+			Cerrar(Alumnos)
+			Cerrar(AlumnosIQ)
+			Cerrar(AlumnosISI)
+
+Fin_accion
+			
+			
+	
+	
+	
