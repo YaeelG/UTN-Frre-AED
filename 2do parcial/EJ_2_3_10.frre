@@ -1,0 +1,41 @@
+//! 2.3.10
+// Ejercicio hecho por profesores
+// 12/08/2026
+
+/*
+ DATOS
+ - A favor: 10ptos x cada $100 cargado/gastado
+ - En contra: 100pts = $100 off por carga
+
+* DIV no se puede hacer en reales!!
+
+ Carga interacriva = usuario lo cargan
+
+ Permitir al cliente aplicar descuentos = preguntarle si quiere aplicar el descuento.
+
+ fecha_sistema() Funcion inventada, para tomar la fecha actual. Es la clase de funciones que aclaran en el parcial si se puede usar o no.
+*/
+
+ACCION 2_3_10 ES
+	AMBIENTE
+		FECHA = REGISTRO
+			dd: 1..31
+			mm: 1..12
+			aa: 2000..2099
+		FIN_REGISTRO	
+		
+
+		 CLIENTE
+	PROCESO
+		Abrir E/S (Puntos)
+		" (cliente)
+		
+		ESCRIBIR('dESEA REALIZAR CARGA)
+		LEER(resp)
+		cont:= 08
+		
+		
+		MIENTRAS resp = 'S' hacer
+			ESCRIBIR('')
+			LEER(P.DNI)
+		 
