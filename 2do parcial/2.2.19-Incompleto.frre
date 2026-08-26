@@ -3,26 +3,126 @@
 //Ejercicios desarrollados por profesores https://aed-frre.github.io/practica/2.2/#ejercicio-2219
 //Incompleto
 
+/*
+    En una Empresa Farmacéutica se posee un archivo MAE_REMEDIOS (ordenado por Clave: Farmacia + Medicamento), el que se actualiza semanalmente, a traves de la información que se encuentra cargada en un archivo de MOVIMIENTOS (ordenado por Clavem: Farmacia + Medicamento, y Cod_Mov), de la siguiente forma:
 
-ACCION FARMACIA ES
+    - Si Clave (MAE_REMEDIOS) es menor que Clavem (MOVIMIENTOS), simplemente se transfieren los datos del Maestro a la salida y se graban.
+
+    - Si Clave (MAE_REMEDIOS) es igual a Clavem (MOVIMIENTOS) y el Codmov es 1, se considera error y se lista un mensaje indicando el tipo de error; pero si el Codmov es 2, entonces es un remedio que deja de fabricarse y se transfiere el registro al archivo de Remedios vencidos (REM_VENC) ; pero si el Cod_Mov es 3, se modifica la cantidad actual con la cantidad recibida.
+
+    - Si Clave (MAE_REMEDIOS) es mayor que Clavem (MOVIMIENTOS) y el Codmov es 1, se incorpora el remedio a nuestro Vademecum, considerando que la cantidad recibida configura la cantidad actual y la Fecha_Vencimiento es 30 días posterior a la fecha actual; pero si el Codmov es 2 o 3 se considera error y se deben producir los correspondientes mensajes de error.
+
+    Se considera que solo existe un registro de movimiento para cada registro del maestro.
+    * (Actualización Unitaria)
+
+
+    MAE_REMEDIOS Ordenado por Farmacia y Medicamento
+
+        Farmacia | Medicamento | Cant_Actual | Fecha_Vencimiento 
+
+
+    MOVIMIENTOS Ordenado por Farmacia, Medicamento y Cod_Mov
+
+        Farmacia | Medicamento | Cod_Mov Cant_Recibida 
+
+
+    REM_VENC Ordenado por Medicamento
+
+        Medicamento | Cant_Vencida 
+
+*/
+
+ACCION FARMACIA_2_2_19 ES
     AMBIENTE
         FECHA = Registro
             año: 1900..2099
             mes: 1..12
             dia: 1..31
-        FIN_REGISTRO
+        fin_registro
 
         REMEDIO = Registro
             CLAVE = Registro
                 far: N(4)
                 medic: AN(15)
-            FIN_REGISTRO
+            fin_registro
             cant_actual: N(4)
-            ffe_vence: FECHA
-        FIN_REGISTRO
+            fe_vence: FECHA
+        fin_registro
 
-        mae
+        mae_remedios, mae_act: archivo de remedio, ordenado por clave
+        reg_sal, reg_mae: remedio
 
+        Movimiento = Registro
+            clave = Registro
+                far: N(4)
+                medic: AN(15)
+            fin_registro
+            cod_mov: (1..3)      //1=alta, 2=bajas,  3=modif
+            cant_rec: N(3)
+        fin_registro
+
+        arch_movim: archivo de movimiento, ordenado por clave y cod_mov
+        reg_mov: Movimiento
+
+        vencidos = Registro
+            medic: AN(15)
+            cantidad: N(3)
+        fin_registro
+
+        rem_venc: archivode vencidos
+        reg_venc: vencidos
+
+        PROCEDIMIENTO Leer_Movimiento() ES
+            LEER(arch_movim, reg_mov)
+
+            Si FDA(Arch_movim) entonces
+                reg_mov.Clave := HV
+            Fin_si
+        FIN_PROCEDIMIENTO
+
+        PROCEDIMIENTO Leer_Maestro() ES
+            LEER(mae_remedios, reg_mae)
+
+            Si FDA(mae_remedios) entonces
+                reg_mov.Clave := HV
+            Fin_si
+        FIN_PROCEDIMIENTO
+
+        PROCEDIMIENTO Proceso_iguales es
+            Si reg_mov.Cod_Mov = 1 entonces
+                ESCRIBIR("Error alta no existe")
+                reg_sal := reg_mae
+            Fin_si
+        FIN_PROCEDIMIENTO
+
+        PROCEDIMIENTO Proceso_distintos es
+            
+        FIN_PROCEDIMIENTO
 
     PROCESO
+        Abrir E/(mae_remedios)
+        Abrir E/(arch_movim)
+        Abrir /S(mae_act)
+        Abrir /S(rem_venc)
+
+        Leer_Maestro
+        Leer_Movimiento
+
+        Mientras (reg_mae.Clave <> HV) o (reg_mov.Clave <> HV) hacer
+            Si reg_mae.Clave < reg_mov.Clave entonces
+                reg_sal := reg_mae
+                ESCRIBIR(mae_act, reg_sal)
+                Leer_Maestro
+                
+            Sino Si reg_mae.Clave = reg_mov.Clave entonces
+                Proceso_iguales 
+                
+                Sino Proceso_distintos //clave mae > clave mov
+                Fin_si
+            Fin_si
+        Fin_Mientras
+
+        https://youtu.be/e9MB-YY6JBc?list=PLizIqQiDw5tc2nKPdIy7kJvdys_OZnVX5&t=5995
+
+
 
