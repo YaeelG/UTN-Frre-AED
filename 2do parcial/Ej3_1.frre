@@ -1,0 +1,83 @@
+//! Ejercicio 3.1 guía online 
+// 26/08/2026
+// Resuelto por profesores
+
+Accion ej 3.1 es
+	AMBIENTE 
+		A: arreglo de [1..100] de entero
+		i, posmin, posmax, contpar, acumpar: entero
+		//min, max: entero
+
+	PROCESO
+		Para i:=1 a 100 hacer
+			Escribir("Ingrese la posición", i, "del arreglo")
+			Leer(A[i])
+		fin_para
+
+		min := A[1]
+		max := A[1]
+		contpar := 0
+		acumpar := 0
+		posmax := 1
+		posmin := 1
+		
+		Para i := 1 a 100 hacer
+			Si A[1] > max entonces
+				//max := A[i]
+				posmax := 1
+			Sino 
+				Si A[i] < min entonces
+					//min := A[1]
+					posmin := 1
+				fin_si
+			fin_si
+
+			Si A[i] MOD 2 = 0 entonces
+				contpar := contpar + 1
+				acumpar := acupar + A[1]
+			fin_si
+		fin_para
+
+		Escribir("El mayor es", A[posmax], "y esta es la pos", posmax)
+		Escribir("El menor es", A[posmin], "y esta es la pos", posmin)
+
+		Escribir("La cantidad de )
+Fin_accion
+
+
+// Proceso 2
+//Me perdí, creo que me falta algo de acá. Depués lo... arreglo xd
+	PROCESO
+		Para i:=1 a 100 hacer
+			Escribir("Ingrese la posición", i, "del arreglo")
+			Leer(A[i])
+
+		contpar := 0
+		acumpar := 0
+		posmax := 1
+		posmin := 1
+		
+		Para i := 1 a 100 hacer
+			Escribir("Ingrese la posición", i, "del arreglo")
+			Leer(i)
+			
+			Si A[1] > max entonces
+				posmax := 1
+			Sino 
+				Si A[i] < min entonces
+					posmin := 1
+				fin_si
+			fin_si
+
+			Si A[i] MOD 2 = 0 entonces
+				contpar := contpar + 1
+				acumpar := acupar + A[1]
+			fin_si
+		fin_para
+
+		Escribir("El mayor es", A[posmax], "y esta es la pos", posmax)
+		Escribir("El menor es", A[posmin], "y esta es la pos", posmin)
+
+		Escribir("La cantidad de pares es", contpar)
+		Escribir("La suma de los pares es", acumpar)
+Fin_accion
