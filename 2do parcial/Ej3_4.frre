@@ -35,7 +35,7 @@ PROCESO
 		Sino
 			Sal[j] := A[i]
 			j := j+1   //Ahora nuestra salida queda ordenada y los espacios "vacios"(que en este caso como inicialicé no son indefinidos sino que valen 0) quedan al final.
-			A[i] := 0  //o también propusieron A[i] := A[i]*3
+			A[i] := A[i]*3
 		Fin_si
 	Fin_para
 
