@@ -1,0 +1,175 @@
+//! Ejercicio 2.2.19
+//* Clase 01/7/2026
+//Ejercicios desarrollados por profesores https://aed-frre.github.io/practica/2.2/#ejercicio-2219
+
+/*
+    En una Empresa Farmacéutica se posee un archivo MAE_REMEDIOS (ordenado por clave: Farmacia + Medicamento), el que se actualiza semanalmente, a traves de la información que se encuentra cargada en un archivo de MOVIMIENTOS (ordenado por clavem: Farmacia + Medicamento, y cod_mov), de la siguiente forma:
+
+    - Si clave (MAE_REMEDIOS) es menor que clavem (MOVIMIENTOS), simplemente se transfieren los datos del Maestro a la salida y se graban.
+
+    - Si clave (MAE_REMEDIOS) es igual a clavem (MOVIMIENTOS) y el Codmov es 1, se considera error y se lista un mensaje indicando el tipo de error; pero si el Codmov es 2, entonces es un remedio que deja de fabricarse y se transfiere el registro al archivo de Remedios vencidos (REM_VENC) ; pero si el cod_mov es 3, se modifica la cantidad actual con la cantidad recibida.
+
+    - Si clave (MAE_REMEDIOS) es mayor que clavem (MOVIMIENTOS) y el Codmov es 1, se incorpora el remedio a nuestro Vademecum, considerando que la cantidad recibida configura la cantidad actual y la Fecha_Vencimiento es 30 días posterior a la fecha actual; pero si el Codmov es 2 o 3 se considera error y se deben producir los correspondientes mensajes de error.
+
+    Se considera que solo existe un registro de movimiento para cada registro del maestro.
+    * (Actualización Unitaria)
+
+
+    MAE_REMEDIOS Ordenado por Farmacia y Medicamento
+
+        Farmacia | Medicamento | Cant_Actual | Fecha_Vencimiento 
+
+
+    MOVIMIENTOS Ordenado por Farmacia, Medicamento y cod_mov
+
+        Farmacia | Medicamento | cod_mov | Cant_Recibida 
+
+
+    REM_VENC Ordenado por Medicamento
+
+        Medicamento | Cant_Vencida 
+
+*/
+
+ACCION FARMACIA_2_2_19 ES
+    AMBIENTE
+        FECHA = Registro
+            año: 1900..2099
+            mes: 1..12
+            dia: 1..31
+        fin_registro
+
+        //REMEDIOS-----------------------------------------
+        REMEDIO = Registro
+            clave = Registro
+                far: N(4)
+                medic: AN(15)
+            fin_registro
+            cant_actual: N(4)
+            fe_vence: FECHA
+        fin_registro
+
+        mae_remedios, mae_act: archivo de remedio, ordenado por clave
+        reg_sal, reg_mae: remedio
+
+        //MOVIMIENTO-----------------------------------------
+        Movimiento = Registro
+            clave = Registro
+                far: N(4)
+                medic: AN(15)
+            fin_registro
+            cod_mov: (1..3)      //1=alta, 2=bajas,  3=modif
+            cant_rec: N(3)      //Cant recibida
+        fin_registro
+
+        arch_movim: archivo de movimiento, ordenado por clave y cod_mov
+        reg_mov: Movimiento
+
+        //VENCIDOS-----------------------------------------
+        vencidos = Registro
+            medic: AN(15)
+            cantidad: N(3)
+        fin_registro
+
+        rem_venc: archivo de vencidos
+        reg_venc: vencidos
+
+
+        PROCEDIMIENTO Leer_Movimiento() ES
+            LEER(arch_movim, reg_mov)
+
+            Si FDA(Arch_movim) entonces
+                reg_mov.clave := HV
+            Fin_si
+        FIN_PROCEDIMIENTO
+
+
+        PROCEDIMIENTO Leer_Maestro() ES
+            LEER(mae_remedios, reg_mae)
+
+            Si FDA(mae_remedios) entonces
+                reg_mov.clave := HV
+            Fin_si
+        FIN_PROCEDIMIENTO
+
+
+        PROCEDIMIENTO Proceso_iguales es
+            Si reg_mov.cod_mov = 1 entonces
+                ESCRIBIR("Error alta no existe")
+                reg_sal := reg_mae
+                ESCRIBIR(mae_act, reg_sal)
+                
+            Sino si reg_mov.cod_mov = 3 entonces
+                //Proceso Modificación maestro
+                reg_sal := reg_mae //copiamos todo el registro del maestro completo a la salida
+                reg_sal.cant_actual := reg_sal.cant_actual + reg_mov.cant_rec
+                //Luego a la cantidad en stock le sumamos la cant recibida de medicamentos nuevos
+
+                ESCRIBIR(mae_act, reg_sal)
+                
+                Sino //Eliminacion fisica
+                    //y guardamos el medicamento en el archivo de medicamentos vencidos.
+                    reg_venc.medic := reg_mae.clave.medic
+                    reg_venc.cantidad := reg_mae.clave.cant_actual
+                    ESCRIBIR(rem_venc, reg_venc)
+                Fin_si
+            Fin_si
+            Leer_Maestro()
+            Leer_Movimiento()
+        FIN_PROCEDIMIENTO
+
+
+        PROCEDIMIENTO Proceso_distintos es
+            Si reg_mov.cod_mov = 2 entonces
+                ESCRIBIR("Error baja no existe")
+
+            Sino si reg_mov.cod_mov = 3 entonces
+                ESCRIBIR("Error modificación no existe")
+
+                Sino   //Si ALTA entonces asigna campo por campo
+                    reg_sal.clave := reg_mov.clave
+                    reg_sal.cant_actual := reg_mov.cant_rec
+                    reg_sal.fe_vence := fecha_sistema() + 30
+
+                    ESCRIBIR(mae_act, rec_sal)
+                Fin_si
+            Fin_si
+            
+            Leer_Movimiento()
+        FIN_PROCEDIMIENTO
+
+
+    PROCESO
+        Abrir E/(mae_remedios)
+        Abrir E/(arch_movim)
+        Abrir /S(mae_act)
+        Abrir /S(rem_venc)
+
+        Leer_Maestro()
+        Leer_Movimiento()
+
+        Mientras (reg_mae.clave <> HV) o (reg_mov.clave <> HV) hacer
+            Si reg_mae.clave < reg_mov.clave entonces
+                reg_sal := reg_mae
+                ESCRIBIR(mae_act, reg_sal)
+                Leer_Maestro()
+                
+            Sino Si reg_mae.clave = reg_mov.clave entonces
+                Proceso_iguales()
+                
+                Sino Proceso_distintos //clave mae > clave mov
+                Fin_si
+            Fin_si
+        Fin_Mientras
+
+
+        CERRAR(mae_remedios)
+        CERRAR(arch_movim)
+        CERRAR(mae_act)
+        CERRAR(rem_venc)
+Fin_accion
+
+        https://youtu.be/e9MB-YY6JBc?list=PLizIqQiDw5tc2nKPdIy7kJvdys_OZnVX5&t=5995
+
+
+
