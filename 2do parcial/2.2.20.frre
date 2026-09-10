@@ -1,0 +1,59 @@
+//! Ejercicio 2.2.24
+// CLASE 08/07/2026        
+// Resuelto en clase
+
+// https://www.youtube.com/watch?v=9guq11_WVkE&list=PLizIqQiDw5tc2nKPdIy7kJvdys_OZnVX5&index=16 
+
+
+Accion Ej2_2_20 es
+    AMBIENTE
+		FECHA = REGISTRO
+			dd: 1..31
+			mm: 1..12
+			aa: N(4)
+		FIN_REGISTRO
+		
+		//MAESTRO --------------------------------------
+        Alu = Registro
+            nroleg: N(5)
+            fechaNac: FECHA
+            AyN: AN(30)
+            carrera: AN(3)
+            fechaIng: Fecha
+            dni: N(8)
+            sexo: ("M", "F")
+            nota: N(2)
+            FecUltAp: FECHA
+        Fin_registro
+        
+        ArchAlu, ArchSal: Archivo de Alu ordenado por nroleg
+        RegAlu, RegSal: Alu
+
+        //MOVIMIENTO --------------------------------------
+        Examen = Registro
+            nroleg: N(5)
+            FecEx: FECHA
+            carr: AN(3)
+            CodMat: N(5) 
+            nota: N(2)
+        Fin_registro
+
+        ArchEx: Archivo de Examen ordenado por nroleg y FecEx
+        RegEx: Examen
+
+
+        //SUBACCIONES-------------------------------------------------------
+
+        PROCEDIMIENTO ProcesosIguales es
+            aux := RegAlu
+
+            Mientras (RegAlu.nroleg = RegEx.nroleg) hacer
+
+                Si (RegEx.nota >= 6) y RegEx.FecUltAp > aux
+                //aux?? no hay declarado aux en el ambiente
+        Fin_Procedimiento
+
+
+    PROCESO
+
+Fin_accion

@@ -1,45 +1,168 @@
+//! Ejercicio 2.2.24
+// CLASE 08/07/2026
+// Resuelto en clase
 
-
-// CLASE 08/07/2026 - Incompleto, clase grabada
-
-// Puede existr más de un registro por cada afiliado => Por lotes
-// De otro modo sería...
-// Existe un registro por cada afiliado => Unitario
+//Puede existir más de un registro por cada afiliado => Por lotes
+//De otro modo sería...
+//Existe un registro por cada afiliado => Unitario
 
 ACCION
 	AMBIENTE
 		FECHA = REGISTRO
-			dia: 1..31
-			mes: 1..12
-			año: n(4)
+			dd: 1..31
+			mm: 1..12
+			aa: N(4)
 		FIN_REGISTRO
 		
-		// MAESTRO
-		CostoXAfiliado = REGISTRO
-			Cod_Afiliado
-			Fecha_Alta
-			Fecha_Baja
-			cant_serv
-			costo 
+		//MAESTRO --------------------------------------
+		CostosXAfiliado = REGISTRO
+			Cod_afiliado: N(4)
+			Fecha_alta: FECHA
+			Fecha_baja: FECHA
+			cant_serv: N(3)
+			costo: N(6, 2)
 		FIN_REGISTRO
 		
+		Salida, Costos: Archivo de CostosXAfiliado, ordenado por Cod_afiliado
+		reg_costos, aux, reg_sal: CostosXAfiliado
 		
-		// MOVIMIENTOS
+		//MOVIMIENTOS ----------------------------------
 		ServiciosSemanales = REGISTRO
-			Cod_Afiliado
-			Fecha_At
-			Cod_servicio
-			costo
+			Cod_afiliado: N(4)
+			Fecha_Atencion: FECHA
+			Cod_servicio: N(3)
+			costo: N(5, 2)
 		FIN_REGISTRO
-		
-		PROCEDIMIENTO Leer_Maestro
-		PROCEDIMIENTO Leer_Moiviento
+
+		Servicios: Archivo de ServiciosSemanales, ordenado por Cod_afiliado y Fecha_Atencion
+		reg_serv: ServiciosSemanales
+
+
+		//SUBACCIONES --------------------------------------------------------
+
+		PROCEDIMIENTO Leer_Movimiento ES
+			Leer(Servicios, reg_serv)
+
+			Si FDA(Servicios) entonces
+				reg_serv.Cod_afiliado := HV
+			Fin_si
+		Fin_Procedimiento
+
+		PROCEDIMIENTO Leer_Maestro ES
+			Leer(Costos, reg_costos)
+
+			Si FDA(Costos) entonces
+				reg_costos.Cod_afiliado := HV
+			Fin_si
+		Fin_Procedimiento
+
+		/*
+		PROCEDIMIENTO Marcar_registro es 
+			//En vez de asteriscos, se puede asignar la fecha del día, o cualquier otro dato, según el problema
+			Aux.Marca_baja := "*"
+		Fin_acción
+		*/
+
+		PROCEDIMIENTO Proceso_modif_maestro ES
+			Si reg_serv.Cod_afiliado <> "" entonces
+				//No se actualizan los campos claves
+				Aux.Cod_afiliado := reg_serv.Cod_afiliado
+			Fin_si
+
+			Si reg_serv.Fecha_alta <> "" entonces
+				Aux.Fecha_alta := reg_serv.Fecha_alta
+			Fin_si
+
+			Si reg_serv.Fecha_baja <> "" entonces
+				Aux.Fecha_baja := reg_serv.Fecha_baja
+			Fin_si
+
+			Si reg_serv.cant_serv <> "" entonces
+				Aux.cant_serv := reg_serv.cant_serv
+			Fin_si
+
+			Si reg_serv.Fecha_alta <> "" entonces
+				Aux.costo := reg_serv.costo
+			Fin_si
+		Fin_Procedimiento
+
+
 		PROCEDIMIENTO Proceso_Movim ES
-			 SI reg_serv.Cod_servicio = 0 ENTONCES
-				// Eliminación lógica
-				Marca_registro
-				
-				// 
+			 Si reg_serv.Cod_servicio = 0 entonces
+				//Eliminación lógica
+				//Marca_registro()     Si Tuviera que poner una marca de baja
+				aux.Fecha_baja := reg_serv.Fecha_Atencion
+
+			Sino
+				Si reg_serv.Cod_servicio > 1 entonces
+					//Modificación 
+					Proceso_modif_maestro()
+					aux.costo := aux.costo + reg_serv.costo
+					aux.cant_serv := aux.cant_serv + 1
+				Sino 
+					ESCRIBIR("Error, no se puede dar alta")
+				Fin_si
+			Fin_si
+		Fin_Procedimiento
 			
 		
 	PROCESO
+		Abrir_archivos()
+		Leer_Maestro()
+		Leer_Movimiento()
+
+		Mientras (reg_serv.Cod_afiliado <> HV) o (reg_serv.Cod_afiliado <> HV) hacer
+
+			Si reg_costos.Cod_afiliado < reg_serv.Cod_afiliado entonces
+				//maestro sin movimiento
+				reg_sal := reg_costos
+				ESCRIBIR(Salida, reg_sal)
+
+				Leer_Maestro
+			Sino 
+				//Movimiento
+				Si reg_costos.Cod_afiliado = reg_serv.Cod_afiliado entonces 
+					aux := reg_costos
+
+					Mientras (aux.Cod_afiliado = reg_serv.Cod_afiliado) hacer
+						Proceso_Movim()
+						Leer_Movimiento()
+					Fin_mientras
+
+					reg_sal := aux
+					
+					ESCRIBIR(Salida, reg_sal)
+					Leer_Maestro()
+
+				Sino
+					//Movimiento sin maestro.  1 alta y 0-1 modif/Bajas
+					Si reg_serv.Cod_servicio = 1 entonces  //Nuevo afiliado - alta
+						aux.Cod_afiliado :=  reg_serv.Cod_afiliado
+						aux.Fecha_alta := reg_serv.Fecha_Atencion
+						aux.Fecha_baja := null
+						aux.cant_serv := 0
+						aux.costo := 0
+
+						Leer_Movimiento()
+
+						Mientras (aux.Cod_afiliado = reg_serv.Cod_afiliado) hacer
+							Proceso_Movim()
+							Leer_Movimiento()
+						Fin_mientras
+
+						reg_sal := aux
+						ESCRIBIR(Salida, reg_sal)
+
+					Sino
+						ESCRIBIR("Error, no se puede modif ni baja")
+					Fin_si
+				Fin_si
+			Fin_si
+		Fin_mientras
+
+			CERRAR(Costos)
+			CERRAR(Salida)
+			CERRAR(Servicios)
+Fin_accion
+
+						
