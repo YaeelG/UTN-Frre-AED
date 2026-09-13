@@ -10,18 +10,48 @@ ACCION 2_3_1_A ES
 			aa: 2000..2099
 		FIN_REGISTRO	
 		
-		Fact = REGISTRO
+		Factura = REGISTRO
 			nro_cli: N(4)
-			nro_fact: AN(13)
-			f_fecha: FECHA
-			importe: N(6,2)
+			nro_fact: N(10)
+			f_fact: FECHA
+			importe: N(9,2)
 		FIN_REGISTRO
+
+		Facturas: archivo de Factura ordenado por nro_cli y nro_fact
+		fac: Factura
 		
 		Cliente = REGISTRO 
-			nro_
-			
+			nro_cli: N(5)
+			nombre: AN(30)
+			dni: N(8)
+			cuit: N(11)
+			domic: N(40)
+		FIN_REGISTRO
 
-MIENTRAS NFDA(
+		Clientes: archivo de Cliente indexado por nro_cli
+		cli: Cliente
 
+	
+	PROCESO
+		Abrir E/ (Facturas); Abrir E/ (Clientes)
 
-(FOTO)
+		ESCRIBIR("Nro. Clientes   Nombre Cliente   Nro. Factura")
+		LEER(Facturas, fac)
+
+		MIENTRAS NFDA(Facturas) HACER
+			cli.nro_cli := fac.nro_cli
+
+			LEER(Clientes, cli)
+
+			Si Existe entonces
+				ESCRIBIR(cli.nro_cli, " ", cli.nombre, "", fac.nro_fact)
+			Sino 
+				ESCRIBIR("No tenemos ese cliente")
+			Fin_si
+
+			LEER(Facturas, fac)
+		FIN_MIENTRAS
+
+		CERRAR(Facturas); CERRAR(Clientes)
+
+Fin_Accion

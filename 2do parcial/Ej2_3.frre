@@ -1,0 +1,77 @@
+//! 3.2
+// Ejercicio hecho en clase
+// 26/08/2026
+/*
+    Ejercicio 3.1
+
+    Para cada una de las consignas siguientes, genere un algoritmo que permita solucionarla (3 algoritmos) usando un arreglo de 100 números enteros:
+
+        1. Almacenar 100 números.
+        2. Localizar el número de mayor valor y el de menor valor, informar sus valores y sus posiciones.
+        3. Contar y sumar todos los números pares.
+*/
+
+Accion Ej3_2 es
+    AMBIENTE
+        Num: arreglo de [1..100] de entero
+        i, posmin, posmax, contpar, acumpar: entero
+
+    PROCESO
+        contpar := 0; acumpar := 0
+
+        //1. Almacenar 100 números.
+        Para i := 1 a 100 hacer
+            Escribir("Ingrese la posición", i, "del arreglo")
+            LEER(Num[i])
+        Fin_para
+
+
+        //2. Localizar el número de mayor valor y el de menor valor, informar sus valores y sus posiciones.
+        posmin := 1; posmax := 1
+
+        Para i := 1 a 100 hacer    
+            Si Num[i] > Num[posmax] entonces
+                pósmax := i
+            Sino
+                Si Num[i] < Num[posmax] entonces
+                    posmin := i
+                Fin_si
+            Fin_si
+
+            //3. Contar y sumar todos los números pares.
+            Si Num[i] MOD 2 = 0 entonces
+                contpar := contpar + 1
+                acumpar := acumpar + Num[i]
+            Fin_si
+        Fin_para
+
+        Escribir("El mayor es", Num[posmax], "y su posición es", posmax)
+        Escribir("El menor es", Num[posmin], "y su posición es", posmin)
+
+
+// Proceso v2
+        PROCESO
+        contpar := 0; acumpar := 0
+
+        //1. Almacenar 100 números.
+        //2. Localizar el número de mayor valor y el de menor valor, informar sus valores y sus posiciones.
+        posmin := 1; posmax := 1
+
+        Para i := 1 a 100 hacer    
+            Si Num[i] > Num[posmax] entonces
+                pósmax := i
+            Sino
+                Si Num[i] < Num[posmax] entonces
+                    posmin := i
+                Fin_si
+            Fin_si
+
+            //3. Contar y sumar todos los números pares.
+            Si Num[i] MOD 2 = 0 entonces
+                contpar := contpar + 1
+                acumpar := acumpar + Num[i]
+            Fin_si
+        Fin_para
+
+        Escribir("El mayor es", Num[posmax], "y su posición es", posmax)
+        Escribir("El menor es", Num[posmin], "y su posición es", posmin)

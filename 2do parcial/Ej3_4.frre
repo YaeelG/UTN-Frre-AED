@@ -3,8 +3,8 @@
 // Resuelto por profesores
 
 /*
-Ejercicio 3.4
-Considerando un arreglo de 50 números enteros, confeccione un algoritmo para resolver las siguientes consignas:
+ 	Ejercicio 3.4
+ 	Considerando un arreglo de 50 números enteros, confeccione un algoritmo para resolver las siguientes consignas:
 
     Modificar el arreglo dado, de modo que todos sus elementos sean múltiplos de 3.
     Crear otro arreglo que contenga los números que no cumplieron la condición.
@@ -22,10 +22,12 @@ AMBIENTE
 PROCESO
 	//Inicializar variables
 	cont3 := 0
+
 	//Inicializar arreglo salida
-	Para j := 1 hasta 50 hacer
+	/*Para j := 1 hasta 50 hacer
 		sal[j] := 0
 	Fin_para
+	No hace falta inicializar el arreglo porque el bloque que sigue garantiza que no queden indices indefinidos*/
 
 	j := 1
 
@@ -35,7 +37,7 @@ PROCESO
 		Sino
 			Sal[j] := A[i]
 			j := j+1   //Ahora nuestra salida queda ordenada y los espacios "vacios"(que en este caso como inicialicé no son indefinidos sino que valen 0) quedan al final.
-			A[i] := A[i]*3
+			A[i] := A[i]*3   //Lo que yo hice inciialmente fue hacer A[i]:=0 porque 0 es multiplo de 3
 		Fin_si
 	Fin_para
 

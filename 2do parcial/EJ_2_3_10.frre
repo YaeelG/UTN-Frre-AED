@@ -18,24 +18,82 @@
 
 ACCION 2_3_10 ES
 	AMBIENTE
-		FECHA = REGISTRO
-			dd: 1..31
-			mm: 1..12
-			aa: 2000..2099
-		FIN_REGISTRO	
-		
+		Punto = registro
+			DNI: N(8)
+			Cant_Puntos: N(10)
+			Ult_Carga: FECHA
+		Fin_registro
 
-		 CLIENTE
+		Puntos: archivo de Punto indeado ppor DNI
+		P: Punto
+
+		Cliente = registro
+			DNI: N(8)
+			Nombre: AN(30)
+			Edad: N(3)
+			Ciudad: AN(30)
+		Fin_registro
+
+		Clientes: archivos de Cliente indexado por DNI
+		C: cliente
+
+		cont, monto: entero
+		resp: ("s", "n")
+
 	PROCESO
-		Abrir E/S (Puntos)
-		" (cliente)
+		Abrir E/S (Puntos);  Abrir E/S (Clientes)
+		cont:= 0
 		
-		ESCRIBIR('dESEA REALIZAR CARGA)
-		LEER(resp)
-		cont:= 08
-		
-		
-		MIENTRAS resp = 'S' hacer
-			ESCRIBIR('')
+		REPETIR
+			ESCRIBIR("Ingrese DNI del cliente")
 			LEER(P.DNI)
-		 
+
+			ESCRIBIR("Ingrese monto a cargar")
+			LEER(monto)
+			LEER(Puntos, P)
+
+			Si Existe entonces
+
+				Si P.Cant_Puntos >= 100 entonces
+					Escribir("Desea usar 100 puntos para descuento?")
+					LEER(resp)
+
+					Si resp = "s" entonces
+						P.Cant_Puntos := P.Cant_Puntos - 100
+						Monto := monto - 100
+						Escribir("Nuevo monto a pagar:", monto)
+					Fin_si
+				Fin_si
+
+				P.Cant_Puntos := P.Cant_Puntos + (monto DIV 100) * 10
+				P.Ult_Carga := fechasistema()
+
+				RESCRIBIR(Puntos, P)
+
+			Sino
+				P.Cant_Puntos := (montos DIV 100) * 10
+				P.Ult_Carga := fechasistema()
+
+				Escribir(Puntos, P)  //Guardo los puntos
+
+				//Doy de ALTA nuevo usuario
+				C.DNI := P.DNI
+				Escribir("Ingrese nombre, edad, ciudad")
+				LEER(C.Nombre)
+				LEER(C.Edad)
+				LEER(C.Ciudad)
+
+				Escribir(Cliente, c)
+
+				cont := cont + 1
+			Fin_si
+
+			Escribir("Desea Continuar s/n")
+			Leer(resp)
+		HASTA QUE (resp = "n")
+
+		Escribir("La cantidad de altas fue de ", cont)
+
+		CERRAR(Clientes);  CERRAR(Puntos)
+Fin_Accion
+
