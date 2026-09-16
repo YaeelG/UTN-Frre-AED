@@ -1,0 +1,85 @@
+//! Ejercicio 3.7 guía online 
+// 26/08/2026
+// Resuelto por profesores
+
+/*
+    Ejercicio 3.7
+
+    Escribir un algoritmo que permita localizar un nombre en un arreglo de N nombres, ordenados alfabéticamente. Cada nombre puede tener, como máximo, 10 caracteres. Escriba por lo menos dos algoritmos que permitan solucionar el problema; especifique cuál de las formas considera más eficiente y por qué.
+*/
+
+Acción Ej3_7 (A: arreglo de [1..100] de AN(30)) es
+    AMBIENTE 
+        i: entero
+        nombre: AN(30)
+
+    PROCESO  //Búsqueda con centinela
+        Escribir("Ingrese nombre a buscar")
+        LEER(nombre)
+
+        //Búsqueda con centinela
+        i := 1
+
+        Mientras (i <= 100) y (A[i] <> nombre) hacer
+            i := i + 1
+        fin_mientras
+
+        Si (A[i] = nombre) entonces
+            Escribir("Se encvontró en la posición", i)
+        Sino
+            Escribir("No se encontró.")
+        Fin_si
+Fin_accion
+
+//Proceso v2   -   Búsqueda con centinela
+    PROCESO
+        Escribir("Ingrese nombre a buscar")
+        LEER(nombre)
+
+        //Búsqueda con centinela
+        i := 1
+
+        //i menor que 100, al llegar a cien sale y lo pasa a evaluar directamente el si-sino
+        Mientras (i < 100) y (A[i] <> nombre) hacer
+            i := i + 1
+        fin_mientras
+
+        Si (A[i] = nombre) entonces
+            Escribir("Se encontró en la posición", i)
+        Sino
+            Escribir("No se encontró.")
+        Fin_si
+Fin_accion
+
+//Lo que tiene el Busqueda lineal con centinela es que encuentra una coincidenciaq y sale. 
+//No sirve para encontrar varias coincidencias, en ese caso necesitaría la estructura de búsqueda lineal
+
+
+//Proceso v3   -   Búsqueda Binaria / Dicotómica
+    PROCESO
+        Escribir("Ingrese nombre a buscar")
+        LEER(nombre)
+
+        //Búsqueda Binaria
+        iz := 1
+        de := 100
+
+        cen := (iz+de) DIV 2  //Trunca el numero, 37,5=37
+
+        Mientras (iz < de) y (A[cen] <> nombre) hacer
+            Si (A[cen] > nombre) entonces
+                de := cen - 1
+            Sino
+                iz := cen + 1
+            Fin_si
+
+            cen := (iz+de) DIV 2
+
+        fin_mientras
+
+        Si (A[cen] = nombre) entonces
+            Escribir('El elemento buscado está en la posición ', cen)
+        Sino
+            Escribir ('El elemento buscado NO está en el arreglo')
+        Fin_si
+
