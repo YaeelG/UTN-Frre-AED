@@ -83,3 +83,10 @@ Fin_accion
             Escribir ('El elemento buscado NO está en el arreglo')
         Fin_si
 
+
+
+/*
+Cuál es más eficiente?
+Entre más elementos, conviene más el Binario. Pero binario necesita estar ordenado.
+
+*/

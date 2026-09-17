@@ -1,0 +1,77 @@
+//! Ejercicio 3.25 guía online 
+// 16/09/2026
+// Resuelto en clase
+
+ACCION ej3_25 es
+	AMBIENTE
+		Fecha = registro
+			aa: N(4)
+			mm: 1..12
+			dd: 1..31
+		Fin_registro
+
+		F = registro
+			Nro_fact: N(4)
+			Proveedor: 'A'..'C'
+			fe_fact: Fecha
+			nro_planta: 1..4
+			importe: real
+		Fin_registro
+
+		Arch: Archivo de F
+		reg: F
+		
+		Tot: arreglo[1..4, 'A'..'D'] de real
+		pl: 1..5   //Planta - Fila
+		pr: 'A'..'D'   //Proveedor - Columna
+
+	PROCESO
+		Abrir E/ (Arch)
+		Leer(Arch, reg)
+
+		//Inicializo la matriz
+		Para pl := 1 hasta 5 hacer
+			Para pr := 'A' hasta 'D' hacer
+				Tot[pl, pr]: 0
+			fin_para
+		fin_para
+
+		//Guardar Valores en el arreglo -------------------------
+		Mientras NoFDA(Arch) hacer
+			pl := reg.nro_planta
+			pr := reg.Proveedor
+
+			Tot(pl, pr) := Tot(pl, pr) + reg.importe
+			Tot(5, pr) := Tot(5, pr) + reg.importe
+			Tot(pl, 'D') := Tot(pl, 'D') + reg.importe
+			Tot(5, 'D') := Tot(5, 'D') + reg.importe
+			//Acumulo en las celdas correspondientes
+
+			Leer(arch, reg)
+		Fin_mientras
+
+
+		//Mostrar en pantalla------------------------
+		Escribir("")
+		Escribir("Planta  |  A  |  B  |  C  | Totales X planta")
+		
+		Para pl := 1 hasta 5 hacer
+			Si pl < 5 entonces
+				Escribir(pl)
+			Sino
+				Escribir("Totales X Proveedor") //Ult fila, 5
+			Fin_si
+		
+			Para pr := 'A' hasta 'C' hacer
+				Escribir(Tot[pl, pr])
+			fin_para
+		fin_para
+Fin_accion
+				
+/*
+También se puede asignar la 3ra dimensión a los meses del año
+
+		pl: 1..5   //Planta - Fila
+		pr: 'A'..'D'   //Proveedor - Columna
+		mes: 1..13 //?? Mes del año - hoja
+*/

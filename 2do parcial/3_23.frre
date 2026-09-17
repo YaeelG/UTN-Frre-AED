@@ -1,0 +1,72 @@
+//! Ejercicio 3.23 guía online 
+// 16/09/2026
+// Resuelto en clase
+
+ACCION ej3_23 es
+	AMBIENTE
+		temperatura: arreglo[1..4, 1..7, 1..50] de real
+		//arreglo[i,j,k]. i filas, j columnas, k hojas? 3ra dimensión.
+
+		pac, dia, lec: entero
+		max_temp, min_temp, suma_dia: real
+		dia_max, lect_max, dia_min, lect_min: entero
+
+		promedio_diarios: arreglo [1..50, 1..7] de real
+		
+		
+	PROCESO
+			//Recorrido por paciente
+			Para pac := 1 hasta 50 hacer
+
+				//Inicialización de máximos y minimos con la primera lectura de ...
+				max_temp := temperaturas[1, 1, pac] //Resguardo
+				min_temp := temperaturas[pac, 1, 1]
+				dia_max := 1
+				lect_max := 1
+				dia_max := 1
+				lect_min := 1
+
+				//Recorrida por cada una de las 4 lecturas diarias
+				Para lec := 1 hasta 4 hacer
+					//Acumulación de temperaturas para el promedio de día
+					suma_dia := suma_dia + temperatura[lec, dia, pac]
+
+					//temperatura máxima
+					Si temperatura[lec, dia, pac] > max_temp entonces
+						max_temp := temperaturas[lec, dia, pac]
+						dia_max := dia
+						lect_max := lec
+					Fin_si
+
+					//Temperatura mínima
+					Si temperatura[lec, dia, pac] < min_temp entonces
+						min_temp := temperatura[lec, dia, pac]
+						día_min := dia
+						lect_min := lec
+					Fin_si
+				Fin_para
+
+				//Calculo el promedio del día y lo asigno al nuevo arreglo
+				promedio_diarios[pac, dia] := suma_dia / 4
+
+			Fin_para
+
+			//Mostrar por pantalla las temperaturas máxima y mínimas del paciente
+			Escribir("Paciente Nº: ", pac)
+			Escribir("Temperatura máxima: ", max_temp, " ºC (Día: ", dia_max, "Lectura: ", lect_max, ")")
+			Escribir("Temperatura mínima: ", min_temp, " ºC (Día: ", dia_min, "Lectura: ", lect_min, ")")
+		Fin_para
+Fin_accion
+
+				
+
+/*
+*	Jerarquia de los PARA
+	Para paciente
+		Para lectura
+			para día
+*/
+
+
+//???individuales: Corte de control, emision, generacion y procesos estadísticos
+//COndicion para corte de control: que esté ordenado el arch

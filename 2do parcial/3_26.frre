@@ -1,0 +1,104 @@
+//! Ejercicio 3.26 guía online 
+// 16/09/2026
+// Resuelto por mi unu
+
+
+/*
+	Tarifas por zona por Kw
+		- Zona A: 0,05
+		- zona B: 0,07
+		- Zona C: 0,09
+		- Zona D: 0,13
+*/
+
+ACCION ej3_26 es
+	AMBIENTE
+		Fecha = registro
+			aa: N(4)
+			mm: 1..12
+			dd: 1..31
+		Fin_registro
+
+		F = registro
+			nro_factura: N(5)
+			nro_usuario: N(5)
+			zona: 'A'..'D'
+			f_fact: Fecha
+			consumo: real
+		Fin_registro
+
+		Arch: Archivo de F
+		reg: F
+		
+		Tot: arreglo[1..13, 'A'..'E'] de real
+		i: 1..13   //Mes - Fila
+		j: 'A'..'E'    //Zona - Columna
+
+	PROCESO
+		Abrir E/ (Arch)
+		Leer(Arch, reg)
+
+
+		//Inicializo la matriz
+		Para i := 1 hasta 13 hacer
+			Para j := 'A' hasta 'E' hacer
+				Tot[i, j]: 0
+			fin_para
+		fin_para
+
+
+		//Guardar Valores en el arreglo -------------------------
+		Mientras NoFDA(Arch) hacer
+			i := reg.f_fact.mm
+			j := reg.zona
+
+			
+			Según j hacer
+				'A': importe := reg.consumo * 0,05
+				'B': importe := reg.consumo * 0,07
+				'C': importe := reg.consumo * 0,09
+				'D': importe := reg.consumo * 0,13
+			Fin_segun
+
+			Tot[i,j] := Tot[i,j] + importe
+			Tot[13,j] := Tot[13,j] + importe
+			Tot[i,'E'] := Tot[i,'E'] + importe
+			Tot[13,'E'] := Tot[13,'E'] + importe
+
+			Escribir(Arch, reg)
+		Fin_mientras
+
+
+		//Mostrar en Pantalla -------------------------
+
+			
+			
+
+			/*
+			Según j hacer
+				'A': Tot[i,j] := Tot[i,j] + (reg.consumo * 0,05)
+				'B': Tot[i,j] := Tot[i,j] + (reg.consumo * 0,05)
+				'C': Tot[i,j] := Tot[i,j] + (reg.consumo * 0,05)
+				...
+				Otro: Tot[i,'E'] := Tot[i,'E']   //'E'
+			Fin_segun
+			*/
+
+
+
+
+			
+
+		Tot[i, j] = consumo
+		Tot[i, j] = importe
+
+
+
+		
+		/*
+		Ej 3_27
+		Total_U
+		Total_gravado
+		Total_Exento
+		Total_Iva
+		*/

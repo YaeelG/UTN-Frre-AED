@@ -1,0 +1,41 @@
+//! Ejercicio 3.9  Guia online
+//* 02/09/2026
+// Incompleto
+
+// En realidad parece que había que hacer un vector con registros, en discord enviaron la resolución 
+
+Accion Ej3_9 es
+AMBIENTE
+	// m3: arreglo [1..5, 1..5, 1..5] de entero
+	// m2: arreglo [1..5, 1..5] de entero
+	// m1: arreglo [1..5] de entero
+	m: arreglo [1..200, 1..4] de AN(20)
+	i: 1..200
+	j: 1..4
+	//x: AN(20)
+
+	ContLib: entero
+	
+	
+
+PROCESO
+	//Para i := 1 a 4 hacer
+		//Para j := 1 a 4 hacer
+		//fin_para
+	//fin_para
+
+	Para i := 1 hasta 200 hacer
+		Para j := 1 hasta 4 hacer
+        SI (j = 4) Y (m[i, j] = "Nicklaus Wirth") entonces
+						ContLib := ContLib + 1
+
+						Si (j = 2) Y (m[i, j] = "Algoritmos + Estructuras de Datos=Programa")
+
+						Fin_si
+				Fin_si
+    fin_para
+  fin_para
+
+    SI j = 0 ENTONCES
+        ESC("No se encontró el elemento")
+    FIN_SI

@@ -1,0 +1,25 @@
+//! Ejercicio 3.31
+//* 02/09/2026
+
+// Incompleto, solo explico por encima
+
+
+// Solo inicializo variables acumuladoras o contadoras
+// Arreglo[Fila, Columna]
+
+Accion Ej3_31 es
+AMBIENTE
+	E: arreglo [1..7, 1..6, 1..2, 1..7] de entero
+	
+PROCESO
+
+	Leer(Edad)	// col2  26-35  
+	Leer(Partido_A_Votar)  // col4 p4
+
+	Para i := 1 a 2 hacer
+		Para j := 1 a 7 hacer
+			Tot := Tot + E(4,2,3,j)
+		fin_para
+	fin_para
+
+	
