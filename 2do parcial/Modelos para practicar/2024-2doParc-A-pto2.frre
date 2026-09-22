@@ -34,14 +34,24 @@
 
  Accion ej2 es
     AMBIENTE
-        clientes = registro
-            id_sucursal: N(4)
-            nombre_suc: AN(30)
-            direccion: AN(30)
-            localidad: AN(30)
+        FECHA = registro
+            aa: N(4)
+            mm: 1..12
+            dd: 1..31
         Fin_registro
 
         clientes = registro
+            id_sucursal: N(4)
+            id_cliente: N(4)
+            nom_apll: AN(30)
+            saldo: real
+            fecha_alta: FECHA
+            fecha_baja: FECHA
+        Fin_registro
+
+        
+
+        sucursales = registro
             id_sucursal: N(4)
             nombre_suc: AN(30)
             direccion: AN(30)
