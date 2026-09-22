@@ -157,7 +157,7 @@ ACCION FARMACIA_2_2_19 ES
             Sino Si reg_mae.clave = reg_mov.clave entonces
                 Proceso_iguales()
                 
-                Sino Proceso_distintos //clave mae > clave mov
+                Sino Proceso_distintos() //clave mae > clave mov
                 Fin_si
             Fin_si
         Fin_Mientras

@@ -1,0 +1,214 @@
+//! Ejercicio 1 - Tema A - Com D - 2do parcial 2024
+// Manejo de archivos secuenciales, Actualización de archivos utilizando una estructura de actualización unitaria-incluyente, 
+
+//* Revisar ej 2.2.19, tmb tiene una estructura de actualización unitaria-incluyente
+
+
+/*
+    Ejercicio N° 1  
+
+    Un importante banco del país cuenta con la información de todos sus clientes en un archivo secuencial con el siguiente formato: 
+
+    
+
+    CLIENTES (ordenado por id_sucursal, id_cliente) 
+
+    id_sucursal | id_cliente | nombre y apellido | saldo a la fecha | fecha alta | fecha baja 
+
+    
+
+    Al final de cada mes, corre un proceso de actualización con todos los movimientos generados por cada cliente durante el mes. La información se encuentra en un archivo secuencial con la siguiente estructura: 
+
+    
+
+    MOVIMIENTOS (ordenado por id_sucursal, id_cliente, cod_movimiento) 
+
+    id_sucursal | id_cliente | cod_movimiento (0..99)| nombre y apellido | fecha_movimiento | monto | detalle | categoría (1..6) | tipo 
+
+    
+
+    Donde: 
+
+        cod_movimiento indica: 0 (alta de un nuevo cliente) , 99 (baja de un cliente) , y cualquier otro valor entre 1 y 98 es una transacción en la cuenta del cliente. 
+
+        detalle: indica una descripción del movimiento. 
+
+        categoria: indica la categoría del movimiento (1-Supermercado , 2-Farmacia, 3-Carniceria, 4-Transferencia, 5-Pago de servicios, 6-Otros). 
+
+        tipo: indica “I” si es un ingreso, “E” si es un egreso. 
+
+    
+
+    Se pide: 
+
+        Desarrollar un algoritmo que permita mantener actualizado el archivo CLIENTES con sus respectivos saldos. Informar por pantalla cualquier tipo de error que considere pertinente durante el proceso. 
+
+        Indicar la cantidad de clientes nuevos que se produjeron durante el proceso. 
+*/
+
+
+//v1 - CICLO DE APAREO: Ciclo incluyente
+ACCION EJ1 es
+    AMBIENTE
+        FECHA = registro
+            dd: 1..31
+            mm: 1..12
+            aa: N(4)
+        fin_registro
+
+        //MAESTRO------------------------------------------------------
+        CLIENTES = registro
+            id_sucursal: N(4)
+            id_cliente9: N(4)
+            nom_apell: AN(30)
+            saldo: real
+            f_baja: FECHA
+        Fin_registro
+
+        Arch_Clie, Clie_Act: archivo de CLIENTES ordenado por id_sucursal, id_cliente
+        clie, sal: CLIENTES
+
+        //MOVIMIENTO---------------------------------------------------
+        MOVIMIENTOS = registro
+            id_sucursal: N(4)
+            id_cliente: N(4)
+            cod_movimiento: 0..99   //Alta 0, Baja clie 99, transacción 1-98
+            nom_apell: AN(30)
+            fecha_movimiento: FECHA
+            monto: real
+            detalle: AN(200)
+            categoria: 1..6
+            tipo: ("I", "E")  //Ingreso o Egreso
+        Fin_registro
+
+        Arch_Mov: archivo de MOVIMIENTOS ordenado por id_sucursal, id_cliente
+        mov: MOVIMIENTOS
+
+        cont_clie: entero
+
+        //Subacciones --------------------------------------------------
+        //Leer archivos -------------------------------
+        Procedimiento leer_arch_clie es
+            Leer(Arch_Clie, clie)
+
+            Si FDA(Arch_Clie) entonces
+                clie.id_sucursal := HV
+            Fin_si
+        Fin_procedimiento
+
+        Procedimiento leer_arch_mov es
+            Leer(Arch_Mov, mov)
+
+            Si FDA(Arch_Clie) entonces
+                mov.id_sucursal := HV
+            Fin_si
+        Fin_procedimiento
+
+
+        //Procesos de actualización unitaria -------------------------------
+        /*Procedimiento Proceso_mod_maestro es
+            sal.saldo := mov.monto
+        Fin_procedimiento*/
+
+        Procedimiento Proceso_iguales es
+            //Cod_movimiento: Alta 0, Baja clie 99, transacción 1-98
+
+            Si mov.cod_movimiento = 0 entonces  //ALTA
+                Escribir("Error, no se puede hacer alta")
+                sal := clie
+                Escribir(Clie_Act, sal)
+                
+            Sino
+                Si (mov.cod_movimiento = 99)  //BAJA - eliminación lógica
+                    sal := clie
+                    
+                    sal.f_baja := fecha_sistema() //marcar registro dado de baja con fecha de hoy
+
+                    Escribir(Clie_Act, sal)
+                Sino                         //Transacción
+                    
+                    sal := clie
+                    //Proceso_mod_maestro() no lo uso ya que solo necesito actualizar el saldo.
+                    sal.saldo := mov.monto  
+                    Escribir(Clie_Act, sal)      
+                Fin_si
+            Fin_si
+            Leer_Maestro()
+            Leer_Movimiento()
+        Fin_procedimiento
+
+        Procedimiento Proceso_distintos es
+            //Cod_movimiento: Alta 0, Baja clie 99, transacción 1-98
+            
+            Si (mov.cod_movimiento = 99) entonces //BAJA 
+                Escribir('Error, no se puede dar de baja')
+
+            Sino
+                Si (mov.cod_movimiento = 0) enotnces //ALTA
+                    sal.id_sucursal := mov.id_sucursal
+                    sal.id_cliente := mov.id_cliente
+                    sal.nom_apell := mov.nom_apell
+                    sal.saldo := 0
+                    sal.f_baja := null
+
+                    cont_clie := cont_clie + 1 //b) cantidad de clientes nuevos
+
+                    Escribir(Clie_Act, sal)
+                Sino                            //TRANSACCIÓN
+                    ESCRIBIR("Error, no se puede dar de baja.")
+                Fin_si
+            Fin_si
+        
+            Leer_Movimiento()
+        Fin_procedimiento
+
+
+
+    PROCESO
+
+        //Inicialiar Variables
+        cont_clie := 0
+
+        //Inicialiar Archivos
+        Abrir E/ (Arch_Clie)
+        Abrir E/ (Arch_Mov)
+        Abrir /S (Clie_Act)
+
+        
+        leer_arch_clie()
+        leer_arch_mov()
+
+        //Inicializar resguardos ...................................
+
+
+        //Bucle principal - ciclo incluyente
+        Mientras (clie.id_sucursal <> HV) O (mov.id_sucursal <> HV)
+            Si (clie.id_sucursal < mov.id_sucursal) entonces
+                sal := clie
+                Escribir(Clie_Act, sal)
+                leer_arch_clie()
+
+            Sino
+                Si (clie.id_sucursal = mov.id_sucursal) entonces
+                    Proceso_iguales()
+                Sino 
+                    Proceso_distintos()
+                Fin_si
+            Fin_si
+        Fin_Mientras      
+
+        CERRAR(Arch_Clie)
+        CERRAR(Arch_Mov)
+        CERRAR(Clie_Act)
+Fin_accion
+
+
+
+
+
+
+
+
+
+//v2 - CICLO DE APAREO: Ciclo excluyente
+//No estoy captando en qué caso puedo usar el excluyente

@@ -70,27 +70,22 @@ ACCION ej3_26 es
 
 
 		//Mostrar en Pantalla -------------------------
-
-			
-			
-
-			/*
-			Según j hacer
-				'A': Tot[i,j] := Tot[i,j] + (reg.consumo * 0,05)
-				'B': Tot[i,j] := Tot[i,j] + (reg.consumo * 0,05)
-				'C': Tot[i,j] := Tot[i,j] + (reg.consumo * 0,05)
-				...
-				Otro: Tot[i,'E'] := Tot[i,'E']   //'E'
-			Fin_segun
-			*/
-
-
-
-
+		Escribir("")
+		Escribir("Mes  |  Zona A  |  Zona B  |  Zona C  | Totales X Mes")
+		
+		Para i := 1 hasta 13 hacer
+			Si i < 13 entonces
+				Escribir(i)
+			Sino
+				Escribir("Totales X Zona") //Ult fila, 13
+			Fin_si
+		
+			Para j := 1 hasta 5 hacer
+				Escribir(Tot[i,j])
+			fin_para
+		fin_para
 			
 
-		Tot[i, j] = consumo
-		Tot[i, j] = importe
 
 
 

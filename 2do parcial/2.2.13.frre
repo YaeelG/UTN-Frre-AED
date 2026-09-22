@@ -1,6 +1,18 @@
 //! Ejercicio 2.2.13 
-// Visto en clase 17/06/2026 - https://aed-frre.github.io/practica/2.2/
+// Visto en clase 17/06/2026 - https://aed-frre.github.io/practica/2.2/#ejercicio-2213
 
+
+/*
+    Un Casino de la región ha notado un incremento en los costos de las reparaciones de tragamonedas en sus sucursales. Por ello solicitó un informe con la cantidad de reparaciones y sus costos, discriminados según tragamonedas, modelo, marca, sucursal y total general.
+
+    Se dispone de un archivo REPARACIONES, con el siguiente formato. Cada registro representa la reparación de un tragamonedas, tener en cuenta que puede existir más de una reparación por tragamonedas.
+
+    REPARACIONES Ordenado por Cod_Sucursal, Marca, Modelo, Cod_Tragamonedas
+
+        Cod_Sucursal Marca Modelo Cod_Tragamonedas Fecha_Reparacion Costo_Reparacion 
+
+    Realice el algoritmo para emitir el informe con los totales solicitados
+*/
 Ambiente
     FECHA = Registro
         año: 1900..2099  //es un rango
@@ -11,13 +23,13 @@ Ambiente
     Reparacion = Registro
         suc: entero
         marca: AN(20)
-        modelo: 
+        modelo: AN(20)
         cod_tg: entero
         f_rep: FECHA
         costo: real
     Fin_Registro
 
-    Rep: archivo de Reparacion
+    Rep: archivo de Reparacion Ordenado por suc, marca, modelo, cod_tg
     tg: Reparacion
 
     res_suc: entero;  res_mar: AN(20);  res_mod: entero;  res_trag: entero  //resguardo sucursal

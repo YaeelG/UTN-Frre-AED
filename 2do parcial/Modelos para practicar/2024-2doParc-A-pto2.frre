@@ -1,0 +1,53 @@
+//! Ejercicio 2 - Tema A - Com D - 2do parcial 2024
+// Manejo de archivos indexado, procesos estadísticos y por tanto arreglos(matrices)
+
+//* Revisar ej 3.26
+
+/*
+    Ejercicio N° 2  
+    El banco ha solicitado un informe para conocer cómo se integra su cartera de clientes, agrupándolos por sucursal y categoría de cliente, a partir de los datos del archivo de CLIENTES (usar las estructuras de datos del ejercicio anterior). 
+
+    Considerando que son 15 sucursales, y la información de las sucursales se encuentra en un archivo indexado:[Salto de ajuste de texto]Sucursales (indexado por id_sucursal)  
+
+    id sucursal | nombre de la sucursal | direccion | localidad
+
+
+    La estructura del informe solicitado es la siguiente: 
+
+        Categoría diamante | Categoría oro | Categoría estándar | Totales por suc 
+        Nombre sucursal 1  | 
+        Nombre sucursal 2  | 
+        …                  | 
+        Nombre sucursal 15 | 
+        Totales x categoría| 
+
+
+        La categoría del cliente dependerá de los montos obtenidos en su saldo de la cuenta al último día del mes. 
+
+            - Montos menores a $100.000 serán de categoría estándar. 
+            - Montos menores a $1.500.000 serán de categoría oro. 
+            - Montos superiores serán de categoría diamante. 
+
+    Nota: no considerar clientes dados de baja. 
+*/
+ 
+
+ Accion ej2 es
+    AMBIENTE
+        clientes = registro
+            id_sucursal: N(4)
+            nombre_suc: AN(30)
+            direccion: AN(30)
+            localidad: AN(30)
+        Fin_registro
+
+        clientes = registro
+            id_sucursal: N(4)
+            nombre_suc: AN(30)
+            direccion: AN(30)
+            localidad: AN(30)
+        Fin_registro
+
+        tot: arreglo[1..16, 1..4] de 
+
+    PROCESO
