@@ -1,0 +1,123 @@
+//! Ejercicio de parcial, final 2022
+// 23/09/2026 (clase)
+
+//Hay otras soluciones en discord. Ojo, que hay detalles a revisar o hay puntos incompletos..
+
+/*
+	- Listado ya cargado de 50 códigos de errores(N(8)) + su descripción(AN(30))
+	- Archivo LogErrores con Fecha(dia, mes y año, usamos función fecha()), cod error(N(8))
+	- La información almacenada en este archivo:
+			- ya se encuentra validada
+			- no tiene ningún orden lógico
+			- puede contener la infor de más de un año
+
+ . Si vamos a considerar el punto 2 un corte de control entonces no necesitamos los totalizadores (totales = registro )
+
+
+
+ CÓMO USAR LA FUNCION FECHA()
+ 	o cuálquier funció predefinida, que yo no necesite desarrollar.
+ 	func fecha devuelve un registro completo(año, mes y día) 
+	
+ 	fec := funcfecha(reg_log.fecha)
+	si (fec.año = año_ingresado) ....
+ 
+*/
+
+Accion parcial es 
+  Ambiente 
+    error = registro 
+      cod_error: an(8)
+      descripcion: an(30)
+    finreg
+
+    lista: arreglo de [1..50] de error 
+
+    logErrores = registro 
+      fecha: an(10)
+      cod_error: an(8)
+    finreg
+
+    arch_log, no_procesados: archivo de logErrores 
+    reg_log, reg_nopro: logErrores 
+
+    totales = registro 
+      mes: 1..12
+      cod_error: an(8)
+      cant_error: entero 
+    finreg
+
+    arch_tot: archivo de totales 
+    reg_tot: totales 
+
+    T: arreglo de [1..13, 1..51] de entero 
+    i,j,pos_max: entero
+    aux: an(8)
+    año_ingresado: n(4)
+
+    procedimiento inicializar () es 
+      para i:= 1 hasta 13 hacer 
+        para j:= 1 hasta 51 hacer 
+          T[i,j]:= 0
+        finpara 
+      finpara 
+    finprocedimiento 
+
+    procedimiento busqueda () es 
+      i:= 1; aux:= reg_log.cod_error
+      mientras (i<50) y (list[i].cod_error <> aux) hacer 
+        i:= i+1
+      finmientras 
+      si list[i].cod_error = aux entonces 
+        j:= i 
+      sino
+        j:= 0
+      finsi 
+    finprocedimiento 
+    
+  proceso 
+    abrir e/ (arch_log); leer (arch_log, reg_log)
+    abrir /s (arch_tot); abrir /s (no_procesados)
+    inicializar ()
+    escribir ("por favor ingrese el año deseado")
+    leer (año_ingresado)
+    mientras NFDA (arch_log) hacer 
+      si procedimiento(reg_log.fecha).año = año_ingresado entonces // aca no se si esta bien implementado el procedimiento que nos dan
+        i:= procedimiento(reg_log.fecha).mes 
+        busqueda ()
+        si j <> 0 entonces 
+          T[i,j]:= T[i,j] +1
+          T[i,51]:= T[i,51] +1
+          T[13,j]:= T[13,j] +1
+          T[13,51]:= T[13,51] +1
+        finsi
+      sino 
+        reg_nopro:= reg_log
+        escribir (no_procesados, reg_nopro)
+      finsi 
+      leer (arch_log, reg_log)
+    finmientras 
+    para i:= 1 hasta 12 hacer 
+      para j:= 1 hasta 50 hacer 
+        si T[i,j] <> 0 entonces 
+          reg_tot.mes:= i 
+          reg_tot.cod_error:= list[j]
+          reg_tot.cant_error:= T[i,j]
+          escribir (arch_tot, reg_tot)
+        sino 
+          escribir ("el codigo de error", list[j], "no fue informado para el mes de", i)
+        finsi 
+      finpara 
+    finpara 
+    para i:= 1 hasta 12 hacer 
+      pos_max:= 1
+      si T[i,51] > T[pos_max,51] entonces 
+        pos_max:= i
+      finsi 
+    finpara 
+      escribir (" el mes con mayor cantidad de errores es", pos_max)
+      escribir ("la cantidad de errores registrados es de:", T[13,51])
+      cerrar (arch_log); cerrar (arch_tot); cerrar (no_procesados)
+finaccion 
+
+        

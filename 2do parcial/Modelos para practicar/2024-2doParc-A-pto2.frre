@@ -93,7 +93,8 @@
                     otro: j := 1
                 fin_segun
                 
-                //Acumulo en la matriz
+                //Cuento en la matriz
+								//cada campo es un contador
                 Tot[i,j] := Tot[i,j] + 1
                 Tot[16,j] := Tot[16,j] + 1
                 Tot[i,4] := Tot[i,4] + 1
@@ -120,3 +121,7 @@
                 Escribir(tot[i,j])
             fin_para
         Fin_para
+
+				Cerrar(Aclie)
+				Cerrar(Asuc)
+Fin_accion

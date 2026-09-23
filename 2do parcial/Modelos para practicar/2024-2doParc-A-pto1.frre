@@ -91,7 +91,7 @@ ACCION EJ1 es
         Procedimiento leer_arch_clie es
             Leer(Arch_Clie, clie)
 
-            Si FDA(Arch_Clie) entonces
+            Si FDA(Arch_Clie) entonces  //Solo el último fichero tendrá High value, entonces se puede salir del bucle principal comparando con este último registro. 
                 clie.id_sucursal := HV
             Fin_si
         Fin_procedimiento
