@@ -49,7 +49,7 @@
             fecha_baja: FECHA
         Fin_registro
 
-				Aclie: archivo de clientes ordenado por id_sucursal, id_cliente
+		Aclie: archivo de clientes ordenado por id_sucursal, id_cliente
         clie: clientes
 
         sucursales = registro
@@ -59,16 +59,64 @@
             localidad: AN(30)
         Fin_registro
 
-				Asuc: archivo de sucursales indexado por id_sucursal
-				suc: sucursales
+		Asuc: archivo de sucursales indexado por id_sucursal
+		suc: sucursales
 
         tot: arreglo[1..16, 1..4] de entero
-				i: 1..16 //filas
-				j: 1..4 //columnas
+		i: 1..16 //filas
+		j: 1..4 //columnas
 
 
     PROCESO
-				Abrir E/(clientes)
-				Abrir E/S(Sucursales) //entrada solo??
+		Abrir E/(Aclie)
+		Abrir E/S(Asuc) //entrada solo??
 
-				
+        LEER(Aclie)
+        //LEER(Asuc)     Solo necesito abrir el archivo indexado, despues leo directamente el id_sucursal del registro que necesito usar.
+
+        //Inicializo matriz
+        Para i := 1 hasta 16 hacer
+            Para j := 1 hasta 4 hacer
+                tot[i,j] := 0
+            fin_para
+        fin_para
+
+        //Guardar valores en el arreglo
+        Mientras NoFDA(Aclie) hacer
+            Si (clie.fecha_baja.aa <> 0) entonces
+                i := clie.id_sucursal
+
+                //Evaluo columnas
+                Segun clie.saldo hacer
+                    <100000: j := 3
+                    <1500000: j := 2
+                    otro: j := 1
+                fin_segun
+                
+                //Acumulo en la matriz
+                Tot[i,j] := Tot[i,j] + 1
+                Tot[16,j] := Tot[16,j] + 1
+                Tot[i,4] := Tot[i,4] + 1
+                Tot[16,4] := Tot[16,4]  + 1
+            Fin_si
+
+            Escribir(Arch, reg)
+        Fin_mientras
+
+
+        //Imprimir en pantalla
+        Escribir("Sucursales | Categoria diamante | Categoria oro | Categoria estándar | Totales por sucursal")
+        Para (i:=1 hasta 16) hacer
+            //Escribir titulos de columna de sucursales
+            Si i < 16 entonces
+                suc.id_sucursal := id
+                Escribir(suc.nombre_suc)
+            Sino
+                Escribir("Totales por Categoria")
+            fin_si
+            
+            //rellenar tabla
+            Para (j:=1 hasta 4) hacer
+                Escribir(tot[i,j])
+            fin_para
+        Fin_para
