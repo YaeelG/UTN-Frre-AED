@@ -154,14 +154,117 @@ FinAccion.
 - Recorre el arreglo desde el principio, comparando cada elemento con el valor buscado, hasta encontrarlo o llegar al final. 
 - No requiere que el arreglo esté ordenado.
 
+``` 
 Accion BUSCAR_SECUENCIAL (v: arreglo [1..n] de entero) ES;
 	Ambiente
-	buscado, i: entero;
+		buscado, i: entero;
 	Proceso
-	LEER(buscado);
-	PARA i := 1 HASTA n HACER
-	SI v[i] = buscado ENTONCES
-	Escribir("Encontrado en la posición: ", i);
-	FIN_SI;
-	FIN_PARA;
+		LEER(buscado);
+
+		PARA i := 1 HASTA n HACER
+			SI v[i] = buscado ENTONCES
+				Escribir("Encontrado en la posición: ", i);
+			FIN_SI;
+		FIN_PARA;
 FinAccion.
+``` 
+
+### Secuencial con corte anticipado
+- Si el arreglo está **ordenado**, no hace falta llegar al final
+- En cuanto v[i] es mayor o igual que x, ya se puede cortar (si no estaba antes, no está).
+
+``` 
+Accion BUSCAR_SECUENCIAL_ORDENADO (v: arreglo [1..n] de entero) ES;
+	Ambiente
+		buscado, i: entero;
+
+	Proceso
+		i := 1;
+		LEER(buscado);
+
+		MIENTRAS (i<=n) Y (v[i]<buscado) HACER
+			SI (v[i]=buscado) ENTONCES
+				Escribir("Encontrado en la posición: ", i);
+			FIN_SI;
+			
+			i := i+1;
+		FIN_MIENTRAS;
+FinAccion.
+``` 
+
+### Centinela
+``` 
+Accion BUSCAR_CENTINELA (v: arreglo [1..n] de entero) ES;
+	Ambiente
+		buscado, i: entero;
+
+	Proceso
+		LEER(buscado);
+		i := 1;
+
+		MIENTRAS (i<n) y (v[i]<>buscado) HACER
+			i := i+1;
+		FIN_MIENTRAS;
+
+		SI v[i]=buscado ENTONCES
+			Escribir("Encontrado en la posición: ", i);
+		SI_NO
+			Escribir("No se encontró.");
+		FIN_SI;
+FinAccion.
+``` 
+
+### Centinelas en arreglos ordenados
+``` 
+Accion BUSCAR_CENTINELA (v: arreglo [1..n] de entero) ES;
+	Ambiente
+		buscado, i: entero;
+
+	Proceso
+		LEER(buscado);
+		i := 1;
+
+		MIENTRAS (i<n) y (v[i]<buscado) HACER
+			i := i+1;
+		FIN_MIENTRAS;
+
+		SI v[i]=buscado ENTONCES
+			Escribir("Encontrado en la posición: ", i); 
+		SI_NO
+			Escribir("No se encontró.");
+		FIN_SI;
+FinAccion.
+``` 
+
+
+### Binaria
+- Solo funciona en arreglos ordenados. 
+- Compara el valor buscado contra el elemento del medio del rango.
+- si es igual, lo encontró; si es menor, descarta la mitad derecha; si es mayor, descarta la mitad izquierda. Repite sobre la mitad restante.
+
+``` 
+Accion BUSCAR_BINARIA (v: arreglo [1..n] de entero, x: entero) ES;
+	Ambiente
+		inicio, fin, medio: entero;
+	Proceso
+		inicio := 1; 
+		fin := n; 
+		medio := (inicio+fin) DIV 2;
+
+		MIENTRAS (inicio <= fin) Y (v[medio] <> x) HACER
+			medio := (inicio + fin) DIV 2;
+
+			SI v[medio] < x ENTONCES
+				inicio := medio + 1;
+			SI_NO
+				fin := medio - 1;
+			FIN_SI;
+		FIN_MIENTRAS;
+
+		SI encontrado ENTONCES
+			Escribir("Encontrado en la posición: ", medio);
+		SI_NO
+			Escribir("No se encontró.");
+		FIN_SI;
+FinAccion
+``` 
