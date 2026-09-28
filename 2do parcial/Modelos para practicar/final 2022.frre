@@ -4,6 +4,10 @@
 //Hay otras soluciones en discord. Ojo, que hay detalles a revisar o hay puntos incompletos..
 
 /*
+
+
+
+* NOTAS ----------------------------------------------
 	- Listado ya cargado de 50 códigos de errores(N(8)) + su descripción(AN(30))
 	- Archivo LogErrores con Fecha(dia, mes y año, usamos función fecha()), cod error(N(8))
 	- La información almacenada en este archivo:
@@ -11,7 +15,7 @@
 			- no tiene ningún orden lógico
 			- puede contener la infor de más de un año
 
- . Si vamos a considerar el punto 2 un corte de control entonces no necesitamos los totalizadores (totales = registro )
+ . Si vamos a considerar el punto 2 un corte de control entonces no necesitamos los totalizadores (totales = registro ), pero no podemos porque no está ordenado.
 
 
 
@@ -29,14 +33,14 @@ Accion parcial es
     error = registro 
       cod_error: an(8)
       descripcion: an(30)
-    finreg
+    fin_reg
 
-    lista: arreglo de [1..50] de error 
+    lista: arreglo de [1..50] de error 	
 
     logErrores = registro 
       fecha: an(10)
       cod_error: an(8)
-    finreg
+    fin_reg
 
     arch_log, no_procesados: archivo de logErrores 
     reg_log, reg_nopro: logErrores 
@@ -45,7 +49,7 @@ Accion parcial es
       mes: 1..12
       cod_error: an(8)
       cant_error: entero 
-    finreg
+    fin_reg
 
     arch_tot: archivo de totales 
     reg_tot: totales 
@@ -55,7 +59,8 @@ Accion parcial es
     aux: an(8)
     año_ingresado: n(4)
 
-    procedimiento inicializar () es 
+		//Inicializa la matriz
+    Procedimiento Inicializar_Matriz() es 
       para i:= 1 hasta 13 hacer 
         para j:= 1 hasta 51 hacer 
           T[i,j]:= 0
@@ -63,40 +68,62 @@ Accion parcial es
       finpara 
     finprocedimiento 
 
-    procedimiento busqueda () es 
-      i:= 1; aux:= reg_log.cod_error
-      mientras (i<50) y (list[i].cod_error <> aux) hacer 
-        i:= i+1
+		//Busqueda con centinela
+    Procedimiento busqueda() es 
+      i:= 1; 
+			aux:= reg_log.cod_error
+			
+      Mientras (i<50) y (list[i].cod_error <> aux) hacer 
+        i:= i+1 
       finmientras 
-      si list[i].cod_error = aux entonces 
+			
+      Si list[i].cod_error = aux entonces 
         j:= i 
-      sino
+      Sino
         j:= 0
       finsi 
     finprocedimiento 
-    
-  proceso 
-    abrir e/ (arch_log); leer (arch_log, reg_log)
-    abrir /s (arch_tot); abrir /s (no_procesados)
-    inicializar ()
-    escribir ("por favor ingrese el año deseado")
-    leer (año_ingresado)
-    mientras NFDA (arch_log) hacer 
-      si procedimiento(reg_log.fecha).año = año_ingresado entonces // aca no se si esta bien implementado el procedimiento que nos dan
-        i:= procedimiento(reg_log.fecha).mes 
-        busqueda ()
-        si j <> 0 entonces 
-          T[i,j]:= T[i,j] +1
-          T[i,51]:= T[i,51] +1
-          T[13,j]:= T[13,j] +1
-          T[13,51]:= T[13,51] +1
+
+
+	PROCESO
+    ABRIR E/ (arch_log); leer (arch_log, reg_log)
+    ABRIR /S (arch_tot); 
+		ABRIR /S (no_procesados)
+		
+    Inicializar_Matriz()
+		
+    escribir("por favor ingrese el año deseado")
+		
+    leer(año_ingresado)
+
+		//Bucle principal
+    Mientras NFDA(arch_log) hacer 
+
+			//Función dada por el enunciado, funcfecha devuelve un registro fecha(dia, mes, fecha: entero)
+			fec := funcfecha(reg_log.fecha)
+			
+      Si (fec.año = año_ingresado) entonces 
+        i := fec.mes 
+				
+        busqueda() //buscamos el cod_error del reg_log actual.
+				
+        Si j <> 0 entonces 
+          T[i,j] := T[i,j] + 1
+          T[i,51] := T[i,51] + 1
+          T[13,j] := T[13,j] + 1
+          T[13,51] := T[13,51] + 1
         finsi
-      sino 
-        reg_nopro:= reg_log
+				
+      Sino 
+        reg_nopro := reg_log
+				
         escribir (no_procesados, reg_nopro)
       finsi 
+			
       leer (arch_log, reg_log)
     finmientras 
+
+		
     para i:= 1 hasta 12 hacer 
       para j:= 1 hasta 50 hacer 
         si T[i,j] <> 0 entonces 

@@ -97,9 +97,8 @@ FIN_MIENTRAS;
 
 
 ### Selección
-- Busca el mínimo y lo coloca en la posición final, con un único intercambio.
-- o podemos buscar el máximo utilizando la misma lógica.
-
+- Busca el mínimo y lo coloca en la posición más a la izquierda, con un único intercambio.
+- o podemos buscar el máximo y lo coloca en la posición final, con un único intercambio.
 ``` 
 Acion SELECCION (v: arreglo [1..n] de entero) ES;
 	Ambiente
