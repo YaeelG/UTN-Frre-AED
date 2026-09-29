@@ -22,3 +22,7 @@
     5. Procesos estadísticos(Archivos + arreglos): Tengo que memmorizar bien la estructura, hacer un ejercicio más yo sola.
 
     6. Arreglos: dentro de todo sé usarlo.
+
+
+## Resumen teorico con algunas cosas importantes
+[Click aqui](Teoría.md)
