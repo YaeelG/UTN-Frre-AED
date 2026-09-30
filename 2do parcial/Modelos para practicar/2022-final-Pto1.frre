@@ -66,7 +66,7 @@ Accion parcial es
     error = registro 
       cod_error: an(8)
       descripcion: an(30)
-    fin_reg
+    fin_registro
 
     lista: arreglo de [1..50] de error 	
 
@@ -75,7 +75,7 @@ Accion parcial es
     logErrores = registro 
       fecha: an(10)
       cod_error: an(8)
-    fin_reg
+    fin_registro
 
     arch_log, no_procesados: archivo de logErrores 
     reg_log: logErrores 
@@ -86,7 +86,7 @@ Accion parcial es
       mes: 1..12
       cod_error: an(8)
       cant_error: entero 
-    fin_reg
+    fin_registro
 
     arch_tot: archivo de totales 
     reg_tot: totales 
@@ -104,9 +104,9 @@ Accion parcial es
       para i:= 1 hasta 13 hacer 
         para j:= 1 hasta 51 hacer 
           T[i,j]:= 0
-        finpara 
-      finpara 
-    finprocedimiento 
+        fin_para 
+      fin_para 
+    fin_procedimiento 
 
 		//Busqueda con centinela
     Procedimiento busqueda() es 
@@ -115,14 +115,14 @@ Accion parcial es
 			
       Mientras (i<50) y (lista[i].cod_error <> aux) hacer 
         i:= i+1 
-      finmientras 
+      fin_mientras 
 			
       Si lista[i].cod_error = aux entonces 
         j:= i 
       Sino
         j:= 0
-      finsi 
-    finprocedimiento 
+      fin_si 
+    fin_procedimiento 
 
 
 	PROCESO
@@ -142,10 +142,10 @@ Accion parcial es
 			fec := funcfecha(reg_log.fecha)
 			
       Si (fec.año = año_ingresado) entonces 
-        i := fec.mes 
-				
+         
         busqueda() //buscamos el cod_error del reg_log actual.
-				
+				i := fec.mes
+
         //Guardamos en una MATRIZ ----------
           //i: mes fila  ;  j: cod error colummna
         Si j <> 0 entonces 
@@ -170,32 +170,33 @@ Accion parcial es
       Para j:= 1 hasta 50 hacer 
         Si T[i,j] <> 0 entonces 
           reg_tot.mes := i 
-          reg_tot.cod_error := lista[j] //lista de errores
+          reg_tot.cod_error := lista[j].cod_error //lista de errores
           reg_tot.cant_error := T[i,j]
 
           escribir(arch_tot, reg_tot)
 
         Sino 
-          escribir("el codigo de error", lista[j], "no fue informado para el mes de", i)
+          escribir("el codigo de error", lista[j].cod_error, "no fue informado para el mes de", i)
         fin_si 
       fin_para 
     fin_para 
     
 
     //b) algoritmo de Ordenamiento seleccion
+    pos_max := 1 //posición máxima
+    
     Para i:= 1 hasta 12 hacer 
-      pos_max := 1 //posición máxima
-      
       Si T[i,51] > T[pos_max,51] entonces 
         pos_max:= i
       fin_si 
     fin_para
 
     escribir (" el mes con mayor cantidad de errores es", pos_max)
+    escribir("y la mayor cantidad de errores fue de ", T[pos_max,51], " errores.")
     escribir ("la cantidad de errores registrados es de:", T[13,51])
 
 
     cerrar (arch_log); cerrar (arch_tot); cerrar (no_procesados)
-finaccion 
+fin_accion 
 
         

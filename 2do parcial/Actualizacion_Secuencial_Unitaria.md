@@ -150,7 +150,7 @@ Fin_Procedimiento
 
 - Procesos distintos
 ``` 
-Procedimiento Proceso_Iguales es
+Procedimiento Proceso_Distintos es
     Si Reg_MOV.Cod_MOV = 'BAJA' entonces           // Baja
         ESCRIBIR('Error: No se puede dar de baja')
     Sino
