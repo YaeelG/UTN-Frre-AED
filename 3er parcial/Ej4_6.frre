@@ -1,0 +1,28 @@
+//! Ejercicio 4.6
+//* Clase 14/10/2026
+//Incompleto
+
+
+//Guía PDF, Complementos teórico a partir de la pág 63, algoritmo modelo para inserción en lista circular simplemente enlazada. Pg 63 también, hay un menú
+
+//Ñoquis
+Accion Ej4_6 profesores
+	AMBIENTEs
+		Fecha = Registro
+			aa: N(4)
+			mm
+			dd
+		Fin_registro
+
+		Cliente = Registro
+			Nom_Clie := AN(25)
+			Tot_cons: Real	//Total consumido, como monto
+			FechaF: Fecha
+			Nro_mesa: Enter
+			Prox: Puntero a Cliente
+		Fin_registro
+
+		P, PRIM: puntero a Cliente
+		
+			
+	PROCESO

@@ -1,0 +1,58 @@
+//! 2º Parcial - Tema A - Com C
+//* Clase 21/10/2026
+// Hecho por profesores  
+
+//Me falta un ciclo de act x lotes
+
+Accion ej1 es
+	AMBIENTE
+		//clave compleja
+		Fecha = Registro
+			AA: N(4)
+			MM: 1..12
+			DD: 1..31
+		FR
+
+		Clientes = Registro
+			Clave = Registro      //Clave compleja
+				NroCliente: N(4)
+				CodPlataforma: 1..4
+			FR
+			CategoriaCliente: 1..3
+			SaldoAdeudado: Real
+			Fecha_Baja: Fecha
+		FR
+
+		Salida, Suscriptores: Archivos de Clientes Ordenado por Clave
+		Reg_sus, aux, reg_sal: Clientes
+
+		Novedades_Pagos = Registro
+			...  //Clave compleja
+		FR
+
+		Novedades: Archivos de Novedades_Pagos ordenado por Clave
+		Reg_nov: Novedades_Pagos
+
+		Plat = Registro
+			CodPlataforma: 1..4
+			NombrePlataforma:
+			CuaotaMensual: Real
+		FR
+
+		Plataformas: Archivo de Plat indexado por CodPlataforma
+		Reg_plat: Plat
+
+		cont_activas, cont_altas: Entero
+		porc_altas: Real
+
+		Procedimiento Leer_novedades es
+			Leer(Novedades, Reg_nov)
+
+			Si FDA(Novedades) entonces
+				Reg_nov.Clave := HV
+			Fin_si
+		Fin_procedimiento
+
+		
+
+	PROCESO

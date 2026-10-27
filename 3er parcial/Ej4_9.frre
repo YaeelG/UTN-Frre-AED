@@ -1,0 +1,17 @@
+//! Ejercicio 4.9 complementarios
+//* Clase 14/10/2026
+//Hecho por profesores  
+
+/*
+ Se tiene una lista con los nombre de los clientes de una compañía de telefonía celular, los cuales pueden aparecer repetidos en la lista, si tienen registrado más de un número telefónico.
+
+ La compañía para su próximo aniversario desea enviar un regalo a sus clientes, sin darle más de un regalo a cada cliente.
+
+ En una lista circular se almacena una nueva lista encadenada ordenada con los nombres y los premios para cada uno (sin repetir los nombres).
+
+*/
+
+Accion Ej es
+	AMBIENTE
+
+	PROCESO

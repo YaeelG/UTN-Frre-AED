@@ -1,0 +1,80 @@
+//! Ejercicio ???
+//* Clase 21/10/2026
+//Hecho por profesores
+//Hay muchas posibilidades de optimizarlo 
+
+Accion Personal (primcli: puntero a Cliente, primreg: puntero a regalos) es
+	AMBIENTE
+		clientes = registro
+			apynom: AN(30)
+			telefono: N(13)
+			prox: puntero a clientes
+		fin_registro
+
+		regalos = Registro
+			regalo: AN(30)
+			cantidad: entero
+			prox: puntero a regalos
+		fin_registro
+
+		nodo = Registro
+			apynom: AN(30)
+			regalo: AN(30)
+			prox: puntero a nodo
+		fin_registro
+
+		a, prim, p: puntero a nodo
+		
+		cli: puntero a clientes
+		reg: puntero a regalos
+		
+		existe: booleano
+
+		
+	PROCESO	
+		prim := NIL
+		cli := primcli
+		reg:= primreg
+
+		mientras (cli <> nil) hacer
+			existe := falso
+			q := prim
+
+			mientras(q <> nil) y (no existe) hacer
+				Si *q.apynom = *cli.apynom entonces
+					existe := verdadero
+				fin_si
+
+				q := *q.prox
+			fin_mientras
+
+			Si no existe entonces
+				Nuevo(p)
+				*p.apynom := *cli.apynom
+				*p.regalos := *reg.regalos
+				reg := *reg.regalos
+				reg:= *reg.prox
+				q := prim
+				a:= nil
+
+				mientras (q <> NIL) y (*q.apynom < *p.apynom) hacer
+					a := q
+					q := *q.prox
+				fin_mientras
+
+				Si (a = nil) hacer
+					*p.prox := prim
+					prim := p
+				Contrario
+					*p.prox := q
+					*a.prox := p
+				fin_si
+			fin_si
+
+			cli := *cli.prox
+		Fin_mientras
+
+Fin_accion
+
+				
+				
