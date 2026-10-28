@@ -1,0 +1,74 @@
+//! Ejercicio 4.13
+//* Clase 28/10/2026
+//Hecho por profesores
+
+
+
+ACCION EJ2_13 (Prim, Ult: punt a nodo) es
+	AMbiemte
+		Nodo = Registro
+			dato: entero
+			ant, prox: puntero a Nodo
+		fin_registro
+
+		P, T: puntero a Nodo
+
+		Funcion está_ordenada(cab: puntero a nodo): lógico es
+			//siempre trabajamos con variable local
+			P:=cab
+			
+			Mientras *P.prox <> ULT y *P.datos <= *( *P.prox).dato hacer 
+				//ignorar el espacio en *( *...), si pongo junto me deja todo el resto del código en gris, como comentario
+				P := *P.prox
+			fin_mientras
+
+			Si *P.dato <= *( *P.prox).dato entonces
+				// ó *P.prox = NIL como condición
+				esta_ordenada := falso
+			fin_si
+		fin_funcion
+
+		Procedimiento eliminar(T: puntero a nodo) es
+			Si PRIM = T entonces    //elimina el primero
+				*( *T.prox).ant := NIL
+				Prim := *T.prox
+			Sino                    //eliminar un nodo intermedio
+				*( *T.prox).ant := *T.ant
+				*( *T.ant).prox := *T.prox
+			fin_si
+		Fin_procedimiento
+
+	PROCESO
+		p := prim
+		error_falso
+		Si prim = NIL entones
+			esc("error Lsita Vacia")  //Dijo el prof robles que en el parcial puede decir que ya está cargada entonces no hace falta hacer este si mayor.
+
+		Sino
+			Si prim = ULT entonces
+				esc("LA lista solo tiene 1 elemento. No hay repetidos")
+
+			Sino
+				Si está_ordenada(prim) entonces
+					//depurar
+					P: prim
+
+					//Lo que sigue no estoy segura
+					Mientras P <> ULT hacer
+						aux := *P.prox
+						Si *P.dato <= *( *P.prox).dato entonces
+							eliminar(p)
+						fin_si
+
+						P := aux
+					fin_mientras
+
+					//fin depurar
+					
+					Escribir("Éxito, la lista ha sido depurada")
+				Sino
+					Escribir("Error, la lista no está ordenada")
+				fin_si
+			fin_si
+		fin_si
+Fin_accion
