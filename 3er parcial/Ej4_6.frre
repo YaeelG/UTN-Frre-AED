@@ -1,28 +1,120 @@
 //! Ejercicio 4.6
 //* Clase 14/10/2026
-//Incompleto
+
+
+/*
+  	Ejercicio 4.6
+
+ 	En el restaurante ÑOQUIS se está pensando en una solución informática para el soporte de datos del nuevo sistema de atención a clientes. Se han decidido por LISTAS por su dinamismo en cuanto a la cantidad de elementos. Diseñe un algoritmo que realice las siguientes funciones:
+
+ 		- Añadir cliente al ser atendido (lista simple ordenada por Nombre del Cliente).
+ 		- Registrar su consumo (Acumular el Total Consumido en valores de montos).
+ 		- Realizar el cobro (emitir ticket con Nombre, Fecha, Número de Mesa y Total).
+ 		- Eliminar del listado de atención.
+ 
+ 	La información almacenada debe mantenerse ordenada por Nombre del cliente. 
+
+*/
 
 
 //Guía PDF, Complementos teórico a partir de la pág 63, algoritmo modelo para inserción en lista circular simplemente enlazada. Pg 63 también, hay un menú
 
-//Ñoquis
-Accion Ej4_6 profesores
-	AMBIENTEs
-		Fecha = Registro
-			aa: N(4)
-			mm
-			dd
-		Fin_registro
+//Solución @pina092033(Nehemias) en Discord, pero creo que hay cosas a ccorregir en el uso del segun. Si el usuario introduce 5 para salir le va a tirar error porque NO es una opción.
+Accion ejercicio 4.6 (prim: puntero a cliente) es 
+  Ambiente 
+    fecha = registro 
+      año: n(4)
+      mes: n(2)
+      dia: n(2)
+    finreg 
 
-		Cliente = Registro
-			Nom_Clie := AN(25)
-			Tot_cons: Real	//Total consumido, como monto
-			FechaF: Fecha
-			Nro_mesa: Enter
-			Prox: Puntero a Cliente
-		Fin_registro
+    cliente = registro 
+      nom_clie: an(25)
+      total_cons: real
+      fe_fact: fecha 
+      nro_mesa: entero
+      prox: puntero a cliente 
+    finreg
 
-		P, PRIM: puntero a Cliente
-		
-			
-	PROCESO
+    p,q,ant,aux: puntero a cliente 
+    opcion: entero
+    consumo: real
+    nombre: an(25)
+
+  proceso 
+    p:= prim
+    q:= nil
+    ant:= nil
+    aux:= nil
+
+    repetir 
+      P:= prim; ant:= nil
+      escribir ("bienvenido, ingrese la opcion que desea ejecutar")
+      escribir ("para agregar un cliente nuevo ingrese 1")
+      escribir ("para ingresar su consumo ingrese 2")
+      escribir ("para realizar el cobro ingrese 3")
+      escribir ("para eliminar un cliente ingrese 4")
+      escribir ("para finalizar ingrese 5")
+      leer (opcion)
+
+      escribir ("por favor ingrese el nombre del cliente")
+      leer (nombre)
+
+      segun opcion hacer 
+        1:  nuevo (q); escribir ("ingrese numero de mesa"); leer (*q.nro_mesa)
+           *q.total_cons:= 0; *q.fe_fact:= fecha_sistema(); *q.nom_clie:= nombre 
+           Mientras p <> nil y *p.nom_clie < nombre hacer 
+             ant:= p 
+             p:= *p.prox
+           finmientras 
+           si p = prim entonces 
+             prim:= q
+             *q.prox:= p 
+           sino 
+             *q.prox:= p 
+             *ant.prox:= q 
+           finsi 
+
+        2: escribir ("por vagor ingrese el consumo del cliente", nombre)
+           leer (consumo)
+           mientras p <> nil y *p.nom_clie <> nombre hacer 
+             p:= *p.prox
+           finmientras 
+           si p = nil entonces 
+             escribir ("error el cliente no existe")
+           sino 
+             *p.total_cons:= *p.total_cons + consumo
+           finsi 
+
+        3: mientras p <> nil y *p.nom_clie <> nombre hacer 
+             p:= *p.prox
+           finmientras 
+           si p = nil entonces 
+             escribir ("error el cliente no existe")
+           sino 
+             escribir ("TICKET")
+             escribir ("nombre:", *p.nom_clie)
+             escribir ("fecha:", *p.fe_fact)
+             escribir ("numero de mesa:", *p.nro_mesa)
+             escribir ("total consumido:", *p.total_cons)
+           finsi 
+		   
+        4: mientras p <> nil y *p.nom_clie <> nombre hacer 
+             ant:= P
+             p:= *p.prox
+           finmientras 
+
+           si p = nil entonces 
+             escribir ("error, el cliente no existe")
+           sino 
+             si p = prim entonces 
+               prim:= *P.prox
+             sino 
+               *ant.prox:= *P.prox
+             finsi
+             disponer (P)
+           finsi
+
+      finsegun
+    hasta que opcion = 5
+FIN_ACCION

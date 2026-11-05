@@ -1,0 +1,28 @@
+ACCION Recorrer(Prim: puntero a nodo) ES
+    AMBIENTE
+        nodo = registro 
+            dato: entero
+            prox: puntero a nodo
+        Fin_registro
+
+        par, impar: entero
+        p: puntero a nodo
+
+    PROCESO
+        p: Prim
+        par := 0
+        impar := 0
+
+        Mientras (p <> NIL) hacer
+            Si *p.dato MOD 2 = 0 entonces
+                par := par + *p.dato
+            Sino
+                impar := impar + *p.dato
+            Fin_si
+
+            p := *p.prox
+        fin_mientras
+
+        Escribir("La suma de los pares: ", par)
+        Escribir("La suma de los impares es: ", impar)
+FIN_ACCION

@@ -14,8 +14,12 @@ ACCION factorial es
 	leer(n)
 	fact:= 1
 
-	Para i := 1 es
-	 ...
+	Para i := 1 hasta n hacer
+		fact := i * fact
+	fin_para
+
+	Escribir("Factorial de ", n, " es ", fact)
+Fin_accion
 ``` 
 
 ### Recursivo
@@ -37,7 +41,7 @@ factorial(4)
 y entonces comienzan a desapilarse las llamadas recursivas
 
 
-## Ejemplo ppt - longitud de una lista
+## Ejemplo 1 ppt - longitud de una lista
 ``` 
 Funcion longlista (r: punt a nodo): Entero es
 	Si r = Nil entonces
@@ -49,7 +53,7 @@ Funcion longlista (r: punt a nodo): Entero es
 Fin_funcion
 ``` 
 
-## Ejemplo ppt - sumatoria de los números que van de x a y, incluidos los extremos
+## Ejemplo 2 ppt - sumatoria de los números que van de x a y, incluidos los extremos
 ``` 
 Funcion Sumatoria (x, y: entero): entero es
 	Si x = y entonces
@@ -64,7 +68,27 @@ Funcion Sumatoria (x, y: entero): entero es
 Fin_funcion
 ``` 
 
-## Ejemplo - Determinar si los dígitos de un num n dado son todos pares
+## Ejemplo 3 ppt - encuentre un elemento en un arreglo
+``` 
+Funcion EncontrarEnArray(a: arreglo de [1..10], tam, x: entero): entero es
+	Si (tam = 1) entonces
+		Si (a[1] = x) entonces
+			EncontrarEnArray := 1
+		Sino
+			EncontrarEnArray := 0
+		fin_si
+	Sino
+		Si (a[tam] = x) entonces
+			EncontrarEnArray := tam
+		Sino
+			tam := tam - 1
+			EncontrarEnArray := EncontrarEnArray(a[], tam, x)
+		fin_si
+	Fin_si
+Fin_funcion
+``` 
+
+## Ej 5.1.4 - Determinar si los dígitos de un num n dado son todos pares
 
 Casos bases:
 - falso: n mod 2 <> 0

@@ -1,0 +1,95 @@
+//! Ejercicio ???
+//* Clase Listas doblemente enlazadas (21.10.26)
+// https://www.youtube.com/watch?v=cH3WIgbTZrs&list=PLizIqQiDw5tc2nKPdIy7kJvdys_OZnVX5&index=19
+//Ejercicios Corregido por profesores 
+
+
+/*
+    Consigna: 
+
+    Se tiene una lista con los nombres de los clientes de una compañía de telefonía celular, los cuales pueden aparecer repetidos en la lista, si tienen registrado más de un número telefónico. 
+
+    La compañía para su próximo aniversario desea enviar un regalo a sus clientes, sin darle más de un regalo a cada cliente. 
+
+    En una lista circular se almacenan los regalos disponibles. Se desea generar un algoritmo que cree una nueva lista encadenada ordenada con los nombres y los premios para cada uno (sin repetir los nombres).
+*/
+
+Accion telefonia (primcli: Puntero a clientes; primreg: puntero a regalos) es 
+  Ambiente 
+    clientes = registro 
+      apynom: an(30)
+      telefono: n(12)
+      prox: puntero a clientes 
+    finreg 
+    cli: puntero a clientes
+
+    regalos = registro 
+      regalo: an(25)
+      cantidad: entero
+      prox: puntero a regalos
+    finreg
+    reg: puntero a regalos
+
+    premio = registro
+      nom_clie: an(25)
+      articulo: an(30)
+      prox: puntero a premio 
+    finreg
+
+    a, p, prim: puntero a premio 
+
+    existe: logico
+
+  proceso 
+    prim:= nil
+    p:= prim
+    cli:= primcli
+    reg:= primreg
+    a:= primcli
+
+    Mientras (cli <> nil) hacer
+        existe := falso
+        q := prim
+        mientras (q <> nil) y (no existe) hacer
+            Si *q.apynom = *cli.apynom entonces
+                existe := verdadero
+            fin_si
+
+            q := *q.prox
+        fin_mientras 
+
+        Si no existe entonces
+            Nuevo(p)
+            *p.apynom := *cli.apynom
+
+            Mientras *reg.cantidad = 0 entonces
+                reg := *reg.prox
+            fin_mientras
+
+            *p.regalo := *reg.regalo
+            *reg.cantidad := *reg.cantidad - 1
+            reg := *reg.prox
+
+            q := prima 
+            a := nil
+
+            Mientras (q <> nil) y (*q.apynom < *p.apynom) hacer
+                a := q 
+                q := *q.prox
+            fin_mientras
+
+            Si (a = nil) entonces
+                *p.prox := prim
+                prim := p 
+            Sino
+                *p.prox := q
+                *a.prox := p
+            fin_si
+        fin_si
+
+        cli := *cli.prox
+
+    fin_mientras
+fin_accion
+          
+          

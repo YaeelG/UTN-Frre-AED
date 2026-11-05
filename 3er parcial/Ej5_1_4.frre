@@ -1,0 +1,30 @@
+//! Ejercicio 5.1.4
+//* Clase Recursividad (28.10.26)
+//Ejercicios Corregido por profesores 
+
+/*
+ 	Ejercicio 5.1.4
+
+ 	Construir un algoritmo recursivo que permita determinar si los dígitos de un número n dado son todos pares.
+
+ 	Casos bases:
+ 		- falso: n mod 2 <> 0
+ 		- verdadero: n mod 2 = 0  y  n < 10
+ 
+ 	Caso Recursivo:
+ 		- todospares(n div 10)  n mod 2 = 0  y  n >= 10
+*/
+
+
+
+Funcion todoDigitospares(n: entero): lógico es
+	Si n mod 2 <> 0 entonces
+		todoDigitospares := falso
+	Sino	
+		Si n < 10 entonces
+			todoDigitospares := verdadero
+		Sino
+			todoDigitospares := todoDigitospares(n div 10)
+		Fin_si
+	Fin_si
+Fin_funcion

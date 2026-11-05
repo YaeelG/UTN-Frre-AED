@@ -1,8 +1,69 @@
 //! Ejercicio 4.2
-//* Clase 14/10/2026
+//* Clase Listas simplemente enlazadas (07.10.26)
+// https://www.youtube.com/watch?v=TxbL1DDRFG8&list=PLizIqQiDw5tc2nKPdIy7kJvdys_OZnVX5&index=16 
 //Ejercicios Corregido por profesores 
+//Sin  Eliminación 
 
-Acción ej4_2 es
+/*
+    Ejercicio 4.2
 
-[FOTO, en la última foto quita algunas lineas al final]
-//carga encolada, siempre despues de ant2
+    Se dispone de una lista simplemente encadenada de números enteros, diseñar un algoritmo que a partir de ella genere otra lista conteniendo los nodos cuyos datos terminan en cero; dichos elementos, deberán ser eliminados de la lista original. 
+    
+    Se asume que la lista está cargada, y que el algoritmo recibe como parámetro de entrada la dirección del primer elemento.
+
+
+    ó sea:
+    - Tenemos una LSE.
+    - Crear una nueva con los datos terminados en 0.
+    - Eliminar la lista original.
+*/
+
+ACCION Ej4_2 (Prim: puntero a nodo) ES
+    AMBIENTE
+        nodo = registro 
+            dato: entero
+            prox: puntero a nodo
+        Fin_registro
+
+        aux, ant, p: puntero a nodo
+        ult2, prim2, q: puntero a nodo
+
+    PROCESO
+        p: Prim
+        prim2 := NIL
+        ant := NIL
+        aux := NIL
+        ult2 := NIL
+        
+        Mientras (p <> NIL) hacer
+            aux := *p.prox
+             
+            Si *p.dato MOD 10 = 0 entonces
+                Nuevo(q)
+                *q.dato := *p.dato
+                *q.prox := NIL
+                
+                Si prim2 = NIL entonces
+                    prim2 := q
+                Sino
+                    *ult2.prox := q
+                    *q.prox := NIL
+                fin_si
+                
+                ult2 := q
+
+                Si p = prim entonces
+                    prim := *p.prox     //Casos 1 y 2
+                Sino 
+                    *ant.prox := *p.prox     //Casos 3 y 4
+                Fin_si
+                disponer(p)
+
+            SINO
+                ant := p
+            Fin_si
+
+            p := aux
+        fin_mientras
+
+FIN_ACCION

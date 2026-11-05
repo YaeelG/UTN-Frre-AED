@@ -1,0 +1,263 @@
+Ambiente
+    Lectura = registro
+        sensor: 1..3
+        nro: entero
+        valor: real
+    fin_reg
+    arch_lect: ARCHIVO de Lectura
+    lec: Lectura
+
+    vectorLecturas = arreglo[1..144] de real
+
+    v: vectorLecturas
+    i: 1..144
+
+    sensorElegido: entero
+    umbral: real
+    longMinima: entero
+
+
+    Procedimiento CargarVector (nroSensor: entero; vec: vectorLecturas; arch: ARCHIVO de Lectura)
+    Ambiente
+        reg: Lectura
+    Proceso
+        ABRIR E (arch)
+        LEER (arch, reg)
+        MIENTRAS NFDA (arch) HACER
+            SI reg.sensor = nroSensor ENTONCES
+                vec[reg.nro] := reg.valor
+            fin_si
+            LEER (arch, reg)
+        fin_mientras
+        CERRAR (arch)
+    fin_procedimiento
+
+
+    Procedimiento Estadisticas (vec: vectorLecturas; maxVal: real; posMax: entero; minVal: real; posMin: entero; promedio: real)
+    Ambiente
+        i: entero
+        suma: real
+    Proceso
+        suma := vec[1]
+        maxVal := vec[1]
+        posMax := 1
+        minVal := vec[1]
+        posMin := 1
+        
+        PARA i := 2 HASTA 144 HACER
+            suma := suma + vec[i]
+            SI vec[i] > maxVal ENTONCES
+                maxVal := vec[i]
+                posMax := i
+            fin_si
+            SI vec[i] < minVal ENTONCES
+                minVal := vec[i]
+                posMin := i
+            fin_si
+        fin_para
+        
+        promedio := suma / 144
+    fin_procedimiento
+
+
+    Procedimiento BuscarUmbral (vec: vectorLecturas; umbralBusqueda: real; pos: entero)
+    Ambiente
+        i: entero
+        encontrado: logico
+    Proceso
+        pos := 0
+        encontrado := falso
+        i := 1
+        
+        MIENTRAS (i <= 144) Y (NO encontrado) HACER
+            SI vec[i] > umbralBusqueda ENTONCES
+                pos := i
+                encontrado := verdadero
+            SINO
+                i := i + 1
+            fin_si
+        fin_mientras
+    fin_procedimiento
+
+
+    Procedimiento DetectarRacha (vec: vectorLecturas; umbralRacha: real; longMin: entero; rachaEncontrada: logico; posInicio: entero)
+    Ambiente
+        i: entero
+        contador: entero
+    Proceso
+        rachaEncontrada := falso
+        posInicio := 0
+        contador := 0
+        
+        PARA i := 1 HASTA 144 HACER
+            SI vec[i] > umbralRacha ENTONCES
+                contador := contador + 1
+                SI contador = longMin ENTONCES
+                    rachaEncontrada := verdadero
+                    posInicio := (i - longMin) + 1
+                fin_si
+            SINO
+                contador := 0
+            fin_si
+        fin_para
+    fin_procedimiento
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    Ambiente
+    Lectura = registro
+        sensor: 1..3
+        nro: entero
+        valor: real
+    fin_reg
+
+    vectorLecturas = arreglo[1..144] de real
+    matrizLecturas = arreglo[1..3, 1..144] de real
+
+    arch_lect: ARCHIVO de Lectura
+    mat_lect: matrizLecturas
+    v_temp: vectorLecturas
+    promedioPorSensor: vectorLecturas
+
+    s: entero
+    umbral: real
+    longMinima: entero
+
+    maxVal, minVal, promVal: real
+    posMax, posMin: entero
+    hayRacha: logico
+    posInicio: entero
+
+    maxProm, minProm, promGlobal: real
+    sensorMax, sensorMin: entero
+
+    Procedimiento CargarMatriz (mat: matrizLecturas; arch: ARCHIVO de Lectura)
+    Ambiente
+        reg: Lectura
+    Proceso
+        ABRIR E (arch)
+        LEER (arch, reg)
+        MIENTRAS NFDA (arch) HACER
+            mat[reg.sensor, reg.nro] := reg.valor
+            LEER (arch, reg)
+        fin_mientras
+        CERRAR (arch)
+    fin_procedimiento
+
+
+    Procedimiento ExtraerFila (mat: matrizLecturas; fila: entero; vec: vectorLecturas)
+    Ambiente
+        j: entero
+    Proceso
+        PARA j := 1 HASTA 144 HACER
+            vec[j] := mat[fila, j]
+        fin_para
+    fin_procedimiento
+
+
+    Procedimiento Estadisticas (vec: vectorLecturas; n: entero; maxVal: real; posMax: entero; minVal: real; posMin: entero; promedio: real)
+    Ambiente
+        i: entero
+        suma: real
+    Proceso
+        suma := vec[1]
+        maxVal := vec[1]
+        posMax := 1
+        minVal := vec[1]
+        posMin := 1
+        
+        PARA i := 2 HASTA n HACER
+            suma := suma + vec[i]
+            SI vec[i] > maxVal ENTONCES
+                maxVal := vec[i]
+                posMax := i
+            fin_si
+            SI vec[i] < minVal ENTONCES
+                minVal := vec[i]
+                posMin := i
+            fin_si
+        fin_para
+        
+        promedio := suma / n
+    fin_procedimiento
+
+
+    Procedimiento BuscarUmbral (vec: vectorLecturas; n: entero; umbralBusqueda: real; pos: entero)
+    Ambiente
+        i: entero
+        encontrado: logico
+    Proceso
+        pos := 0
+        encontrado := falso
+        i := 1
+        
+        MIENTRAS (i <= n) Y (NO encontrado) HACER
+            SI vec[i] > umbralBusqueda ENTONCES
+                pos := i
+                encontrado := verdadero
+            SINO
+                i := i + 1
+            fin_si
+        fin_mientras
+    fin_procedimiento
+
+
+    Procedimiento DetectarRacha (vec: vectorLecturas; n: entero; umbralRacha: real; longMin: entero; rachaEncontrada: logico; posInicio: entero)
+    Ambiente
+        i: entero
+        contador: entero
+    Proceso
+        rachaEncontrada := falso
+        posInicio := 0
+        contador := 0
+        
+        PARA i := 1 HASTA n HACER
+            SI vec[i] > umbralRacha ENTONCES
+                contador := contador + 1
+                SI contador = longMin ENTONCES
+                    rachaEncontrada := verdadero
+                    posInicio := (i - longMin) + 1
+                fin_si
+            SINO
+                contador := 0
+            fin_si
+        fin_para
+    fin_procedimiento
+
+
+Proceso
+    umbral := 80.0
+    longMinima := 4
+
+    CargarMatriz(mat_lect, arch_lect)
+
+    PARA s := 1 HASTA 3 HACER
+        ExtraerFila(mat_lect, s, v_temp)
+
+        Estadisticas(v_temp, 144, maxVal, posMax, minVal, posMin, promVal)
+
+        promedioPorSensor[s] := promVal
+
+        DetectarRacha(v_temp, 144, umbral, longMinima, hayRacha, posInicio)
+    fin_para
+
+    Estadisticas(promedioPorSensor, 3, maxProm, sensorMax, minProm, sensorMin, promGlobal)
+
+    ESCRIBIR ("El sensor con mayor promedio es el Sensor Nro: ", sensorMax)
+    ESCRIBIR ("Con un promedio de humedad de: ", maxProm)
+FIN

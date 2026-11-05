@@ -1,0 +1,18 @@
+//! Ejercicio 5.1.4
+//* Clase Recursividad (28.10.26)
+// Ejercicios Corregido por profesores
+
+/*
+ Ejercicio 5.1.3
+
+ Dados dos números: a y b. 
+ Calcule la potencia a^b, usando sólo multiplicaciones sucesivas.
+*/
+
+Funcion division(a, b: entero): entero es
+    Si a < b entonces
+        division := 0
+    Sino
+        division := 1 + division(a-b, b)
+    fin_si
+Fin_funcion
