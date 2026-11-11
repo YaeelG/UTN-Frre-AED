@@ -1,0 +1,48 @@
+//! Ejercicio Recursividad
+//* Clase Recursividad 11/11/2026
+//Hecho por profesores
+
+
+// Invertir
+Procedimiento Inverso (n: entero) es
+	Si (n mod 10) = n entonces
+		Escribir (n)
+	Sino
+		Esc(n MOD 10)
+		Inverso(n DIV 10)
+	fin_si
+Fin_Procedimiento
+
+
+Procedimiento Inverso (n: entero) es
+	Esc(n MOD 10)
+	
+	Si (n mod 10) <> 0 entonces
+		Inverso(n DIV 10)
+	fin_si
+Fin_Procedimiento
+
+
+Procedimiento Inverso (n: entero) es
+	//Otra forma ...
+Fin_Procedimiento
+
+//"Palindromo Venezuela a aleuz..V"
+
+Procedimiento Pal (palabra: arreglo(1..255) es caracter, n: entero) es
+	Si n = 1 entonces
+		esc(palabra(1))
+	Sino
+		esc(palabra(n))
+		Pal(palabra, n-1)
+	fin_si
+Fin_Procedimiento
+
+
+Procedimiento Pal (palabra: arreglo(1..255) es caracter, n: entero) es
+	esc(palabra(n))
+	Si n > 1 entonces
+		Pal(palabra, n-1)
+	fin_si
+Fin_Procedimiento
+
