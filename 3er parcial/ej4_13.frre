@@ -17,21 +17,24 @@ ACCION EJ4_13 (Prim, Ult: punt a nodo) es
 			ant, prox: puntero a Nodo
 		fin_registro
 
-		P, T: puntero a Nodo
+		P, T, aux: puntero a Nodo
 
 
 		Funcion está_ordenada(cab: puntero a nodo): lógico es
 			//siempre trabajamos con variable local
 			P := cab
 			
-			Mientras *P.prox <> ULT y *P.datos <= *( *P.prox).dato hacer 
+			Mientras (*P.prox <> ULT) y (*P.datos > *( *P.prox).dato) hacer 
 				//ignorar el espacio en *( *...), si pongo junto me deja todo el resto del código en gris, como comentario
 				P := *P.prox
 			fin_mientras
 
-			Si *P.dato <= *( *P.prox).dato entonces
+			Si (*P.dato > *( *P.prox).dato) entonces
 				//ó *P.prox = NIL como condición
 				esta_ordenada := falso
+			
+			Sino		
+				esta_ordenada := verdadero
 			fin_si
 		fin_funcion
 
@@ -63,10 +66,10 @@ ACCION EJ4_13 (Prim, Ult: punt a nodo) es
 					P := prim
 
 					//Lo que sigue no estoy segura
-					Mientras P <> ULT hacer
+					Mientras (P <> ULT) hacer
 						aux := *P.prox
 
-						Si *P.dato <= *( *P.prox).dato entonces
+						Si (*P.dato = *( *P.prox).dato) entonces
 							eliminar(p)
 						fin_si
 
@@ -81,4 +84,56 @@ ACCION EJ4_13 (Prim, Ult: punt a nodo) es
 				fin_si
 			fin_si
 		fin_si
+Fin_accion
+
+
+
+//Otra opcion, no teminé de revisarla
+ACCION EJ4_13 (Prim: punt a nodo) es
+	AMBIENTE
+		Nodo = Registro
+			dato: entero
+			ant, prox: puntero a Nodo
+		fin_registro
+
+		P, aux: puntero a Nodo
+
+		error: logico
+
+	PROCESO
+		P := prim
+		error := falso
+
+		Si prim = NIL entones     //1er caso
+			esc("Error Lista Vacia")  
+
+		Sino
+			mientras p <> nil y no error hacer //evaluamos primero que la lista sea creciente 
+				si *p.dato > *(*p.prox).dato entonces
+					error:= verdadero
+					escribir ("error la lista no es creciente")
+				finsi
+					p:=*p.prox
+			finmientras 
+
+			si no error entonces 
+				p:= prim
+				mientras p <> nil hacer 
+				aux:= *p.prox 
+				
+				si *p.dato = *(*p.prox).dato entonces // evaluamos que el numero del nodo sea igual al siguiente (se repite)
+					si p = prim entonces // segundo caso
+					prim:= *p.prox; *(*p.prox).ant:= nil
+					sino // 3er caso por defecto
+					*(*p.ant).prox:= *p.prox
+					*(*p.prox).ant:= *p.ant
+					finsi 
+					escribir ("la depuración se realizo de forma exitosa")
+					disponer (p)
+				finsi 
+
+				p:= aux
+				finmientras 
+			finsi
+		finsi
 Fin_accion

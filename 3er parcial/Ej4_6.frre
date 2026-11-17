@@ -118,3 +118,144 @@ Accion ejercicio 4.6 (prim: puntero a cliente) es
       finsegun
     hasta que opcion = 5
 FIN_ACCION
+
+
+
+
+
+//Mi versión  -   lista simple, ordenada por Nombre del Cliente
+Accion ejercicio 4.6 (prim: puntero a cliente) es 
+  AMBIENTE 
+    fecha = registro 
+      año: n(4)
+      mes: n(2)
+      dia: n(2)
+    fin_registro
+
+    cliente = registro  //+++ de nodo +++
+      nom_clie: an(25)
+      total_cons: real  //Total Consumido 
+      fe_fact: fecha 
+      nro_mesa: entero
+      prox: puntero a cliente 
+    fin_registro
+
+    p, q, ant, aux: puntero a cliente 
+    opcion: entero
+    nombre: an(30)
+    consumo: real
+
+    //Nuevo cliente -------------------------
+    Procedimiento Nuevo_Clie(nombre: an(30), ) Es
+      nuevo (q); 
+
+      //Lo puse en el orden en el que está declarado por el bien de mi cabeza. En el caso de que asumierammos que el usuario puede introducir otra cosa que no sea un entero, talvez sería mejor ingresar primero que todo el num de mesa, da error y la compu se ahorra de hacer lo otro.
+      *q.nom_clie:= nombre
+      *q.total_cons:= 0
+      *q.fe_fact:= fecha_sistema()
+
+      escribir ("ingrese numero de mesa"); 
+      leer (*q.nro_mesa)
+      
+
+      Mientras (p <> nil) y (*p.nom_clie < nombre) hacer 
+        ant := p 
+        p := *p.prox
+      fin_mientras 
+
+      Si p = prim entonces   //1er elemento  o Vacio
+        prim := q 
+        *q.prox := p 
+
+      sino                  //Medio o ult
+        *q.prox := p 
+        *ant.prox := q 
+      fin_si 
+    Fin_procedimiento
+
+    //Agregar consumo -------------------------
+    Procedimiento Agregar_Consumo() Es
+      escribir ("Ingrese el consumo del cliente ", nombre, ": ")
+      leer (consumo)
+      
+      Mientras (p <> nil) y (*p.nom_clie <> nombre) hacer 
+        p := *p.prox
+      fin_mientras 
+
+      Si p = nil entonces 
+        escribir ("Error: cliente no existe.")
+      Sino       //si  (*p.nom_clie = nombre)  entonces
+        *p.total_cons:= *p.total_cons + consumo
+      fin_si 
+    Fin_procedimiento
+
+    //Agregar cobro -------------------------
+    Procedimiento Agregar_Cobro() Es
+      Mientras (p <> nil) y (*p.nom_clie <> nombre) hacer 
+        p:= *p.prox
+      fin_mientras 
+
+      Si (p = nil) entonces 
+        escribir ("Error: cliente no existe.")
+      Sino 
+        //Emitir ticket
+        escribir ("-------- TICKET --------")
+        escribir ("nombre:", *p.nom_clie)
+        escribir ("fecha:", *p.fe_fact)
+        escribir ("numero de mesa:", *p.nro_mesa)
+        escribir ("total consumido:", *p.total_cons)
+        escribir ("------------------------")
+      fin_si 
+    Fin_procedimiento
+
+    //Eliminar cliente -------------------------
+    Procedimiento Eliminar_Cliente() Es
+      Mientras p <> nil y *p.nom_clie <> nombre hacer 
+        ant:= P
+        p:= *p.prox
+      fin_mientras 
+
+      si p = nil entonces 
+        escribir ("Error: cliente no existe.")
+      sino 
+        si p = prim entonces 
+          prim:= *P.prox
+        sino 
+          *ant.prox:= *P.prox
+        fin_si
+        disponer (P)
+      fin_si
+    Fin_procedimiento
+
+
+  PROCESO
+    p := prim
+    q := nil
+    ant := nil
+    aux := nil
+
+    escribir ("Ingrese ngrese la opcion que desea ejecutar")
+    escribir ("1. agregar un cliente nuevo.")
+    escribir ("2. ingresar su consumo.")
+    escribir ("3. realizar el cobro.")
+    escribir ("4. eliminar un cliente.")
+    escribir ("5. salir.")
+    leer (opcion)
+
+    escribir ("por favor ingrese el nombre del cliente")
+    leer (nombre)
+
+    Repertir            //estructura post-test,y Es indefinido(No se sabe de antemano cuántas operaciones va a querer realizar el usuario antes de elegir la opción de salir)  
+      Segun opcion hacer
+        1: Nuevo_Clie(nombre)  //Procedimientos
+        2: Agregar_Consumo(nombre)
+        3: Agregar_Cobro(nombre)
+        4: Eliminar_Ciente(nombre)
+        5: escribir("Hasta pronto...")
+        otro: escribir("Error, opción no válida")
+      Fin_segun
+    Hasta que (opcion = 5)
+FIN_ACCION
+
+
+
