@@ -1,0 +1,500 @@
+Accion Parcial-ej1 
+  Ambiente 
+    fecha = registro 
+      año: n(4)
+      mes: n(2)
+      di: n(2)
+    finreg 
+
+    inscripciones = registro 
+      id_equipo: n(4)
+      nom_equipo: an(30)
+      fe_inscripcion: fecha
+      tecno_uti: arreglo de [1..5] de logico 
+    finreg
+
+    puntajes = registro 
+      id_equipo: n(4)
+      punt_criterio: arreglo de [1..3] de entero 
+      punt_lider: entero 
+    finreg
+
+    arch_inscrip: archivo de inscripciones ordenao por id_equipo 
+    reg_inscrip: inscripciones 
+    arch_punt: archivo d epuntajes indexado por id_equipo
+    reg_punt: puntajes 
+
+    equipo = registro 
+      nom_equipo: an(30)
+      puntaje_total: entero 
+      puntaje_lider: entero 
+      ant: puntero a equipo
+      prox: puntero a equipo 
+    finreg 
+
+    prim, ult, p, q: puntero a equipo
+
+    i, suma_punt, cant_tecno, cant_equipo: entero 
+    menor: logico 
+
+  proceso 
+    abrir e/ (arch_inscrip); abrir e/ (arch_punt); leer (arch_inscrip, reg_inscrip)
+    prim:= nil; ult:= nil
+    cant_equipo:= 0
+
+    mientras nfda (arch_inscrip) hacer 
+      reg_punt.id_equipo:= reg_inscrip.id_equipo
+      leer (arch_punt, reg_punt)
+
+      si existe entonces 
+        nuevo (q); 
+	      *q.ant:= prox; 
+        *q.prox:= nil; 
+        *q.nom_equipo:= reg_inscrip.nom_equipo
+
+        suma_punt:= 0;   
+        cant_tecno:=0; 
+        menor:= verdadero 
+
+        para i:= 1 hasta 5 hacer 
+          si reg_inscrip.tecno_uti[i] entonces 
+            cant_tecno:= cant_tecno + 1
+            suma_punt:= suma_punt + 1
+          fin_si 
+        fin_para 
+         
+        para i:= 1 hasta 3 hacer 
+          suma_Punt:= suma_punt + reg_punt.punt_criterio[i]
+        fin_para 
+
+        si cant_tecno >= 3 entonces 
+          cant_equipo:= cant_equipo + 1
+        fin_si 
+
+        *q.puntaje_total:= suma_punt
+        *q.puntaje_lider:= reg_punt.punt_lider
+
+        si prim = nil 
+          prim:= q; ult:= q
+        sino 
+          p:= prim 
+          mientras p <> nil y menor hacer 
+            si *p.puntaje_total < *q.puntaje_total entonces 
+              p:= *p.prox; menor:= verdadero 
+            sino 
+             si *p.punt_total = *q.punt_total y *p.puntaje_lider < *q.puntaje_lider entonces 
+               p:= *p.prox; menor:= verdadero
+             sino 
+               menor:= falso
+             finsi 
+            finsi 
+          finmientras 
+          si p = prim entonces 
+            *q.prox:= p; *p.ant:= q; prim:= q 
+          sino 
+            si p = nil entonces 
+              *q.ant:= ult; *ult.prox:= q; ult:= q
+            sino 
+              *q.prox:= p; *q.ant:= *p.ant; *(*p.ant).prox:= q; *p.ant:= q
+            finsi
+          finsi 
+        finsi 
+      sino 
+        escribir ("error, el equipo no existe")
+      finsi 
+      leer (arch_inscrip; reg_inscrip)
+    finmientras 
+    escribir ("la cantidad de equipos que utilizaron 3 o más tecnologias es:", cant_equipo)
+    p:= ult 
+    para i:= 1 hasta 3 hacer 
+      segun i hacer 
+       1: escribir ("el nombre del equipo ganador del primer puesto es:", *p.nom_equipo)
+          escribir ("puntaje total:", *p.puntaje_total)
+          escribir ("puntaje lider:", *p.puntaje_Lider)
+       2: escribir ("el nombre del equipo ganador del segundo puesto es:", *p.nom_equipo)
+          escribir ("puntaje total:", *p.puntaje_total)
+          escribir ("puntaje lider:", *p.puntaje_Lider) 
+       3: escribir ("el nombre del equipo ganador del tercer puesto es:", *p.nom_equipo)
+          escribir ("puntaje total:", *p.puntaje_total)
+          escribir ("puntaje lider:", *p.puntaje_Lider)
+      finsegun 
+      p:= *p.ant
+    finpara 
+finaccion 
+
+
+
+
+
+
+
+
+// corregido por gemini
+Accion Parcial-ej1 
+  Ambiente 
+    fecha = registro 
+      año: n(4)
+      mes: n(2)
+      di: n(2)
+    finreg 
+
+    inscripciones = registro 
+      id_equipo: n(4)
+      nom_equipo: an(30)
+      fe_inscripcion: fecha
+      tecno_uti: arreglo de [1..5] de logico 
+    finreg
+
+    puntajes = registro 
+      id_equipo: n(4)
+      punt_criterio: arreglo de [1..3] de entero 
+      punt_lider: entero 
+    finreg
+
+    arch_inscrip: archivo de inscripciones ordenado por id_equipo 
+    reg_inscrip: inscripciones 
+    arch_punt: archivo de puntajes indexado por id_equipo
+    reg_punt: puntajes 
+
+    equipo = registro 
+      nom_equipo: an(30)
+      puntaje_total: entero 
+      puntaje_lider: entero 
+      ant: puntero a equipo
+      prox: puntero a equipo 
+    finreg 
+
+    prim, ult, p, q: puntero a equipo
+
+    i, suma_punt, cant_tecno, cant_equipo: entero 
+    menor: logico 
+
+  proceso 
+    abrir e/ (arch_inscrip); abrir e/ (arch_punt); leer (arch_inscrip, reg_inscrip)
+    prim:= nil; ult:= nil
+    cant_equipo:= 0
+
+    mientras nfda (arch_inscrip) hacer 
+      reg_punt.id_equipo:= reg_inscrip.id_equipo
+      leer (arch_punt, reg_punt)
+
+      si existe entonces 
+        nuevo (q); 
+        *q.ant:= nil;     // Corregido: inicializar punteros del nuevo nodo
+        *q.prox:= nil; 
+        *q.nom_equipo:= reg_inscrip.nom_equipo
+
+        suma_punt:= 0;   
+        cant_tecno:=0; 
+        menor:= verdadero 
+
+        para i:= 1 hasta 5 hacer 
+          si reg_inscrip.tecno_uti[i] entonces 
+            cant_tecno:= cant_tecno + 1
+            suma_punt:= suma_punt + 1
+          fin_si 
+        fin_para 
+         
+        para i:= 1 hasta 3 hacer 
+          suma_punt:= suma_punt + reg_punt.punt_criterio[i]
+        fin_para 
+
+        si cant_tecno >= 3 entonces 
+          cant_equipo:= cant_equipo + 1
+        fin_si 
+
+        *q.puntaje_total:= suma_punt
+        *q.puntaje_lider:= reg_punt.punt_lider
+
+        si prim = nil 
+          prim:= q; ult:= q
+        sino 
+          p:= prim 
+          mientras p <> nil y menor hacer 
+            si *p.puntaje_total < *q.puntaje_total entonces 
+              p:= *p.prox; menor:= verdadero 
+            sino 
+              // Corregido: *p.puntaje_total en lugar de *p.punt_total
+              si *p.puntaje_total = *q.puntaje_total y *p.puntaje_lider < *q.puntaje_lider entonces 
+                p:= *p.prox; menor:= verdadero
+              sino 
+                menor:= falso
+              finsi 
+            finsi 
+          finmientras 
+
+          si p = prim entonces 
+            *q.prox:= p; *p.ant:= q; prim:= q; *q.ant:= nil
+          sino 
+            si p = nil entonces 
+              *q.ant:= ult; *ult.prox:= q; ult:= q; *q.prox:= nil
+            sino 
+              *q.prox:= p; *q.ant:= *p.ant; *(*p.ant).prox:= q; *p.ant:= q
+            finsi
+          finsi 
+        finsi 
+      sino 
+        escribir ("error, el equipo no existe")
+      finsi 
+      leer (arch_inscrip, reg_inscrip)  // Corregido: coma en lugar de punto y coma en el leer
+    finmientras 
+
+    escribir ("la cantidad de equipos que utilizaron 3 o más tecnologias es:", cant_equipo)
+    
+    p:= ult 
+    para i:= 1 hasta 3 hacer 
+      segun i hacer 
+       1: escribir ("el nombre del equipo ganador del primer puesto es:", *p.nom_equipo)
+          escribir ("puntaje total:", *p.puntaje_total)
+          escribir ("puntaje lider:", *p.puntaje_lider)  // Corregido: minúscula en lider
+       2: escribir ("el nombre del equipo ganador del segundo puesto es:", *p.nom_equipo)
+          escribir ("puntaje total:", *p.puntaje_total)
+          escribir ("puntaje lider:", *p.puntaje_lider) 
+       3: escribir ("el nombre del equipo ganador del tercer puesto es:", *p.nom_equipo)
+          escribir ("puntaje total:", *p.puntaje_total)
+          escribir ("puntaje lider:", *p.puntaje_lider)
+      finsegun 
+      p:= *p.ant
+    finpara 
+finaccion
+
+
+
+
+
+
+
+
+// Mularizado
+Accion Parcial-ej1 
+  Ambiente 
+    fecha = registro 
+      año: n(4)
+      mes: n(2)
+      di: n(2)
+    finreg 
+
+    inscripciones = registro 
+      id_equipo: n(4)
+      nom_equipo: an(30)
+      fe_inscripcion: fecha
+      tecno_uti: arreglo de [1..5] de logico 
+    finreg
+
+    puntajes = registro 
+      id_equipo: n(4)
+      punt_criterio: arreglo de [1..3] de entero 
+      punt_lider: entero 
+    finreg
+
+    arch_inscrip: archivo de inscripciones ordenado por id_equipo 
+    reg_inscrip: inscripciones 
+    arch_punt: archivo de puntajes indexado por id_equipo
+    reg_punt: puntajes 
+
+    equipo = registro 
+      nom_equipo: an(30)
+      puntaje_total: entero 
+      puntaje_lider: entero 
+      ant: puntero a equipo
+      prox: puntero a equipo 
+    finreg 
+
+    prim, ult, p, q: puntero a equipo
+    cant_equipo, cant_tecno, i: entero 
+
+
+    //--- Subacción 1: Calcula tecnologías, puntajes y carga los datos en el nodo ---
+    Procedimiento ProcesarDatosEquipo (reg_insc: inscripciones; reg_pnt: puntajes; nodo: puntero a equipo; cant_t: entero)
+    Ambiente
+      j, suma: entero
+    Proceso
+      suma := 0
+      cant_t := 0
+      
+      para j := 1 hasta 5 hacer 
+        si reg_insc.tecno_uti[j] entonces 
+          cant_t := cant_t + 1
+          suma := suma + 1
+        fin_si 
+      fin_para 
+       
+      para j := 1 hasta 3 hacer 
+        suma := suma + reg_pnt.punt_criterio[j]
+      fin_para 
+
+      *nodo.nom_equipo := reg_insc.nom_equipo
+      *nodo.puntaje_total := suma
+      *nodo.puntaje_lider := reg_pnt.punt_lider
+    fin_proc
+
+
+    //--- Subacción 2: Inserta el nodo de forma ordenada en la lista doblemente enlazada ---
+    Procedimiento InsertarOrdenado (nuevo_nodo: puntero a equipo)
+    Ambiente
+      p_aux: puntero a equipo
+      menor: logico
+    Proceso
+      si prim = nil entonces 
+        prim := nuevo_nodo
+        ult := nuevo_nodo
+        *nuevo_nodo.ant := nil
+        *nuevo_nodo.prox := nil
+      sino 
+        p_aux := prim 
+        menor := verdadero
+
+        // Listas ordenada ascendentemente
+        //o si hay empate me fijo el puntaje de lider
+        mientras ((p_aux <> nil) y (*p_aux.puntaje_total <= *nuevo_nodo.puntaje_total)) o 
+        ((*p_aux.puntaje_total = *nuevo_nodo.puntaje_total) y (*p_aux.puntaje_lider <= *nuevo_nodo.puntaje_lider)) hacer
+          p_aux := *p_aux.prox 
+        fin_mientras 
+
+        
+        si p_aux = prim entonces   //CASO 1: Insertar al INICIO (o en una lista vacía)
+          *nuevo_nodo.prox := prim 
+          *nuevo_nodo.ant := nil
+          si prim <> nil entonces
+            *prim.ant := nuevo_nodo
+          sino
+            ult := nuevo_nodo 
+          finsi
+          prim := nuevo_nodo 
+
+        sino                  
+          si p_aux = nil entonces    //CASO 2: Insertar al FINAL de la lista
+            *nuevo_nodo.ant := ult 
+            *ult.prox := nuevo_nodo 
+            *nuevo_nodo.prox := nil
+            ult := nuevo_nodo 
+
+          sino            //CASO 3: Insertar en el MEDIO (entre dos nodos existentes)
+            *nuevo_nodo.prox := p_aux 
+            *nuevo_nodo.ant := *p_aux.ant 
+            *(*p_aux.ant).prox := nuevo_nodo 
+            *p_aux.ant := nuevo_nodo
+          fin_si
+        fin_si
+      fin_si
+    Fin_procedimiento
+
+
+  Proceso 
+    abrir E/ (arch_inscrip)
+    abrir E/ (arch_punt)
+    leer (arch_inscrip, reg_inscrip)
+    
+    prim := nil
+    ult := nil
+    cant_equipo := 0
+
+    //Ciclo principal intacto en el Proceso
+    mientras nfda (arch_inscrip) hacer 
+      reg_punt.id_equipo := reg_inscrip.id_equipo
+      leer (arch_punt, reg_punt)
+
+      si existe entonces 
+        nuevo (q)
+        *q.ant := nil
+        *q.prox := nil
+
+        //Invocación de subacciones
+        ProcesarDatosEquipo (reg_inscrip, reg_punt, q, cant_tecno)
+
+        si cant_tecno >= 3 entonces 
+          cant_equipo := cant_equipo + 1
+        fin_si 
+
+        InsertarOrdenado (q)
+
+      sino 
+        escribir ("error, el equipo no existe")
+      finsi 
+
+      leer (arch_inscrip, reg_inscrip)
+    fin_mientras 
+
+    escribir ("la cantidad de equipos que utilizaron 3 o más tecnologias es:", cant_equipo)
+    
+    p := ult 
+    para i := 1 hasta 3 hacer 
+      segun i hacer 
+       1: escribir ("el nombre del equipo ganador del 1er puesto es:", *p.nom_equipo)
+          escribir ("puntaje total:", *p.puntaje_total)
+          escribir ("puntaje lider:", *p.puntaje_lider)
+       2: escribir ("el nombre del equipo ganador del 2do puesto es:", *p.nom_equipo)
+          escribir ("puntaje total:", *p.puntaje_total)
+          escribir ("puntaje lider:", *p.puntaje_lider) 
+       3: escribir ("el nombre del equipo ganador del 3er puesto es:", *p.nom_equipo)
+          escribir ("puntaje total:", *p.puntaje_total)
+          escribir ("puntaje lider:", *p.puntaje_lider)
+      fin_segun 
+      p := *p.ant
+    fin_para 
+
+    cerrar (arch_inscrip)
+    cerrar (arch_punt)
+fin_accion
+
+
+
+
+
+
+
+
+Accion parial_ej2 (prim: puntero a numero) es 
+  Ambiente 
+    numero = registro 
+      num: entero 
+      prox: puntero a numero 
+    finreg
+
+    p, ant, aux: puntero a numero 
+
+    prim2, a, q: puntero a numero
+
+    funcion creciente (n: entero): logico es 
+      si n < 10 entonces 
+        creciente := verdadero 
+      sino 
+        si n mod 10 <= (n div 10) mod 10 entonces 
+          creciente:= falso 
+        sino 
+          creciente:= creciente (n div 10)
+        finsi 
+      finsi 
+    finfuncion 
+
+  proceso 
+    p:= prim 
+    ant:= nil 
+    aux:= nil
+    prim2:= nil 
+    si prim = nil entonces 
+      escribir ("error, lista vacia")
+    sino 
+      mientras p <> nil hacer 
+        aux:= *p.prox
+        si no creciente (*p.num) entonces 
+          nuevo (q); *q.prox:= nil; *q.num:= *p.num 
+          si prim2 = nil entonces 
+            prim2:= q; a:= q
+          sino 
+            *q.prox:= p; *a.prox:= q; a:= q 
+          finsi 
+          si p = prim entonces 
+            prim:= *p.prox
+          sino 
+            *ant.prox:= *p.prox
+          finsi 
+          disponer (p)
+        sino 
+          ant:= p 
+        finsi 
+        p:= aux
+      finmientras 
+finaccion 
+        
+
